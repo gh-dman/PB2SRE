@@ -4458,7 +4458,7 @@
                         this.DialogSay("Achievement unlocked \'\'" + this.BADGE_TITLE[param1] + "\'\'","#00FF00");
                         this.LAST_BADGE = getTimer();
                      }
-                     this.SaveGame();
+					 this.my_so.data["bdg" + param1] = this.BADGE_STAT[param1];
                   }
                }
             }
@@ -8358,7 +8358,7 @@ import flash.display.Sprite;
             if(!this.MP_mode && !this.FORCE_CUSTOM_MAP && param1.char == 3)
             {
                param1.mdl_head = this.skin_model[1];
-			   if(this.skin_model[1] != 3) {
+			   if(this.skin_model[1] != 3 && this.skin_model[i] != 60 && this.skin_model[1] != 61) {
 				   param1.mdl_body = this.skin_model[1];
 				   param1.mdl_leg1_upper = this.skin_model[1];
 				   param1.mdl_leg1_middle = this.skin_model[1];
@@ -18013,17 +18013,6 @@ import flash.display.Sprite;
             }
          }
       }
-  
-	  public function SaveCurGun() {
-		    this.my_so.data["curA"] = this.curA;
-		    this.my_so.data["curB"] = this.curB;
-			try {
-				this.my_so.flush();
-			}
-			catch(e:Error) {
-			}
-			this.NetworkSave();
-	  }
       
       public function CheckCross(param1:Number, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:Number, param8:Number, param9:int) : Boolean
       {
@@ -18418,6 +18407,7 @@ import flash.display.Sprite;
          this.mupd.ttt.gotoAndPlay(1);
          if(this.CACHED_MAPS[this.CUR_LOADING] != undefined)
          {
+			this.SaveGame();
             this.UseLoadedMapData(this.CACHED_MAPS[this.CUR_LOADING]);
          }
          else
@@ -20737,7 +20727,6 @@ import flash.display.Sprite;
                }
             }
 			if(param1.keyCode == 82 && !this.MP_mode) {
-			   SaveCurGun();
                GotoMap(CUR_LOADING);
 			}
             if(param1.keyCode == 27)
@@ -27923,7 +27912,7 @@ import flash.display.Sprite;
 									rt_timer.removeEventListener(TimerEvent.TIMER, rt_func);
 									rt_timer.stop();
 									 
-									this.SaveCurGun();
+									 
                                     this.LEVEL_END_FORCE = "failed";
                                     this.LAST_ERROR = "YOUR TEAM IS DEAD.";
                                     if(this.HINTS)
@@ -27954,7 +27943,6 @@ import flash.display.Sprite;
 								 rt_timer.removeEventListener(TimerEvent.TIMER, rt_func);
 								 rt_timer.stop();								  
 								  
-								 this.SaveCurGun();
                                  this.LEVEL_END_FORCE = "failed";
                                  if(this.mens[this.MP_myid].lastshotby == this.MP_myid || this.mens[this.MP_myid].lastshotby == -1)
                                  {
@@ -34558,6 +34546,7 @@ import flash.display.Sprite;
                                  catch(e:*)
                                  {
                                  }
+								 this.SaveGame();
                                  gotoAndStop("campaign");
                               }
                            }
@@ -34580,6 +34569,7 @@ import flash.display.Sprite;
                               {
                               }
                               this.FUN_TIME_SPEND = 0;
+							  this.SaveGame();
                               gotoAndStop("main");
                            }
                            if(this.LEVEL_END_FORCE == "complete")
@@ -34600,6 +34590,7 @@ import flash.display.Sprite;
                               }
                               else
                               {
+								 this.SaveGame();
                                  gotoAndStop("campaign");
                               }
                            }
