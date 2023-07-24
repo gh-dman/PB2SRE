@@ -2900,6 +2900,7 @@
       }
   
 	  public function fr_func(param1:Event) {
+		  if(this.LEVEL_END_FORCE == "") {
 			++this.frames_display;
 			if(getTimer() - this.prev_frames >= 500)
 			{
@@ -2908,13 +2909,14 @@
 			   this.prev_frames = getTimer();
 			   this.frames_display = 0;
 			}
+		  }
 	  }
   
 	  public function gt_func(e:TimerEvent) {
 		  if(this.ui_elements_visible[3]) 
 		  {
 			 if(this.system_non_stop && !this.pauze.visible) {
-				 if(this.LEVEL_END_FORCE != "complete") {
+				 if(this.LEVEL_END_FORCE == "") {
 					 this.end_ms = getTimer();
 					 this.gt_ms = Math.max(0,this.end_ms - this.start_ms - this.losses);
 					 this.gt_ms_text = this.gt_ms - (Math.floor(this.gt_ms / 1000) * 1000);
@@ -2961,11 +2963,13 @@
 					 }
 				 }
 			 } else {
-				 this.loss_time = getTimer();
-				 this.loss_time = Math.min(getTimer(), getTimer() - this.loss_time);
-				 this.losses += this.loss_time;
-				 this.losses = Math.min(getTimer() - this.start_ms,this.losses);
-				 this.gt_counter = Math.max(0,getTimer() - this.start_ms - this.losses + 1) / 1000;
+				 if(this.LEVEL_END_FORCE == "") {
+					 this.loss_time = getTimer();
+					 this.loss_time = Math.min(getTimer(), getTimer() - this.loss_time);
+					 this.losses += this.loss_time;
+					 this.losses = Math.min(getTimer() - this.start_ms,this.losses);
+					 this.gt_counter = Math.max(0,getTimer() - this.start_ms - this.losses + 1) / 1000;
+				 }
 			 }
 		  } else {
 					 this.end_ms = getTimer();
@@ -27913,6 +27917,12 @@ import flash.display.Sprite;
                                  }
                                  if(!this.MP_mode)
                                  {
+									removeEventListener(Event.ENTER_FRAME,fr_func);
+									gt_timer.removeEventListener(TimerEvent.TIMER, gt_func);
+									gt_timer.stop();
+									rt_timer.removeEventListener(TimerEvent.TIMER, rt_func);
+									rt_timer.stop();
+									 
 									this.SaveCurGun();
                                     this.LEVEL_END_FORCE = "failed";
                                     this.LAST_ERROR = "YOUR TEAM IS DEAD.";
@@ -27938,6 +27948,12 @@ import flash.display.Sprite;
                               }
                               if(!this.MP_mode)
                               {
+								 removeEventListener(Event.ENTER_FRAME,fr_func);
+								 gt_timer.removeEventListener(TimerEvent.TIMER, gt_func);
+								 gt_timer.stop();
+								 rt_timer.removeEventListener(TimerEvent.TIMER, rt_func);
+								 rt_timer.stop();								  
+								  
 								 this.SaveCurGun();
                                  this.LEVEL_END_FORCE = "failed";
                                  if(this.mens[this.MP_myid].lastshotby == this.MP_myid || this.mens[this.MP_myid].lastshotby == -1)
