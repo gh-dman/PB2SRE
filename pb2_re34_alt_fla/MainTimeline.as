@@ -37454,7 +37454,6 @@ import flash.display.Sprite;
       {
 		 param1 = param1.split(" ").join("");
 		 if(param1.indexOf(";") >= 0) {
-			 trace("NON-DECODE START >" + param1 + "< END");
 			 return param1;
 		 }
          var _loc2_:* = undefined;
@@ -37463,7 +37462,6 @@ import flash.display.Sprite;
          while(this.i < param1.length)
          {
             _loc2_ += String.fromCharCode(param1.charCodeAt(this.i) - 1);
-			trace("DECODED START >" + _loc2_ + "< END");
             ++this.i;
          }
          return _loc2_;
