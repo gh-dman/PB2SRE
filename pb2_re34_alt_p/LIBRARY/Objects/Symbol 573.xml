@@ -1,0 +1,29 @@
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="Objects/Symbol 573" itemID="63c25e2b-00000b13" lastModified="1673129643">
+  <timeline>
+    <DOMTimeline name="Symbol 573">
+      <layers>
+        <DOMLayer name="Layer 1" color="#CE457F" current="true" isSelected="true">
+          <frames>
+            <DOMFrame index="0" duration="30" keyMode="9728">
+              <elements>
+                <DOMStaticText fontRenderingMode="standard" width="21.4" height="10.45" autoExpand="true" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="1.7" ty="1.6"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>USE</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" leftMargin="5" lineSpacing="0" lineHeight="10.45" size="9" bitmapSize="180" face="DejaVuSansMono-Bold" fillColor="#FFFFFF"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+      </layers>
+    </DOMTimeline>
+  </timeline>
+</DOMSymbolItem>

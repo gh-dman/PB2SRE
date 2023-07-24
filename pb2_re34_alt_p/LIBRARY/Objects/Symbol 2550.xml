@@ -1,0 +1,24 @@
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="Objects/Symbol 2550" itemID="63c25e2b-00000e51" lastModified="1673129643">
+  <timeline>
+    <DOMTimeline name="Symbol 2550">
+      <layers>
+        <DOMLayer name="Layer 1" color="#C86990" current="true" isSelected="true">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="Objects/Symbol 2549" name="joint" centerPoint3DX="-16" centerPoint3DY="-358.75">
+                  <matrix>
+                    <Matrix tx="-66.5" ty="-409.25"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+      </layers>
+    </DOMTimeline>
+  </timeline>
+</DOMSymbolItem>

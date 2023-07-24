@@ -1,0 +1,157 @@
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="Symbol 9" itemID="64b9a82b-00000726" symbolType="graphic" lastModified="1689889087">
+  <timeline>
+    <DOMTimeline name="Symbol 9">
+      <layers>
+        <DOMLayer name="Layer_1" color="#00FFFF" current="true" isSelected="true">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMShape>
+                  <fills>
+                    <FillStyle index="1">
+                      <SolidColor alpha="0.850980392156863"/>
+                    </FillStyle>
+                    <FillStyle index="2">
+                      <SolidColor color="#FF0000"/>
+                    </FillStyle>
+                  </fills>
+                  <strokes>
+                    <StrokeStyle index="1">
+                      <SolidStroke scaleMode="normal" weight="0.05" solidStyle="hairline">
+                        <fill>
+                          <SolidColor color="#FF0000"/>
+                        </fill>
+                      </SolidStroke>
+                    </StrokeStyle>
+                  </strokes>
+                  <edges>
+                    <Edge fillStyle0="1" edges="!5920 0|0 0!0 0|0 400!0 400|5920 400!5920 400|5920 0"/>
+                    <Edge fillStyle0="2" fillStyle1="2" strokeStyle="1" edges="!5160 140|5160 220"/>
+                    <Edge fillStyle0="1" fillStyle1="2" strokeStyle="1" edges="!5160 140|5220 140!5220 140|5220 220!5220 220|5160 220!5160 220|1160 220!1160 220|1160 140!1160 140|5160 140"/>
+                  </edges>
+                </DOMShape>
+                <DOMStaticText width="9.1" height="9.85" autoExpand="true" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="5.55" ty="5.35"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>H</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="9.85" size="9" bitmapSize="180" face="EuropeExt" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+                <DOMStaticText width="7.75" height="9.85" autoExpand="true" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="14.45" ty="5.35"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>e</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="9.85" size="9" bitmapSize="180" face="EuropeExt" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+                <DOMStaticText width="7.6" height="9.85" autoExpand="true" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="22" ty="5.35"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>a</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="9.85" size="9" bitmapSize="180" face="EuropeExt" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+                <DOMStaticText width="6.2" height="10.05" autoExpand="true" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="29.4" ty="5.35"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>l</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="10.05" size="9" bitmapSize="180" face="TimesNewRomanPSMT" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+                <DOMStaticText width="6.45" height="9.85" autoExpand="true" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="32.55" ty="5.35"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>t</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="9.85" size="9" bitmapSize="180" face="EuropeExt" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+                <DOMStaticText width="7.75" height="9.85" autoExpand="true" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="38.8" ty="5.35"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>h</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="9.85" size="9" bitmapSize="180" face="EuropeExt" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+                <DOMStaticText fontRenderingMode="customThicknessSharpness" width="8.15" height="8.8" autoExpand="true" antiAliasThickness="56" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="263.95" ty="5"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>1</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="8.8" size="8" bitmapSize="160" face="EuropeExtNormal" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+                <DOMStaticText fontRenderingMode="customThicknessSharpness" width="8.15" height="8.8" autoExpand="true" antiAliasThickness="56" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="271.9" ty="5"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>0</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="8.8" size="8" bitmapSize="160" face="EuropeExtNormal" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+                <DOMStaticText fontRenderingMode="customThicknessSharpness" width="8.15" height="8.8" autoExpand="true" antiAliasThickness="56" isSelectable="false">
+                  <matrix>
+                    <Matrix tx="280.2" ty="5"/>
+                  </matrix>
+                  <textRuns>
+                    <DOMTextRun>
+                      <characters>0</characters>
+                      <textAttrs>
+                        <DOMTextAttrs aliasText="false" rotation="true" letterSpacing="1" lineSpacing="0" lineHeight="8.8" size="8" bitmapSize="160" face="EuropeExtNormal" fillColor="#FF0000"/>
+                      </textAttrs>
+                    </DOMTextRun>
+                  </textRuns>
+                </DOMStaticText>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+      </layers>
+    </DOMTimeline>
+  </timeline>
+</DOMSymbolItem>
