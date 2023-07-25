@@ -31136,6 +31136,24 @@ import flash.display.Sprite;
 				   i++;
 			   }
 		   
+			   i = 0;
+			   while(i < this.nextef) {
+				   if(this.ef[i].x < this.render_minX || this.ef[i].x > this.render_maxX) {
+					   if(!this.ef[i].visible) {
+						   i++;
+						   continue;
+					   }
+					   this.ef[i].visible = false;
+				   } else {
+					   if(this.ef[i].visible) {
+						   i++;
+						   continue;
+					   }
+					   this.ef[i].visible = true;
+				   }
+				   i++;
+			   }
+		   
                i = 0;
                while(i < this.vehiclestotal)
                {
