@@ -21678,7 +21678,7 @@ import flash.display.Sprite;
                         {
                            this.timeshift = 0;
                            this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
-                           if(this.HQ && this.SCREEN_EFFECTS)
+                           if(this.SCREEN_EFFECTS)
                            {
                               this.whitness.alpha += 1;
                               this.whitness.visible = true;
@@ -21693,7 +21693,7 @@ import flash.display.Sprite;
                                  this.energy -= 10;
                                  this.timeshift = 1;
                                  this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
-                                 if(this.HQ && this.SCREEN_EFFECTS)
+                                 if(this.SCREEN_EFFECTS)
                                  {
                                     this.whitness.alpha += 1;
                                     this.whitness.visible = true;
@@ -21715,7 +21715,7 @@ import flash.display.Sprite;
                         {
                            this.timeshift = 0;
                            this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
-                           if(this.HQ && this.SCREEN_EFFECTS)
+                           if(this.SCREEN_EFFECTS)
                            {
                               this.whitness.alpha += 1;
                               this.whitness.visible = true;
@@ -21742,7 +21742,7 @@ import flash.display.Sprite;
                                     this.energy -= 10;
                                     this.timeshift = 1;
                                     this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
-                                    if(this.HQ && this.SCREEN_EFFECTS)
+                                    if(this.SCREEN_EFFECTS)
                                     {
                                        this.whitness.alpha += 1;
                                        this.whitness.visible = true;
@@ -23799,7 +23799,7 @@ import flash.display.Sprite;
                                              }
                                              if(this.puls[_loc1_].master == this.MP_myid)
                                              {
-                                                if(this.HQ && this.SCREEN_EFFECTS)
+                                                if(this.SCREEN_EFFECTS)
                                                 {
                                                    this.whitness.alpha += Number(this.puls[_loc1_].power) * 10 / Number(this.vehicles[this.i3].hmax);
                                                    if(this.vehicles[this.i3].hea <= 0)
@@ -24596,7 +24596,7 @@ import flash.display.Sprite;
                                                             {
                                                                if(!this.mens[_loc4_].dead)
                                                                {
-                                                                  if(this.HQ && this.SCREEN_EFFECTS)
+                                                                  if(this.SCREEN_EFFECTS)
                                                                   {
                                                                      this.whitness.alpha += 15 * Number(this.puls[_loc1_].power) / Number(this.mens[_loc4_].hmax);
                                                                      if(this.mens[_loc4_].hea <= 0)
@@ -25058,7 +25058,7 @@ import flash.display.Sprite;
                               {
                                  if(mens_aof_i6.team != this.mens[by].team)
                                  {
-                                    if(this.HQ && this.SCREEN_EFFECTS)
+                                    if(this.SCREEN_EFFECTS)
                                     {
                                        this.whitness.alpha += this.Math_abs(damage) / 6 / Number(mens_aof_i6.hmax);
                                        if(mens_aof_i6.hea <= 0)
@@ -25621,7 +25621,7 @@ import flash.display.Sprite;
                   {
                      if(!mc2.dead)
                      {
-                        if(this.HQ && this.SCREEN_EFFECTS)
+                        if(this.SCREEN_EFFECTS)
                         {
                            this.whitness.alpha += Math.max(puls_power * 50 / Number(mc2.hmax),0.3);
                            if(mc2.hea <= 0)
@@ -30778,7 +30778,7 @@ import flash.display.Sprite;
                      {
                         this.timeshift = 0;
                         this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
-                        if(this.HQ && this.SCREEN_EFFECTS)
+                        if(this.SCREEN_EFFECTS)
                         {
                            this.whitness.alpha += 1;
                            this.whitness.visible = true;
@@ -31137,22 +31137,36 @@ import flash.display.Sprite;
 			   }
 		   
 			   i = 0;
-			   while(i < this.nextef) {
-				   if(this.ef[i].x < this.render_minX || this.ef[i].x > this.render_maxX) {
-					   if(!this.ef[i].visible) {
-						   i++;
-						   continue;
+			   while(i < this.maxef) {
+				   if(this.ef[i] != null) {
+					   if(this.ef[i].x < this.render_minX || this.ef[i].x > this.render_maxX) {
+						   if(this.game.contains(this.ef[i]))
+						   {
+							  this.game.removeChild(this.ef[i]);
+							  this.ef[i] = null;
+						   }
+						   else if(this.graphics_3d_front.contains(this.ef[i]))
+						   {
+							  this.graphics_3d_front.removeChild(this.ef[i]);
+							  this.ef[i] = null;
+						   }
+						   
 					   }
-					   this.ef[i].visible = false;
-				   } else {
-					   if(this.ef[i].visible) {
-						   i++;
-						   continue;
-					   }
-					   this.ef[i].visible = true;
 				   }
 				   i++;
 			   }
+		   
+		   
+               /*if(this.game.contains(this.ef[this.nextef]))
+               {
+                  this.game.removeChild(this.ef[this.nextef]);
+                  this.ef[this.nextef] = null;
+               }
+               else if(this.graphics_3d_front.contains(this.ef[this.nextef]))
+               {
+                  this.graphics_3d_front.removeChild(this.ef[this.nextef]);
+                  this.ef[this.nextef] = null;
+               }*/		   
 		   
                i = 0;
                while(i < this.vehiclestotal)
