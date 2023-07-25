@@ -5218,7 +5218,7 @@ import flash.display.Sprite;
          var x:Number = param2;
          var y:Number = param3;
          var attached_mc:MovieClip = param4;
-         if(this.NONMUTE)
+         if(this.NONMUTE && this.FX_VOLUME != 0)
          {
             if(this.game.visible)
             {
@@ -5269,7 +5269,7 @@ import flash.display.Sprite;
       
       public function PlaySound_full(param1:*) : void
       {
-         if(this.NONMUTE)
+         if(this.NONMUTE && this.FX_VOLUME != 0)
          {
             if(currentFrameLabel != "gaming" || this.game.visible)
             {
