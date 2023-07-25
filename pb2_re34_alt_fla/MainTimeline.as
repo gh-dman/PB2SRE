@@ -24,6 +24,8 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var fps_toggle_perf = false;
+	   
 	  public var bottomsurface = [];
 	   
 	  public var bottomsurfacebox = [];
@@ -30693,6 +30695,19 @@ import flash.display.Sprite;
          var t:* = undefined;
          var f:* = undefined;
          var event:Event = param1;
+		 if(this.FRAMERATE == 4) {
+			 var originalFrameRate = stage.frameRate;
+			 this.fps_toggle_perf = !this.fps_toggle_perf;
+			 if (this.fps_toggle_perf)
+			 {
+				originalFrameRate = stage.frameRate;
+				stage.frameRate = 1000;
+			 }
+			 else
+			 {
+				stage.frameRate = originalFrameRate;
+			 }
+		 }
          this.VarChangePreventStart();
          try
          {
