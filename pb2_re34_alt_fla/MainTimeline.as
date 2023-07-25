@@ -8380,7 +8380,7 @@ import flash.display.Sprite;
             if(!this.MP_mode && !this.FORCE_CUSTOM_MAP && param1.char == 3)
             {
                param1.mdl_head = this.skin_model[1];
-			   if(this.skin_model[1] != 3 && this.skin_model[i] != 60 && this.skin_model[1] != 61) {
+			   if(this.skin_model[1] != 3 && this.skin_model[1] != 60 && this.skin_model[1] != 61) {
 				   param1.mdl_body = this.skin_model[1];
 				   param1.mdl_leg1_upper = this.skin_model[1];
 				   param1.mdl_leg1_middle = this.skin_model[1];
