@@ -6030,29 +6030,48 @@ import flash.display.Sprite;
          }
       }
       
-      public function ForceRasterize(param1:Sprite) : void
-      {
-         var _loc3_:BitmapData = null;
-         var _loc4_:Matrix = null;
-         var _loc5_:Bitmap = null;
-         var _loc2_:Rectangle = param1.getBounds(param1);
-         if(_loc2_.width > 1 && _loc2_.height > 1 && _loc2_.width < 8191 && _loc2_.height < 8191 && _loc2_.width * _loc2_.height < 16777215)
-         {
-            _loc3_ = new BitmapData(_loc2_.width,_loc2_.height,true,0);
-            (_loc4_ = new Matrix()).translate(-_loc2_.x,-_loc2_.y);
-            _loc3_.draw(param1,_loc4_);
-            while(param1.numChildren > 0)
-            {
-               param1.removeChildAt(0);
-            }
-            param1.graphics.clear();
-            (_loc5_ = new Bitmap(_loc3_)).x = _loc2_.x;
-            _loc5_.y = _loc2_.y;
-            param1.addChild(_loc5_);
-            _loc5_.smoothing = this.HQ;
-            param1.cacheAsBitmap = true;
-         }
-      }
+      public function ForceRasterize(sprite:Sprite, signore:String="") : void
+		{
+			var bitmapData:BitmapData;
+			var mtx:Matrix;
+			var bitmap:Bitmap;
+			var bounds:Rectangle = sprite.getBounds(sprite);
+			var ignore:DisplayObject = null;
+			if (signore != "") ignore = sprite.getChildByName(signore);
+			if(bounds.width > 1 && bounds.height > 1 && bounds.width < 8191 && bounds.height < 8191 && bounds.width * bounds.height < 16777215)
+			{
+				var i = 0;
+				bitmapData = new BitmapData(bounds.width, bounds.height, true, 0);
+				(mtx = new Matrix()).translate(-bounds.x, -bounds.y);
+				bitmapData.draw(sprite, mtx);
+				while(sprite.numChildren > i)
+				{
+					if (ignore != null && sprite.getChildAt(i) == ignore) {
+						 i++;
+						 continue;
+					}
+					sprite.removeChildAt(i);
+				}
+				sprite.graphics.clear();
+				if (false) {
+					var byteArray:ByteArray = new ByteArray();
+
+					bitmapData.encode(
+						new Rectangle(0, 0, bounds.width, bounds.height),
+						new flash.display.PNGEncoderOptions(),
+						byteArray
+					);
+					//UploadRaster(byteArray);
+				}
+
+				(bitmap = new Bitmap(bitmapData)).x = bounds.x;
+				bitmap.y = bounds.y;
+				bitmap.name = "bmp";
+				sprite.addChild(bitmap);
+				bitmap.smoothing = this.HQ;
+				sprite.cacheAsBitmap = true;
+			}
+		}
       
       public function link_surface(param1:DisplayObject, param2:int) : void
       {
@@ -6761,6 +6780,7 @@ import flash.display.Sprite;
       
       public function nextpul() : void
       {
+		 this.ForceRasterize(this.puls[this.pulscur]);
          ++this.pulscur;
          if(this.pulscur > this.pulsmax)
          {
