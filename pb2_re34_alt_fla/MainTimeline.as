@@ -2900,7 +2900,7 @@
       }
   
 	  public function fr_func(param1:Event) {
-		  if(this.LEVEL_END_FORCE == "") {
+		  if(this.LEVEL_END_FORCE == "" && this.fr_real != null) {
 			++this.frames_display;
 			if(getTimer() - this.prev_frames >= 500)
 			{
@@ -2913,7 +2913,7 @@
 	  }
   
 	  public function gt_func(e:TimerEvent) {
-		  if(this.ui_elements_visible[3]) 
+		  if(this.ui_elements_visible[3] && this.gt_ms_text != null) 
 		  {
 			 if(this.system_non_stop && !this.pauze.visible) {
 				 if(this.LEVEL_END_FORCE == "") {
@@ -2994,7 +2994,7 @@
   
   
 	  public function rt_func(e:TimerEvent) {
-		  if(this.ui_elements_visible[2]) 
+		  if(this.ui_elements_visible[2] && this.rt_ms_text != null) 
 		  {
 			 if(this.LEVEL_END_FORCE != "complete") {
 				 this.end_ms = getTimer();
@@ -3050,7 +3050,7 @@
 		 addEventListener(Event.ADDED_TO_STAGE,this.__setPerspectiveProjection_);
          if(this.__animFactory_menu_buttonsaf1 == null)
          {
-            this.__animArray_menu_buttonsaf1 = new Array();
+            this.__animArray_menu_buttonsaf1 = [];
             this.__motion_menu_buttonsaf1 = new MotionBase();
             this.__motion_menu_buttonsaf1.duration = 1;
             this.__motion_menu_buttonsaf1.overrideTargetTransform();
@@ -3060,7 +3060,7 @@
             this.__motion_menu_buttonsaf1.addPropertyArray("opaqueBackground",[null]);
             this.__motion_menu_buttonsaf1.is3D = true;
             this.__motion_menu_buttonsaf1.motion_internal::spanStart = 3;
-            this.____motion_menu_buttonsaf1_matArray__ = new Array();
+            this.____motion_menu_buttonsaf1_matArray__ = [];
             this.____motion_menu_buttonsaf1_mat3DVec__ = new Vector.<Number>(16);
             this.____motion_menu_buttonsaf1_mat3DVec__[0] = 0.604228;
             this.____motion_menu_buttonsaf1_mat3DVec__[1] = 0.010887;
@@ -3087,7 +3087,7 @@
          }
          if(this.__animFactory_menu_buttons2af1 == null)
          {
-            this.__animArray_menu_buttons2af1 = new Array();
+            this.__animArray_menu_buttons2af1 = [];
             this.__motion_menu_buttons2af1 = new MotionBase();
             this.__motion_menu_buttons2af1.duration = 1;
             this.__motion_menu_buttons2af1.overrideTargetTransform();
@@ -3097,7 +3097,7 @@
             this.__motion_menu_buttons2af1.addPropertyArray("opaqueBackground",[null]);
             this.__motion_menu_buttons2af1.is3D = true;
             this.__motion_menu_buttons2af1.motion_internal::spanStart = 3;
-            this.____motion_menu_buttons2af1_matArray__ = new Array();
+            this.____motion_menu_buttons2af1_matArray__ = [];
             this.____motion_menu_buttons2af1_mat3DVec__ = new Vector.<Number>(16);
             this.____motion_menu_buttons2af1_mat3DVec__[0] = 0.604228;
             this.____motion_menu_buttons2af1_mat3DVec__[1] = 0.010887;
@@ -3606,7 +3606,7 @@
       {
          if(this.intro_glowings == null)
          {
-            this.intro_glowings = new Array();
+            this.intro_glowings = [];
          }
          this.intro_glowings.push(param1);
       }
@@ -3620,7 +3620,7 @@
       {
          if(this.intro_speculars == null)
          {
-            this.intro_speculars = new Array();
+            this.intro_speculars = [];
          }
          this.intro_speculars.push(param1);
       }
@@ -4702,7 +4702,7 @@ import flash.display.Sprite;
                _loc3_ = this.MPclr[param1][0];
                _loc4_ = this.MPclr[param1][1];
                _loc5_ = Number(this.MPclr[param1][2]);
-               _loc6_ = (_loc6_ = (_loc6_ = (_loc6_ = (_loc6_ = new Array()).concat([_loc3_ * 0.3,_loc3_ * 0.4 + _loc4_ * 0.2,_loc3_ * 0.6 + _loc5_ * 0.2,0,0])).concat([_loc4_ * 0.3 + _loc3_ * 0.2,_loc4_ * 0.4,_loc4_ * 0.6 + _loc5_ * 0.2,0,0])).concat([_loc5_ * 0.3 + _loc3_ * 0.2,_loc5_ * 0.4 + _loc4_ * 0.2,_loc5_ * 0.6,0,0])).concat([0,0,0,1,0]);
+               _loc6_ = (_loc6_ = (_loc6_ = (_loc6_ = (_loc6_ = []).concat([_loc3_ * 0.3,_loc3_ * 0.4 + _loc4_ * 0.2,_loc3_ * 0.6 + _loc5_ * 0.2,0,0])).concat([_loc4_ * 0.3 + _loc3_ * 0.2,_loc4_ * 0.4,_loc4_ * 0.6 + _loc5_ * 0.2,0,0])).concat([_loc5_ * 0.3 + _loc3_ * 0.2,_loc5_ * 0.4 + _loc4_ * 0.2,_loc5_ * 0.6,0,0])).concat([0,0,0,1,0]);
                _loc2_.matrix = _loc6_;
             }
          }
@@ -4854,8 +4854,8 @@ import flash.display.Sprite;
             }
             ++this.i;
          }
-         this.inventoryA = new Array();
-         this.inventoryB = new Array();
+         this.inventoryA = [];
+         this.inventoryB = [];
          this.i2 = int(this.my_so.data["inv1_len"]);
          this.i = 0;
          while(this.i < this.i2)
@@ -8848,7 +8848,7 @@ import flash.display.Sprite;
                      this.lamps_sprites[this.i4] = null;
                      ++this.i4;
                   }
-                  this.lamps_sprites = new Array();
+                  this.lamps_sprites = [];
                }
             }
          }
@@ -9148,7 +9148,7 @@ import flash.display.Sprite;
             loadmap_stage = "1001";
             this.SHOW_FRAG_MESSAGES = true;
             this.level_variables = {};
-            this.dm_slots_on_spawn = new Array();
+            this.dm_slots_on_spawn = [];
             this.dm_max_guns_on_spawn = 3;
             this.user_says_trigger = -1;
             this.on_user_connected_trigger = -1;
@@ -9226,7 +9226,7 @@ import flash.display.Sprite;
             {
 			   //ci++;
                a = bookInfo.name();
-               b = new Array();
+               b = [];
                for each(bookInfo2 in bookInfo.attributes())
                {
                   b["#" + bookInfo2.name()] = bookInfo2;
@@ -9615,9 +9615,9 @@ import flash.display.Sprite;
                   this.triggers[this.triggerstotal].s_enabledd = this.triggers[this.triggerstotal].enabledd;
                   this.triggers[this.triggerstotal].s_maxcalls = this.triggers[this.triggerstotal].maxcalls = new int(b["#maxcalls"]);
                   this.triggers[this.triggerstotal].actions_total = new int(0);
-                  this.triggers[this.triggerstotal].actions_targetA = new Array();
-                  this.triggers[this.triggerstotal].actions_targetB = new Array();
-                  this.triggers[this.triggerstotal].actions_type = new Array();
+                  this.triggers[this.triggerstotal].actions_targetA = [];
+                  this.triggers[this.triggerstotal].actions_targetB = [];
+                  this.triggers[this.triggerstotal].actions_type = [];
                   this.triggers[this.triggerstotal].forcehyperjump = new Boolean(false);
                   i = 1;
                   while(i <= 10)
@@ -9866,7 +9866,7 @@ import flash.display.Sprite;
                }
                i++;
             }
-            this.all_doors = new Array();
+            this.all_doors = [];
             this.i2 = 0;
             while(this.i2 < this.doorstotal)
             {
@@ -9890,7 +9890,7 @@ import flash.display.Sprite;
             for each(bookInfo in xml.children())
             {
                a = bookInfo.name();
-               b = new Array();
+               b = [];
                for each(bookInfo2 in bookInfo.attributes())
                {
                   b["#" + bookInfo2.name()] = bookInfo2;
@@ -10673,7 +10673,7 @@ import flash.display.Sprite;
                loadmap_stage = "5002";
                a = bookInfo.name();
                loadmap_stage = "5003";
-               b = new Array();
+               b = [];
                loadmap_stage = "5004";
                for each(bookInfo2 in bookInfo.attributes())
                {
@@ -10843,7 +10843,7 @@ import flash.display.Sprite;
             this.g_maxx = this.boxx[0] + this.boxw[0];
             this.g_miny = this.boxy[0];
             this.g_maxy = this.boxy[0] + this.boxh[0];
-            col = new Array();
+            col = [];
             i = 0;
             while(i < this.boxestotal)
             {
@@ -11762,8 +11762,8 @@ import flash.display.Sprite;
                this.cx = (this.g_maxx - this.g_minx) / this.step_size;
                this.cy = (this.g_maxy - this.g_miny) / this.step_size;
                loadmap_stage = "1315";
-               clrs = new Array();
-               poss = new Array();
+               clrs = [];
+               poss = [];
                dip = 0;
                while(dip < 1)
                {
@@ -11776,7 +11776,7 @@ import flash.display.Sprite;
                while(this.i4 < this.i5)
                {
                   g = new Sprite();
-                  alphas = new Array();
+                  alphas = [];
                   dip = 0;
                   while(dip < 1)
                   {
@@ -11991,7 +11991,7 @@ import flash.display.Sprite;
       
       public function qpack_rule(param1:String) : void
       {
-         this.qpack_pattern[this.qpack_pattern_length] = new Array();
+         this.qpack_pattern[this.qpack_pattern_length] = [];
          this.qpack_pattern[this.qpack_pattern_length][0] = param1;
          this.qpack_pattern[this.qpack_pattern_length][1] = "^" + this.qpack_base.charAt(this.qpack_pattern_simcalc) + "";
          ++this.qpack_pattern_simcalc;
@@ -12000,7 +12000,7 @@ import flash.display.Sprite;
       
       public function qpack_rule_2param(param1:String, param2:String) : void
       {
-         this.qpack_pattern[this.qpack_pattern_length] = new Array();
+         this.qpack_pattern[this.qpack_pattern_length] = [];
          this.qpack_pattern[this.qpack_pattern_length][0] = param1;
          this.qpack_pattern[this.qpack_pattern_length][1] = param2;
          ++this.qpack_pattern_length;
@@ -12310,12 +12310,12 @@ import flash.display.Sprite;
 							   this.UpdateCurGun();
 							   if(this.mens[this.tr3].char == 1 && (this.MP_myid == this.tr3 || this.mens[this.MP_myid].char != 1))
 							   {
-								  this.inventoryA = new Array();
+								  this.inventoryA = [];
 								  this.ok = true;
 							   }
 							   if(this.mens[this.tr3].char == 3 && (this.MP_myid == this.tr3 || this.mens[this.MP_myid].char != 3))
 							   {
-								  this.inventoryB = new Array();
+								  this.inventoryB = [];
 								  this.ok = true;
 							   }
 							   if(this.ok)
@@ -13728,7 +13728,7 @@ import flash.display.Sprite;
                            green = (hex & 65280) >> 8;
                            blue = hex & 255;
                            clrs_mov = new ColorMatrixFilter();
-                           matrix = new Array();
+                           matrix = [];
                            matrix = matrix.concat([1,0,0,0,red]);
                            matrix = matrix.concat([0,1,0,0,green]);
                            matrix = matrix.concat([0,0,1,0,blue]);
@@ -16683,7 +16683,7 @@ import flash.display.Sprite;
                                  {
                                     if(_loc9_[this.aof[this.i6]] == undefined)
                                     {
-                                       _loc9_[this.aof[this.i6]] = new Array();
+                                       _loc9_[this.aof[this.i6]] = [];
                                     }
                                     _loc9_[this.aof[this.i6]].push(this.GlobalAtomIDToPlayerLocalAtomID(this.i6,this.mens[this.aof[this.i6]]),this.r2(Number(this.ax[this.i6]) - param1),this.r2(Number(this.ay[this.i6]) - param2),this.r2(this.xx));
                                  }
@@ -31042,9 +31042,17 @@ import flash.display.Sprite;
 			   i = 0;
 			   while(i < this.playerstotal) {
 				   if(this.mens[i].x < this.render_minX || this.mens[i].x > this.render_maxX) {
+					   if(!this.mens[i].visible) {
+						   i++;
+						   continue;
+					   }
 					   this.mens[i].visible = false;
 					   //this.aactive[i] = false;
 				   } else {
+					   if(this.mens[i].visible) {
+						   i++;
+						   continue;
+					   }
 					   this.mens[i].visible = true;
 					   //this.aactive[i] = true;
 				   }
@@ -31055,8 +31063,16 @@ import flash.display.Sprite;
 			   while(i < this.doorstotal) {
 				   if(this.gamedoor[i] != undefined) {
 					   if(this.gamedoor[i].x + (this.gamedoor[i].scaleX * 100) < this.render_minX || this.gamedoor[i].x > this.render_maxX) {
+						   if(!this.gamedoor[i].visible) {
+								i++;
+							   continue;
+						   }
 						   this.gamedoor[i].visible = false;
 					   } else {
+						   if(this.gamedoor[i].visible) {
+								i++;
+						        continue;
+						   }
 						   this.gamedoor[i].visible = true;
 					   }
 				   }
@@ -31067,8 +31083,16 @@ import flash.display.Sprite;
 			   while(i < this.decorstotal) {
 				   if(this.decorbox[i] != undefined) {
 					   if(this.decorbox[i].x < this.render_minX || this.decorbox[i].x > this.render_maxX) {
-							this.decorbox[i].custom_bitmap.visible = false;
+						   if(!this.decorbox[i].visible) {
+								i++;
+							    continue;
+						   }
+						   this.decorbox[i].custom_bitmap.visible = false;
 					   } else{
+						   if(this.decorbox[i].visible) {
+								i++;
+						        continue;
+						   }
 						   this.decorbox[i].custom_bitmap.visible = true;
 					   }
 				   }
@@ -31079,6 +31103,10 @@ import flash.display.Sprite;
 			   while(i < this.boxestotal) { 
 				   // DOORS STUFF 
 				   if(this.gamebox[i].x + (this.gamebox[i].scaleX * 100) < this.render_minX || this.gamebox[i].x > this.render_maxX) {
+					   if(!this.gamebox[i].visible) {
+						   i++;
+						   continue;
+					   }
 					   this.gamebox[i].visible = false;
 					   if(this.ledgebox[i] != undefined) {
 						this.ledgebox[i].visible = false;
@@ -31090,6 +31118,10 @@ import flash.display.Sprite;
 						   this.topsurface[i].visible = false;
 					   }
 				   } else {
+					   if(this.gamebox[i].visible) {
+						   i++;
+						   continue;
+					   }
 					   this.gamebox[i].visible = true;
 					   if(this.ledgebox[i] != undefined) {
 						this.ledgebox[i].visible = true;
@@ -35997,7 +36029,7 @@ import flash.display.Sprite;
          _loc1_.hue = this.menu_hue;
          _loc1_.saturation = 0;
          _loc2_ = new ColorMatrixFilter(_loc1_.CalculateFinalFlatArray());
-         _loc3_ = new Array();
+         _loc3_ = [];
          _loc3_.push(_loc2_);
          this.earth.filters = _loc3_;
          this.menu_buttons.filters = _loc3_;
@@ -36792,10 +36824,10 @@ import flash.display.Sprite;
          var str:String = param1;
          this.last_server_list_str = str;
          sr_arr = str.split(";");
-         this.servers_name = new Array();
-         this.servers_ip = new Array();
-         this.servers_port = new Array();
-         this.servers_uid = new Array();
+         this.servers_name = [];
+         this.servers_ip = [];
+         this.servers_port = [];
+         this.servers_uid = [];
          new_server_cur = 0;
          found_my_server = false;
          this.i = 0;
@@ -37168,10 +37200,10 @@ import flash.display.Sprite;
                TakeScreenShot_allow = true;
             },this.TakeScreenShot_delay);
             bitmapData = new BitmapData(400,200,false,4278255615);
-            arr = new Array();
-            arr2 = new Array();
-            arr3 = new Array();
-            arr4 = new Array();
+            arr = [];
+            arr2 = [];
+            arr3 = [];
+            arr4 = [];
             i = 0;
             while(i < this.playerstotal)
             {
