@@ -5314,6 +5314,9 @@ import flash.display.Sprite;
          {
             if(currentFrameLabel != "gaming" || this.game.visible)
             {
+			   if(this.s_channel[Math.max(0,this.last_channel - 1)] == null) {
+					this.last_channel = this.last_channel - 1;
+			   }
                if(this.s_channel[this.last_channel] != null)
                {
                   this.s_channel[this.last_channel].stop();
@@ -18421,6 +18424,7 @@ import flash.display.Sprite;
       
       public function ChatNewMsg(param1:String) : void
       {
+		 // CHATNEWMSG FIX THIS SOON
          if(param1.toLowerCase().indexOf("<img ") != -1 || param1.toLowerCase().indexOf("<a ") != -1)
          {
             param1 = "&lt; Unsupported tag in message &gt;";
