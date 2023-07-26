@@ -24,6 +24,8 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var previous_channel = 0;
+	   
 	  public var game_x = 0;
 	   
 	  public var game_y = 0;
@@ -5243,6 +5245,18 @@ import flash.display.Sprite;
       {
          return Math.sqrt(param1 * param1 + param2 * param2 + param3 * param3);
       }
+  
+	  public function FinishSound(e:Event) {
+		 this.s_channel[this.previous_channel] = null;
+		 var i = 0;
+	     while(i < max_channels) {
+		   if(this.s_channel[i] == null) {
+			   this.last_channel = i;
+			   break;
+		   }
+		   i++;
+	     }
+	  }
       
       public function PlaySound(param1:*, param2:Number, param3:Number, param4:MovieClip = null) : void
       {
@@ -5252,53 +5266,39 @@ import flash.display.Sprite;
          var x:Number = param2;
          var y:Number = param3;
          var attached_mc:MovieClip = param4;
-         if(this.NONMUTE && this.FX_VOLUME != 0)
-         {
-            if(this.game.visible)
-            {
-               if(this.s_channel[this.last_channel] != null)
-               {
-                  this.s_channel[this.last_channel].stop();
-               }
-               this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 - 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
-               this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 + 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
-               this.vol3d[this.last_channel].volume = this.vol.volume;
-               if(src.custom_volume == undefined)
-               {
-                  src.custom_volume = 1;
-               }
-               else
-               {
-                  this.vol3d[this.last_channel].volume *= src.custom_volume;
-               }
-               this.vol3d[this.last_channel].leftToLeft = this.smod2;
-               this.vol3d[this.last_channel].leftToRight = 0;
-               this.vol3d[this.last_channel].rightToRight = this.smod;
-               this.vol3d[this.last_channel].rightToLeft = 0;
-               this.s_channel[this.last_channel] = src.play(0,0,this.vol3d[this.last_channel]);
-               if(attached_mc != null)
-               {
-                  callb = function():void
-                  {
-                     attached_mc.attached_sound.removeEventListener(Event.SOUND_COMPLETE,callb);
-                     attached_mc2.attached_sound = null;
-                  };
-                  attached_mc2 = attached_mc;
-                  if(attached_mc.attached_sound != undefined && attached_mc.attached_sound != null)
-                  {
-                     attached_mc.attached_sound.removeEventListener(Event.SOUND_COMPLETE,callb);
-                     attached_mc.attached_sound.stop();
-                  }
-                  attached_mc.attached_sound = this.s_channel[this.last_channel];
-                  attached_mc.attached_sound.addEventListener(Event.SOUND_COMPLETE,callb);
-               }
-               ++this.last_channel;
-               if(this.last_channel >= this.max_channels)
+		 if(this.NONMUTE && this.FX_VOLUME != 0)
+		 {
+			if(this.game.visible)
+			{
+			   if(this.s_channel[this.last_channel] != null)
+			   {
+				  this.s_channel[this.last_channel].stop();
+			   }
+			   this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 - 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
+			   this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 + 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
+			   this.vol3d[this.last_channel].volume = this.vol.volume;
+			   if(src.custom_volume == undefined)
+			   {
+				  src.custom_volume = 1;
+			   }
+			   else
+			   {
+				  this.vol3d[this.last_channel].volume *= src.custom_volume;
+			   }
+			   this.vol3d[this.last_channel].leftToLeft = this.smod2;
+			   this.vol3d[this.last_channel].leftToRight = 0;
+			   this.vol3d[this.last_channel].rightToRight = this.smod;
+			   this.vol3d[this.last_channel].rightToLeft = 0;
+			   this.s_channel[this.last_channel] = src.play(0,0,this.vol3d[this.last_channel]);
+			   this.s_channel[this.last_channel].addEventListener(Event.SOUND_COMPLETE, this.FinishSound);
+			   ++this.last_channel;
+			   if(this.last_channel >= this.max_channels)
                {
                   this.last_channel = 0;
                }
-            }
-         }
+
+			}
+		 }
       }
       
       public function PlaySound_full(param1:*) : void
@@ -5324,6 +5324,7 @@ import flash.display.Sprite;
                this.vol3d[this.last_channel].leftToRight = 0;
                this.vol3d[this.last_channel].rightToRight = 1;
                this.vol3d[this.last_channel].rightToLeft = 0;
+			   this.previous_channel = this.last_channel;
                this.s_channel[this.last_channel] = param1.play(0,0,this.vol3d[this.last_channel]);
                ++this.last_channel;
                if(this.last_channel >= this.max_channels)
