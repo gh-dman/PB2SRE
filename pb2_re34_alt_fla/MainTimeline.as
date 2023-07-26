@@ -5246,7 +5246,7 @@ import flash.display.Sprite;
       {
          return Math.sqrt(param1 * param1 + param2 * param2 + param3 * param3);
       }
-  
+  /*
 	  public function FinishSound(e:Event) {
 		 this.s_channel[this.previous_channel] = null;
 		 removeEventListener(Event.SOUND_COMPLETE, this.FinishSound);
@@ -5258,7 +5258,7 @@ import flash.display.Sprite;
 		   }
 		   i++;
 	     }
-	  }
+	  }*/
       
       public function PlaySound(param1:*, param2:Number, param3:Number, param4:MovieClip = null) : void
       {
@@ -5272,6 +5272,9 @@ import flash.display.Sprite;
 		 {
 			if(this.game.visible)
 			{
+			   if(this.s_channel[Math.max(0,this.last_channel - 1)] == null) {
+					this.last_channel = this.last_channel - 1;
+			   }
 			   if(this.s_channel[this.last_channel] != null)
 			   {
 				  this.s_channel[this.last_channel].stop();
@@ -5292,9 +5295,9 @@ import flash.display.Sprite;
 			   this.vol3d[this.last_channel].rightToRight = this.smod;
 			   this.vol3d[this.last_channel].rightToLeft = 0;
 			   this.s_channel[this.last_channel] = src.play(0,0,this.vol3d[this.last_channel]);
-			   if(this.s_channel[this.last_channel] != null) {
+			   /*if(this.s_channel[this.last_channel] != null) {
 					this.s_channel[this.last_channel].addEventListener(Event.SOUND_COMPLETE, this.FinishSound);
-			   }
+			   }*/
 			   ++this.last_channel;
 			   if(this.last_channel >= this.max_channels)
                {
