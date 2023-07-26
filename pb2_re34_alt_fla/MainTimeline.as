@@ -2933,7 +2933,8 @@
 			if(getTimer() - this.prev_frames >= 500)
 			{
 			   this.temp_fps = this.frames_display * 1000 / (getTimer() - this.prev_frames);
-			   this.fr_real.fps.text = ((Math.round(this.temp_fps) * 10) / 10).toString() + " FPS";
+			   var fps_txt = Math.round(this.temp_fps);
+			   this.fr_real.fps.text = fps_txt.toString().concat(" FPS");
 			   this.prev_frames = getTimer();
 			   this.frames_display = 0;
 			}
@@ -5248,6 +5249,7 @@ import flash.display.Sprite;
   
 	  public function FinishSound(e:Event) {
 		 this.s_channel[this.previous_channel] = null;
+		 removeEventListener(Event.SOUND_COMPLETE, this.FinishSound);
 		 var i = 0;
 	     while(i < max_channels) {
 		   if(this.s_channel[i] == null) {
@@ -5290,7 +5292,9 @@ import flash.display.Sprite;
 			   this.vol3d[this.last_channel].rightToRight = this.smod;
 			   this.vol3d[this.last_channel].rightToLeft = 0;
 			   this.s_channel[this.last_channel] = src.play(0,0,this.vol3d[this.last_channel]);
-			   this.s_channel[this.last_channel].addEventListener(Event.SOUND_COMPLETE, this.FinishSound);
+			   if(this.s_channel[this.last_channel] != null) {
+					this.s_channel[this.last_channel].addEventListener(Event.SOUND_COMPLETE, this.FinishSound);
+			   }
 			   ++this.last_channel;
 			   if(this.last_channel >= this.max_channels)
                {
