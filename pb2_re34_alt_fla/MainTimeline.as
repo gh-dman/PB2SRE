@@ -24,6 +24,18 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var draw_now = false;
+	   
+	  public var game_x = 0;
+	   
+	  public var game_y = 0;
+	   
+	  public var inverse_legs = false;
+	   
+	  public var drawtime = getTimer();
+	   
+	  public var physicstime = getTimer();
+	   
 	  public var fps_toggle_perf = false;
 	   
 	  public var bottomsurface = [];
@@ -94,7 +106,7 @@
 	  
 	  public var prev_frames = 0;
 	  
-	  public var temp_fps = 0;
+	  public var temp_fps = 60;
 	  
 	  public var temp_variable = 0;
 	  
@@ -2901,6 +2913,142 @@
 		 init3DMenu();
       }
   
+	  public function drawWhen() {
+		  if(getTimer() > this.drawtime + ((1 / this.temp_fps) * 100) || this.firstframe) {
+			  this.draw_now = true;
+			  this.drawtime = getTimer();
+		  } else {
+			  this.draw_now = false;
+		  }
+	  }
+  
+	  public function drawEff(i, xx, yy) {
+		  if(this.draw_now && this.ef[i] != null) {
+			 this.ef[i].x = xx;
+             this.ef[i].y = yy;
+		  }
+	  }
+  
+	  public function drawMap(xx, yy) {
+		  //if(this.draw_now) {
+			  this.game.x = xx;
+			  this.game.y = yy;
+		  //}
+	  }
+  
+	  public function drawGunPos(xx,yy,i) {
+		  //if(this.draw_now) {
+			  this.guns[i].x = xx;
+			  this.guns[i].y = yy;
+		 // }
+	  }
+  
+	  public function drawCharacterPos(xx,yy,i) {
+		  //if(this.draw_now) {
+			  this.mens[i].x_ = xx;
+			  this.mens[i].y_ = yy;
+			  this.mens[i].x = this.mens[i].x_;
+			  this.mens[i].y = this.mens[i].y_;
+		  //}
+	  }
+  
+	  public function drawCharacters(mc_to_draw, inverse_legs) {
+		 i = 0;
+		 //if(this.draw_now) {
+			 while(i < this.playerstotal) 
+			 {
+				 mc_to_draw = this.mens[i];
+				 if(Boolean(this.aio[mc_to_draw.b_toe]) || Boolean(this.aio[mc_to_draw.b_body])) 
+				 {
+					 mc_to_draw.leg1.x_ = Number(this.ax[mc_to_draw.b_toe]) - mc_to_draw.x;
+					 mc_to_draw.leg1.y_ = Number(this.ay[mc_to_draw.b_toe]) - mc_to_draw.y;
+					 mc_to_draw.leg2.x_ = Number(this.ax[mc_to_draw.b_toe]) - mc_to_draw.x + 2;
+					 mc_to_draw.leg2.y_ = Number(this.ay[mc_to_draw.b_toe]) - mc_to_draw.y;
+					 mc_to_draw.arm1.x_ = Number(this.ax[mc_to_draw.b_body]) - mc_to_draw.x;
+					 mc_to_draw.arm1.y_ = Number(this.ay[mc_to_draw.b_body]) - mc_to_draw.y;
+					 mc_to_draw.arm2.x_ = Number(this.ax[mc_to_draw.b_body]) - mc_to_draw.x + 2;
+					 mc_to_draw.arm2.y_ = Number(this.ay[mc_to_draw.b_body]) - mc_to_draw.y;
+					 mc_to_draw.toe.x_ = Number(this.ax[mc_to_draw.b_toe]) - mc_to_draw.x;
+					 mc_to_draw.toe.y_ = Number(this.ay[mc_to_draw.b_toe]) - mc_to_draw.y;
+
+					 
+					 mc_to_draw.leg1.scaleX = Number(mc_to_draw.side) * Number(mc_to_draw.scale);
+					 mc_to_draw.leg1.x = mc_to_draw.leg1.x_;
+					 mc_to_draw.leg1.y = mc_to_draw.leg1.y_;
+					 mc_to_draw.leg1.rotation = 180 - Math.atan2(Number(this.ax[mc_to_draw.b_toe]) - Number(this.ax[mc_to_draw.b_leg1]),Number(this.ay[mc_to_draw.b_toe]) - Number(this.ay[mc_to_draw.b_leg1])) / Math.PI * 180;
+					 mc_to_draw.leg2.scaleX = Number(mc_to_draw.side) * Number(mc_to_draw.scale);
+					 mc_to_draw.leg2.x = mc_to_draw.leg2.x_;
+					 mc_to_draw.leg2.y = mc_to_draw.leg2.y_;
+					 mc_to_draw.leg2.rotation = 180 - Math.atan2(Number(this.ax[mc_to_draw.b_toe]) - Number(this.ax[mc_to_draw.b_leg2]),Number(this.ay[mc_to_draw.b_toe]) - Number(this.ay[mc_to_draw.b_leg2])) / Math.PI * 180;
+					 if(mc_to_draw.brk_legs)
+					 {
+						this.LegBone(mc_to_draw.leg1,120,false,false);
+						this.LegBone(mc_to_draw.leg2,120,false,false);
+					 }
+					 else
+					 {
+						this.inverse_legs = mc_to_draw.mdl_leg1_upper == 34;
+						this.LegBone(mc_to_draw.leg1,Math.max(1,Math.min(120,this.Dist2D(this.ax[mc_to_draw.b_toe],this.ay[mc_to_draw.b_toe],this.ax[mc_to_draw.b_leg1],this.ay[mc_to_draw.b_leg1]) / 31 * 120 / Number(mc_to_draw.scale))),this.inverse_legs,mc_to_draw.stand);
+						this.LegBone(mc_to_draw.leg2,Math.max(1,Math.min(120,this.Dist2D(this.ax[mc_to_draw.b_toe],this.ay[mc_to_draw.b_toe],this.ax[mc_to_draw.b_leg2],this.ay[mc_to_draw.b_leg2]) / 31 * 120 / Number(mc_to_draw.scale))),this.inverse_legs,mc_to_draw.stand);
+					 }
+					 mc_to_draw.arm1.scaleX = Number(mc_to_draw.side) * Number(mc_to_draw.scale);
+					 mc_to_draw.arm1.x = mc_to_draw.arm1.x_;
+					 mc_to_draw.arm1.y = mc_to_draw.arm1.y_;
+					 mc_to_draw.arm1.rotation = 180 - Math.atan2(Number(this.ax[mc_to_draw.b_body]) - Number(this.ax[mc_to_draw.b_arm1]),Number(this.ay[mc_to_draw.b_body]) - Number(this.ay[mc_to_draw.b_arm1])) / Math.PI * 180;
+					 mc_to_draw.arm2.scaleX = Number(mc_to_draw.side) * Number(mc_to_draw.scale);
+					 mc_to_draw.arm2.x = mc_to_draw.arm1.x_;
+					 mc_to_draw.arm2.y = mc_to_draw.arm1.y_;
+					 mc_to_draw.arm2.rotation = 180 - Math.atan2(Number(this.ax[mc_to_draw.b_body]) - Number(this.ax[mc_to_draw.b_arm2]),Number(this.ay[mc_to_draw.b_body]) - Number(this.ay[mc_to_draw.b_arm2])) / Math.PI * 180;
+					 if(mc_to_draw.brk_arms)
+					 {
+						this.ArmBone(mc_to_draw.arm1,60);
+						this.ArmBone(mc_to_draw.arm2,60);
+					 }
+					 else
+					 {
+						this.ArmBone(mc_to_draw.arm1,Math.max(1,Math.min(60,this.Dist2D(this.ax[mc_to_draw.b_body],this.ay[mc_to_draw.b_body],this.ax[mc_to_draw.b_arm1],this.ay[mc_to_draw.b_arm1]) / 30 * 60 / Number(mc_to_draw.scale))));
+						this.ArmBone(mc_to_draw.arm2,Math.max(1,Math.min(60,this.Dist2D(this.ax[mc_to_draw.b_body],this.ay[mc_to_draw.b_body],this.ax[mc_to_draw.b_arm2],this.ay[mc_to_draw.b_arm2]) / 30 * 60 / Number(mc_to_draw.scale))));
+					 }
+					 mc_to_draw.toe.scaleX = Number(mc_to_draw.side) * Number(mc_to_draw.scale);
+					 mc_to_draw.toe.x = mc_to_draw.toe.x_;
+					 mc_to_draw.toe.y = mc_to_draw.toe.y_;
+					 if(Boolean(mc_to_draw.brk_body) && (this.VIOLENCE || this.MP_mode))
+					 {
+						mc_to_draw.toe.rotation = -Math.atan2(Number(this.ax[mc_to_draw.b_toe]) - Number(this.ax[mc_to_draw.b_brk2]),Number(this.ay[mc_to_draw.b_toe]) - Number(this.ay[mc_to_draw.b_brk2])) / Math.PI * 180;
+					 }
+					 else
+					 {
+						mc_to_draw.toe.rotation = -Math.atan2(Number(this.ax[mc_to_draw.b_toe]) - Number(this.ax[mc_to_draw.b_body]),Number(this.ay[mc_to_draw.b_toe]) - Number(this.ay[mc_to_draw.b_body])) / Math.PI * 180;
+					 }
+					 if(Boolean(mc_to_draw.brk_body) && (this.VIOLENCE || this.MP_mode))
+					 {
+						this.xx = Math.atan2(Number(this.ax[mc_to_draw.b_brk1]) - Number(this.ax[mc_to_draw.b_body]),Number(this.ay[mc_to_draw.b_brk1]) - Number(this.ay[mc_to_draw.b_body]));
+					 }
+					 else
+					 {
+						this.xx = Math.atan2(Number(this.ax[mc_to_draw.b_toe]) - Number(this.ax[mc_to_draw.b_body]),Number(this.ay[mc_to_draw.b_toe]) - Number(this.ay[mc_to_draw.b_body]));
+					 }
+
+					 mc_to_draw.body.x_ = Number(this.ax[mc_to_draw.b_body]) - mc_to_draw.x + Math.sin(this.xx) * 24 * Number(mc_to_draw.scale);
+					 mc_to_draw.body.y_ = Number(this.ay[mc_to_draw.b_body]) - mc_to_draw.y + Math.cos(this.xx) * 24 * Number(mc_to_draw.scale);
+					 mc_to_draw.head.x_ = Number(this.ax[mc_to_draw.b_head_start]) - mc_to_draw.x;
+					 mc_to_draw.head.y_ = Number(this.ay[mc_to_draw.b_head_start]) - mc_to_draw.y;
+				 
+					 mc_to_draw.body.scaleX = Number(mc_to_draw.side) * Number(mc_to_draw.scale);
+					 mc_to_draw.body.x = mc_to_draw.body.x_;
+					 mc_to_draw.body.y = mc_to_draw.body.y_;
+					 mc_to_draw.body.rotation = -this.xx / Math.PI * 180;
+					 mc_to_draw.head.scaleX = Number(mc_to_draw.side) * Number(mc_to_draw.scale);
+					 mc_to_draw.head.x = mc_to_draw.head.x_;
+					 mc_to_draw.head.y = mc_to_draw.head.y_;
+					 mc_to_draw.head.rotation = -Math.atan2(Number(this.ax[mc_to_draw.b_head_start]) - Number(this.ax[mc_to_draw.b_head_end]),Number(this.ay[mc_to_draw.b_head_start]) - Number(this.ay[mc_to_draw.b_head_end])) / Math.PI * 180;
+					 
+				 }
+				 i++;
+			 }
+		  //}
+	  }
+  
 	  public function fr_func(param1:Event) {
 		  if(this.LEVEL_END_FORCE == "" && this.fr_real != null) {
 			++this.frames_display;
@@ -4358,7 +4506,14 @@
       
       public function UpdateFramerate() : void
       {
-         stage.frameRate = this.FRAMERATE == 1 ? 20 : (this.FRAMERATE == 2 ? 30 : 60);
+		 if(this.FRAMERATE == 20) {
+			 stage.frameRate = 20;
+			 trace("HELLO");
+		 } else if(this.FRAMERATE == 30) {
+			 stage.frameRate = 30;
+		 } else {
+			 stage.frameRate = 60;
+		 }
       }
       
       /*public function AskForCache(param1:MovieClip) : void
@@ -4748,7 +4903,7 @@ import flash.display.Sprite;
             this.my_so.data["curB"] = 0;
             this.my_so.data["last_mp"] = this.loaderInfo.parameters.default_server != undefined ? int(this.loaderInfo.parameters.default_server) : 0;
             this.my_so.data["psychoblood_mode"] = 1;
-            this.my_so.data["framerate"] = 3;
+            this.my_so.data["framerate"] = 60;
             this.i = 0;
             while(this.i < this.BADGES_TOTAL)
             {
@@ -4905,7 +5060,7 @@ import flash.display.Sprite;
          }
          if(this.my_so.data["framerate"] == undefined)
          {
-            this.FRAMERATE = 3;
+            this.FRAMERATE = 60;
          }
          else
          {
@@ -5226,8 +5381,8 @@ import flash.display.Sprite;
                {
                   this.s_channel[this.last_channel].stop();
                }
-               this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game.x - 400 - 300,y * this.game_scale + this.game.y - 200,this.dist_to_face);
-               this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game.x - 400 + 300,y * this.game_scale + this.game.y - 200,this.dist_to_face);
+               this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 - 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
+               this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 + 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
                this.vol3d[this.last_channel].volume = this.vol.volume;
                if(src.custom_volume == undefined)
                {
@@ -6180,8 +6335,8 @@ import flash.display.Sprite;
                {
                   this.flakes[this.i] = this.graphics_3d.addChildAt(new flake(),0) as MovieClip;
                }
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                this.flakes[this.i]._z = _loc1_;
                _loc2_ = Math.random() * Math.PI * 2;
                _loc3_ = Math.random() * 30 - 10;
@@ -6227,10 +6382,10 @@ import flash.display.Sprite;
          this.i = 0;
          while(this.i < this.flakes_total)
          {
-            if(this.flakes[this.i]._x > this.screenX - this.game.x + this.flakes_spreadout)
+            if(this.flakes[this.i]._x > this.screenX - this.game_x + this.flakes_spreadout)
             {
                this.flakes[this.i]._x -= this.screenX + this.flakes_spreadout * 2;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6242,10 +6397,10 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._x < -this.game.x - this.flakes_spreadout)
+            if(this.flakes[this.i]._x < -this.game_x - this.flakes_spreadout)
             {
                this.flakes[this.i]._x += this.screenX + this.flakes_spreadout * 2;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6257,11 +6412,11 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._y > this.screenY - this.game.y + this.flakes_spreadout)
+            if(this.flakes[this.i]._y > this.screenY - this.game_y + this.flakes_spreadout)
             {
                this.flakes[this.i]._y -= this.screenY + this.flakes_spreadout * 2;
                this.flakes[this.i].rotation = Math.random() * 360;
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6273,10 +6428,10 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._y < -this.game.y - this.flakes_spreadout)
+            if(this.flakes[this.i]._y < -this.game_y - this.flakes_spreadout)
             {
                this.flakes[this.i]._y += this.screenY + this.flakes_spreadout * 2;
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6290,8 +6445,8 @@ import flash.display.Sprite;
             }
             this.flakes[this.i]._x += Number(this.flakes[this.i].tox) * this.GSPEED;
             this.flakes[this.i]._y += Number(this.flakes[this.i].toy) * this.GSPEED;
-            this.flakes[this.i].x = Number(this.flakes[this.i]._x) - (Number(this.flakes[this.i]._x) - this.hscreenX + this.game.x) * Number(this.flakes[this.i]._z);
-            this.flakes[this.i].y = Number(this.flakes[this.i]._y) - (Number(this.flakes[this.i]._y) - this.hscreenY + this.game.y) * Number(this.flakes[this.i]._z);
+            this.flakes[this.i].x = Number(this.flakes[this.i]._x) - (Number(this.flakes[this.i]._x) - this.hscreenX + this.game_x) * Number(this.flakes[this.i]._z);
+            this.flakes[this.i].y = Number(this.flakes[this.i]._y) - (Number(this.flakes[this.i]._y) - this.hscreenY + this.game_y) * Number(this.flakes[this.i]._z);
             this.flakes[this.i].scaleX = this.flakes[this.i].scaleY = Number(this.flakes[this.i]._scale) * (1 - Number(this.flakes[this.i]._z));
             this.flakes[this.i].toy += this.gravity * 0.5 * this.GSPEED;
             this.flakes[this.i].tox *= Math.pow(0.8,this.GSPEED);
@@ -6326,7 +6481,7 @@ import flash.display.Sprite;
       public function Effect(param1:Number, param2:Number, param3:int, param4:Number, param5:Number) : void
       {
          this.ok2 = false;
-         if(param1 > -this.game.x / this.game_scale - 150 && param1 < -this.game.x / this.game_scale + this.screenX / this.game_scale + 150 && param2 > -this.game.y / this.game_scale - 150 && param2 < -this.game.y / this.game_scale + this.screenY / this.game_scale + 150)
+         if(param1 > -this.game_x / this.game_scale - 150 && param1 < -this.game_x / this.game_scale + this.screenX / this.game_scale + 150 && param2 > -this.game_y / this.game_scale - 150 && param2 < -this.game_y / this.game_scale + this.screenY / this.game_scale + 150)
          {
             this.ok2 = true;
          }
@@ -6688,8 +6843,9 @@ import flash.display.Sprite;
          if(this.ok2)
          {
             this.ef[this.nextef].life = 0;
-            this.ef[this.nextef].x = param1;
-            this.ef[this.nextef].y = param2;
+            //this.ef[this.nextef].x = param1;
+            //this.ef[this.nextef].y = param2;
+			this.drawEff(this.nextef,param1,param2);
             if(this.ef[this.nextef].typ == 3)
             {
                this.ef[this.nextef].tox = param4;
@@ -6856,8 +7012,8 @@ import flash.display.Sprite;
             param1.voice_channel = param2.play();
             if(param1.voice_channel != null)
             {
-               this.smod = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game.x - 400 - 300,param1.y * this.game_scale + this.game.y - 200,this.dist_to_face);
-               this.smod2 = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game.x - 400 + 300,param1.y * this.game_scale + this.game.y - 200,this.dist_to_face);
+               this.smod = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 - 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
+               this.smod2 = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 + 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
                if(param2.custom_volume == undefined)
                {
                   param2.custom_volume = 1;
@@ -7132,6 +7288,8 @@ import flash.display.Sprite;
       public function create_player(param1:MovieClip, param2:Number, param3:Number) : void
       {
          this.mens[this.playerstotal] = param1;
+		 this.drawCharacterPos(this.mens[this.playerstotal].x,this.mens[this.playerstotal].y,this.playerstotal);
+		 this.drawCharacters(this.mens[this.playerstotal],this.inverse_legs);
          param1.idd = new int(this.playerstotal);
          param1.info = undefined;
          param1.exp_potential = 0.666;
@@ -8191,11 +8349,13 @@ import flash.display.Sprite;
                this.ReConnect(param2.ch_ch1,_loc4_.b_p1,_loc4_.b_p2,0,this.Math_abs(Number(_loc4_.len1) - Number(_loc4_.len2)),-1);
                _loc4_.ch_ch1 = param2.ch_ch1;
                this.guns[_loc4_.idd] = _loc4_;
-               _loc4_.x = param2.x;
-               _loc4_.y = param2.y;
+               //_loc4_.x = param2.x;
+               //_loc4_.y = param2.y;
+			   this.drawGunPos(param2.x, param2.y,_loc4_);
                _loc4_.rotation = param2.rotation;
                _loc4_.scaleX = param2.scaleX;
                _loc4_.scaleY = param2.scaleY;
+			   
                // this.game.removeChild(param2);
             }
             else
@@ -10478,8 +10638,9 @@ import flash.display.Sprite;
                   {
                      if(this.MP_myid == this.mc.idd)
                      {
-                        this.game.x = -this.mc.x + this.hscreenX;
-                        this.game.y = -this.mc.y + this.hscreenY;
+                        this.game_x = -this.mc.x + this.hscreenX;
+                        this.game_y = -this.mc.y + this.hscreenY;
+						this.drawMap(this.game_x, this.game_y);
                      }
                      this.mc.isplayer = new Boolean(true);
                      ++this.MP_playerstotal;
@@ -10762,7 +10923,7 @@ import flash.display.Sprite;
                      if(this.vehicles[this.i2].master == -1)
                      {
                         loadmap_stage = "5023";
-                        if(this.Dist2D(this.mens[i].x,this.mens[i].y,this.vehicles[this.i2].x,this.vehicles[this.i2].y) < 100)
+                        if(this.Dist2D(this.mens[i].x_,this.mens[i].y_,this.vehicles[this.i2].x,this.vehicles[this.i2].y) < 100)
                         {
                            loadmap_stage = "5024";
                            this.PutInCar(i,this.i2);
@@ -12448,11 +12609,6 @@ import flash.display.Sprite;
 						 this.SaveGame();
 						 ++this.CMPG_THIS_LEVEL;
 						 this.LEVEL_END_FORCE = "complete";
-						
-						 this.gt_timer.stop();
-						 this.rt_timer.stop();
-						 this.gt_timer.removeEventListener(TimerEvent.TIMER, this.gt_func);
-						 this.rt_timer.removeEventListener(TimerEvent.TIMER, this.rt_func);
 					 
 						 this.MP_fps = 1;
 						 this.darkness.alpha = 0;
@@ -12608,8 +12764,9 @@ import flash.display.Sprite;
                               this.mcc.y = this.regions[this.triggers[a].actions_targetB[tr]].y + Number(this.regions[this.triggers[a].actions_targetB[tr]].h) / 2;
                               if(this.triggers[a].actions_targetA[tr] == this.MP_myid)
                               {
-                                 this.game.x += u;
-                                 this.game.y += this.v;
+                                 this.game_x += u;
+                                 this.game_y += this.v;
+								 this.drawMap(this.game_x, this.game_y);
                               }
                               this.i4 = 0;
                               while(this.i4 < this.atotal)
@@ -12984,8 +13141,9 @@ import flash.display.Sprite;
                                              }
                                              if(this.tr2 == this.MP_myid)
                                              {
-                                                this.game.x += u;
-                                                this.game.y += this.v;
+                                                this.game_x += u;
+                                                this.game_y += this.v;
+												this.drawMap(this.game_x, this.game_y);
                                              }
                                              this.i4 = 0;
                                              while(this.i4 < this.atotal)
@@ -13057,8 +13215,9 @@ import flash.display.Sprite;
                                              this.v = this.ay[this.mcc.b_toe] - (this.regions[this.triggers[a].actions_targetB[tr]].y + Number(this.regions[this.triggers[a].actions_targetB[tr]].h) / 2);
                                              if(this.tr2 == this.MP_myid)
                                              {
-                                                this.game.x += u;
-                                                this.game.y += this.v;
+                                                this.game_x += u;
+                                                this.game_y += this.v;
+												this.drawMap(this.game_x, this.game_y);
                                              }
                                              this.i4 = 0;
                                              while(this.i4 < this.atotal)
@@ -13679,8 +13838,9 @@ import flash.display.Sprite;
                               }
                               if(this.tr2 == this.MP_myid)
                               {
-                                 this.game.x += u;
-                                 this.game.y += this.v;
+                                 this.game_x += u;
+                                 this.game_y += this.v;
+								 this.drawMap(this.game_x, this.game_y);
                               }
                               this.i4 = 0;
                               while(this.i4 < this.atotal)
@@ -16586,7 +16746,7 @@ import flash.display.Sprite;
          {
             if(param7)
             {
-               this.SHAKEAMMOUT += this.dist_to_face / this.Dist3Dm((param1 + this.game.x - 400) * this.game_scale,(param2 + this.game.y - 200) * this.game_scale,this.dist_to_face) * Math.max(param3 / 50 * 3,param4) * 0.2;
+               this.SHAKEAMMOUT += this.dist_to_face / this.Dist3Dm((param1 + this.game_x - 400) * this.game_scale,(param2 + this.game_y - 200) * this.game_scale,this.dist_to_face) * Math.max(param3 / 50 * 3,param4) * 0.2;
             }
          }
          this.i6 = 0;
@@ -17276,18 +17436,37 @@ import flash.display.Sprite;
          this.pb2Bullet.csolver_miny = Math.min(this.puls[param1].ly,this.puls[param1].ny);
          if(this.pb2Bullet.csolver_maxx + 0 < Math.min(Number(_loc3_.x) - Number(this.arad[param2]),Number(_loc3_.lx) - Number(this.arad[param2])))
          {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
+			 
             return false;
          }
          if(Number(this.pb2Bullet.csolver_minx) - 0 > Math.max(_loc3_.x + this.arad[param2],_loc3_.lx + this.arad[param2]))
          {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
             return false;
          }
          if(this.pb2Bullet.csolver_maxy + 0 < Math.min(Number(_loc3_.y) - Number(this.arad[param2]),Number(_loc3_.ly) - Number(this.arad[param2])))
          {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
+			 
             return false;
          }
          if(Number(this.pb2Bullet.csolver_miny) - 0 > Math.max(_loc3_.y + this.arad[param2],_loc3_.ly + this.arad[param2]))
          {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
+			 
             return false;
          }
          return this.pb2Bullet._MovingSphereIntersection(_loc3_.x,_loc3_.y,_loc3_.lx,_loc3_.ly,this.arad[param2]);
@@ -18117,6 +18296,7 @@ import flash.display.Sprite;
                            {
                               if((param6 > param8 ? param6 : param8) + 1 >= this.retuy)
                               {
+								 //this.v = undefined;
                                  return true;
                               }
                            }
@@ -18126,6 +18306,7 @@ import flash.display.Sprite;
                }
             }
          }
+		 //this.v = undefined;
          return false;
       }
       
@@ -18158,6 +18339,7 @@ import flash.display.Sprite;
                                        {
                                           if((param6 > param8 ? param6 : param8) + 1 >= this.retuy)
                                           {
+											 //this.v = undefined;
                                              return true;
                                           }
                                        }
@@ -18171,6 +18353,7 @@ import flash.display.Sprite;
                }
             }
          }
+		 //this.v = undefined;
          return false;
       }
       
@@ -24686,8 +24869,9 @@ import flash.display.Sprite;
                                        this.mcc.toy += this.puls[_loc1_].spy;
                                        if(this.puls[_loc1_].master == this.MP_myid)
                                        {
-                                          this.game.x += this.u;
-                                          this.game.y += this.v;
+                                          this.game_x += this.u;
+                                          this.game_y += this.v;
+										  this.drawMap(this.game_x, this.game_y);
                                        }
                                        this.i4 = 0;
                                        while(this.i4 < this.atotal)
@@ -26306,7 +26490,7 @@ import flash.display.Sprite;
                      }
                   }
                }
-               if(this.mens[i].brk_body && (this.ax[this.mens[i].b_body] > this.render_minX && this.ax[this.mens[i].b_body] < this.render_maxX && this.ay[this.mens[i].b_body] > this.render_minY && this.ay[this.mens[i].b_body] < this.render_maxY || this.ax[this.mens[i].b_toe] > this.render_minX && this.ax[this.mens[i].b_toe] < this.render_maxX && this.ay[this.mens[i].b_toe] > this.render_minY && this.ay[this.mens[i].b_toe] < this.render_maxY) || !this.mens[i].brk_body && this.ax[this.mens[i].b_body] > this.render_minX && this.ax[this.mens[i].b_body] < this.render_maxX && this.ay[this.mens[i].b_body] > this.render_minY && this.ay[this.mens[i].b_body] < this.render_maxY || this.mens[i].x > this.render_minX && this.mens[i].x < this.render_maxX && this.mens[i].y > this.render_minY && this.mens[i].y < this.render_maxY || this.mens[i].isplayer || this.mens[i].hunt != -1 || !this.mens[i].isplayer && this.mens[i].botaction == 1 || this.mens[i].incar != -1 && this.aactive[-200 - Number(this.mens[i].incar)])
+               if(this.mens[i].brk_body && (this.ax[this.mens[i].b_body] > this.render_minX && this.ax[this.mens[i].b_body] < this.render_maxX && this.ay[this.mens[i].b_body] > this.render_minY && this.ay[this.mens[i].b_body] < this.render_maxY || this.ax[this.mens[i].b_toe] > this.render_minX && this.ax[this.mens[i].b_toe] < this.render_maxX && this.ay[this.mens[i].b_toe] > this.render_minY && this.ay[this.mens[i].b_toe] < this.render_maxY) || !this.mens[i].brk_body && this.ax[this.mens[i].b_body] > this.render_minX && this.ax[this.mens[i].b_body] < this.render_maxX && this.ay[this.mens[i].b_body] > this.render_minY && this.ay[this.mens[i].b_body] < this.render_maxY || this.mens[i].x_ > this.render_minX && this.mens[i].x_ < this.render_maxX && this.mens[i].y > this.render_minY && this.mens[i].y < this.render_maxY || this.mens[i].isplayer || this.mens[i].hunt != -1 || !this.mens[i].isplayer && this.mens[i].botaction == 1 || this.mens[i].incar != -1 && this.aactive[-200 - Number(this.mens[i].incar)])
                {
                   this.aactive[i] = true;
                   this.mc = this.mens[i];
@@ -26676,8 +26860,8 @@ import flash.display.Sprite;
                               this.mc.act_movex = 0;
                               this.mc.act_movey = 0;
                            }
-                           this.mc.tarx = (this.mouse_x - this.game.x) / this.game_scale;
-                           this.mc.tary = (this.mouse_y - this.game.y) / this.game_scale;
+                           this.mc.tarx = (this.mouse_x - this.game_x) / this.game_scale;
+                           this.mc.tary = (this.mouse_y - this.game_y) / this.game_scale;
                            if(Boolean(is_firing) && this.MP_gamestate == 0)
                            {
                               if(this.mc.act_fire == false)
@@ -27806,8 +27990,8 @@ import flash.display.Sprite;
                                  {
                                     if(is_firing)
                                     {
-                                       this.mc.tarx = (this.mouse_x - this.game.x) / this.game_scale;
-                                       this.mc.tary = (this.mouse_y - this.game.y) / this.game_scale;
+                                       this.mc.tarx = (this.mouse_x - this.game_x) / this.game_scale;
+                                       this.mc.tary = (this.mouse_y - this.game_y) / this.game_scale;
                                     }
                                     if(this.key_up)
                                     {
@@ -27923,18 +28107,12 @@ import flash.display.Sprite;
                                     {
                                        this.xx *= 0.1;
                                     }
-                                    this.game.x += Math.sin(this.xx) * 200;
-                                    this.game.y += Math.cos(this.xx) * 200;
+                                    this.game_x += Math.sin(this.xx) * 200;
+                                    this.game_y += Math.cos(this.xx) * 200;
+									this.drawMap(this.game_x, this.game_y);
                                  }
                                  if(!this.MP_mode)
                                  {
-									removeEventListener(Event.ENTER_FRAME,fr_func);
-									gt_timer.removeEventListener(TimerEvent.TIMER, gt_func);
-									gt_timer.stop();
-									rt_timer.removeEventListener(TimerEvent.TIMER, rt_func);
-									rt_timer.stop();
-									 
-									 
                                     this.LEVEL_END_FORCE = "failed";
                                     this.LAST_ERROR = "YOUR TEAM IS DEAD.";
                                     if(this.HINTS)
@@ -27954,17 +28132,12 @@ import flash.display.Sprite;
                                  {
                                     this.xx *= 0.1;
                                  }
-                                 this.game.x += Math.sin(this.xx) * 200;
-                                 this.game.y += Math.cos(this.xx) * 200;
+                                 this.game_x += Math.sin(this.xx) * 200;
+                                 this.game_y += Math.cos(this.xx) * 200;
+								 this.drawMap(this.game_x, this.game_y);
                               }
                               if(!this.MP_mode)
-                              {
-								 removeEventListener(Event.ENTER_FRAME,fr_func);
-								 gt_timer.removeEventListener(TimerEvent.TIMER, gt_func);
-								 gt_timer.stop();
-								 rt_timer.removeEventListener(TimerEvent.TIMER, rt_func);
-								 rt_timer.stop();								  
-								  
+                              {							  
                                  this.LEVEL_END_FORCE = "failed";
                                  if(this.mens[this.MP_myid].lastshotby == this.MP_myid || this.mens[this.MP_myid].lastshotby == -1)
                                  {
@@ -30087,73 +30260,10 @@ import flash.display.Sprite;
                      this.WakeUpAtom(this.mc.b_toe);
                      this.WakeUpAtom(this.mc.b_body);
                   }
-                  if(Boolean(this.aio[this.mc.b_toe]) || Boolean(this.aio[this.mc.b_body]))
-                  {
-                     this.mc.leg1.scaleX = Number(this.mc.side) * Number(this.mc.scale);
-                     this.mc.leg1.x = Number(this.ax[this.mc.b_toe]) - this.mc.x;
-                     this.mc.leg1.y = Number(this.ay[this.mc.b_toe]) - this.mc.y;
-                     this.mc.leg1.rotation = 180 - Math.atan2(Number(this.ax[this.mc.b_toe]) - Number(this.ax[this.mc.b_leg1]),Number(this.ay[this.mc.b_toe]) - Number(this.ay[this.mc.b_leg1])) / Math.PI * 180;
-                     this.mc.leg2.scaleX = Number(this.mc.side) * Number(this.mc.scale);
-                     this.mc.leg2.x = Number(this.ax[this.mc.b_toe]) - this.mc.x + 2;
-                     this.mc.leg2.y = Number(this.ay[this.mc.b_toe]) - this.mc.y;
-                     this.mc.leg2.rotation = 180 - Math.atan2(Number(this.ax[this.mc.b_toe]) - Number(this.ax[this.mc.b_leg2]),Number(this.ay[this.mc.b_toe]) - Number(this.ay[this.mc.b_leg2])) / Math.PI * 180;
-                     if(this.mc.brk_legs)
-                     {
-                        this.LegBone(this.mc.leg1,120,false,false);
-                        this.LegBone(this.mc.leg2,120,false,false);
-                     }
-                     else
-                     {
-                        inverse_legs = this.mc.mdl_leg1_upper == 34;
-                        this.LegBone(this.mc.leg1,Math.max(1,Math.min(120,this.Dist2D(this.ax[this.mc.b_toe],this.ay[this.mc.b_toe],this.ax[this.mc.b_leg1],this.ay[this.mc.b_leg1]) / 31 * 120 / Number(this.mc.scale))),inverse_legs,this.mc.stand);
-                        this.LegBone(this.mc.leg2,Math.max(1,Math.min(120,this.Dist2D(this.ax[this.mc.b_toe],this.ay[this.mc.b_toe],this.ax[this.mc.b_leg2],this.ay[this.mc.b_leg2]) / 31 * 120 / Number(this.mc.scale))),inverse_legs,this.mc.stand);
-                     }
-                     this.mc.arm1.scaleX = Number(this.mc.side) * Number(this.mc.scale);
-                     this.mc.arm1.x = Number(this.ax[this.mc.b_body]) - this.mc.x;
-                     this.mc.arm1.y = Number(this.ay[this.mc.b_body]) - this.mc.y;
-                     this.mc.arm1.rotation = 180 - Math.atan2(Number(this.ax[this.mc.b_body]) - Number(this.ax[this.mc.b_arm1]),Number(this.ay[this.mc.b_body]) - Number(this.ay[this.mc.b_arm1])) / Math.PI * 180;
-                     this.mc.arm2.scaleX = Number(this.mc.side) * Number(this.mc.scale);
-                     this.mc.arm2.x = Number(this.ax[this.mc.b_body]) - this.mc.x + 2;
-                     this.mc.arm2.y = Number(this.ay[this.mc.b_body]) - this.mc.y;
-                     this.mc.arm2.rotation = 180 - Math.atan2(Number(this.ax[this.mc.b_body]) - Number(this.ax[this.mc.b_arm2]),Number(this.ay[this.mc.b_body]) - Number(this.ay[this.mc.b_arm2])) / Math.PI * 180;
-                     if(this.mc.brk_arms)
-                     {
-                        this.ArmBone(this.mc.arm1,60);
-                        this.ArmBone(this.mc.arm2,60);
-                     }
-                     else
-                     {
-                        this.ArmBone(this.mc.arm1,Math.max(1,Math.min(60,this.Dist2D(this.ax[this.mc.b_body],this.ay[this.mc.b_body],this.ax[this.mc.b_arm1],this.ay[this.mc.b_arm1]) / 30 * 60 / Number(this.mc.scale))));
-                        this.ArmBone(this.mc.arm2,Math.max(1,Math.min(60,this.Dist2D(this.ax[this.mc.b_body],this.ay[this.mc.b_body],this.ax[this.mc.b_arm2],this.ay[this.mc.b_arm2]) / 30 * 60 / Number(this.mc.scale))));
-                     }
-                     this.mc.toe.scaleX = Number(this.mc.side) * Number(this.mc.scale);
-                     this.mc.toe.x = Number(this.ax[this.mc.b_toe]) - this.mc.x;
-                     this.mc.toe.y = Number(this.ay[this.mc.b_toe]) - this.mc.y;
-                     if(Boolean(this.mc.brk_body) && (this.VIOLENCE || this.MP_mode))
-                     {
-                        this.mc.toe.rotation = -Math.atan2(Number(this.ax[this.mc.b_toe]) - Number(this.ax[this.mc.b_brk2]),Number(this.ay[this.mc.b_toe]) - Number(this.ay[this.mc.b_brk2])) / Math.PI * 180;
-                     }
-                     else
-                     {
-                        this.mc.toe.rotation = -Math.atan2(Number(this.ax[this.mc.b_toe]) - Number(this.ax[this.mc.b_body]),Number(this.ay[this.mc.b_toe]) - Number(this.ay[this.mc.b_body])) / Math.PI * 180;
-                     }
-                     if(Boolean(this.mc.brk_body) && (this.VIOLENCE || this.MP_mode))
-                     {
-                        this.xx = Math.atan2(Number(this.ax[this.mc.b_brk1]) - Number(this.ax[this.mc.b_body]),Number(this.ay[this.mc.b_brk1]) - Number(this.ay[this.mc.b_body]));
-                     }
-                     else
-                     {
-                        this.xx = Math.atan2(Number(this.ax[this.mc.b_toe]) - Number(this.ax[this.mc.b_body]),Number(this.ay[this.mc.b_toe]) - Number(this.ay[this.mc.b_body]));
-                     }
-                     this.mc.body.scaleX = Number(this.mc.side) * Number(this.mc.scale);
-                     this.mc.body.x = Number(this.ax[this.mc.b_body]) - this.mc.x + Math.sin(this.xx) * 24 * Number(this.mc.scale);
-                     this.mc.body.y = Number(this.ay[this.mc.b_body]) - this.mc.y + Math.cos(this.xx) * 24 * Number(this.mc.scale);
-                     this.mc.body.rotation = -this.xx / Math.PI * 180;
-                     this.mc.head.scaleX = Number(this.mc.side) * Number(this.mc.scale);
-                     this.mc.head.x = Number(this.ax[this.mc.b_head_start]) - this.mc.x;
-                     this.mc.head.y = Number(this.ay[this.mc.b_head_start]) - this.mc.y;
-                     this.mc.head.rotation = -Math.atan2(Number(this.ax[this.mc.b_head_start]) - Number(this.ax[this.mc.b_head_end]),Number(this.ay[this.mc.b_head_start]) - Number(this.ay[this.mc.b_head_end])) / Math.PI * 180;
-                  }
+                  //if(Boolean(this.aio[this.mc.b_toe]) || Boolean(this.aio[this.mc.b_body]))
+                  //{
+					//	this.drawBody(this.mc, inverse_legs);
+                  //}
                   if(this.mc.io)
                   {
                      if(this.mc.gui.visible)
@@ -30715,7 +30825,8 @@ import flash.display.Sprite;
          var t:* = undefined;
          var f:* = undefined;
          var event:Event = param1;
-		 if(this.FRAMERATE == 4) {
+		 this.drawWhen();
+		 if(this.FRAMERATE == 1000) {
 			 var originalFrameRate = stage.frameRate;
 			 this.fps_toggle_perf = !this.fps_toggle_perf;
 			 if (this.fps_toggle_perf)
@@ -30790,6 +30901,7 @@ import flash.display.Sprite;
             }
             if(this.system_non_stop)
             {
+		   
                if(this.FREEZE_OFFSCREEN_ENTITIES)
                {
                   this.render_minX = (-this.game.x - 300) / this.game_scale;
@@ -30836,19 +30948,24 @@ import flash.display.Sprite;
                      this.energy -= 0.4 * this.GSPEED2;
                   }
                }
-               if(this.GET_LITE_PHYS())
-               {
-                  this.Physics();
-                  this.LITE_PHYS_tim = !this.LITE_PHYS_tim;
-               }
-               else
-               {
-                  this.Physics();
-               }
+			   if(getTimer() > this.physicstime + ((1 / this.temp_fps) * 100))
+			   {
+				   if(this.GET_LITE_PHYS())
+				   {
+					  this.Physics();
+					  this.LITE_PHYS_tim = !this.LITE_PHYS_tim;
+				   }
+				   else
+				   {
+					  this.Physics();
+				   }
+				   this.physicstime = getTimer();
+			   }
                this.UpdateAtomPathCache();
                this.DoorLogic();
                this.BulletLogic();
                this.PlayerLogic();
+			   this.drawCharacters(this.mens[i], this.inverse_legs);
                this.ThinkOfFlakes();
                this.EffectsLogic();
                if(this.lock_camera_intensity > 0)
@@ -30857,10 +30974,10 @@ import flash.display.Sprite;
                   {
                      this.lock_camera_intensity = 1;
                   }
-                  this.xx2 = this.game.x;
-                  this.yy2 = this.game.y;
-                  this.xx = -Number(this.lock_camera_region.x) * this.game.scaleX * this.lock_camera_intensity + this.game.x * (1 - this.lock_camera_intensity);
-                  this.yy = -Number(this.lock_camera_region.y) * this.game.scaleY * this.lock_camera_intensity + this.game.y * (1 - this.lock_camera_intensity) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale;
+                  this.xx2 = this.game_x;
+                  this.yy2 = this.game_y;
+                  this.xx = -Number(this.lock_camera_region.x) * this.game.scaleX * this.lock_camera_intensity + this.game_x * (1 - this.lock_camera_intensity);
+                  this.yy = -Number(this.lock_camera_region.y) * this.game.scaleY * this.lock_camera_intensity + this.game_y * (1 - this.lock_camera_intensity) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale;
                   if(Math.round(this.xx) == this.xx2)
                   {
                      if(this.xx > -Number(this.lock_camera_region.x) * this.game.scaleX)
@@ -30883,15 +31000,16 @@ import flash.display.Sprite;
                         this.yy += 1 * this.game.scaleY;
                      }
                   }
-                  this.game.x = Math.round(this.xx);
-                  this.game.y = Math.round(this.yy);
+                  //this.game.x = Math.round(this.xx);
+                  //this.game.y = Math.round(this.yy);
+				  this.drawMap(Math.round(this.xx), Math.round(this.yy));
                }
                else if(this.MP_mode && this.mens[this.MP_myid].dead || this.MP_spectator)
                {
                   if(this.death_cam >= 0 && this.death_cam < this.playerstotal)
                   {
-                     old_x = this.game.x;
-                     old_y = this.game.y;
+                     old_x = this.game_x;
+                     old_y = this.game_y;
                      if(this.MP_spectator)
                      {
                         if(this.MP_myid != this.death_cam)
@@ -30904,8 +31022,8 @@ import flash.display.Sprite;
                               i++;
                            }
                         }
-                        look_x = this.mens[this.death_cam].tarx + this.game.x;
-                        look_y = this.mens[this.death_cam].tary + this.game.y;
+                        look_x = this.mens[this.death_cam].tarx + this.game_x;
+                        look_y = this.mens[this.death_cam].tary + this.game_y;
                      }
                      else
                      {
@@ -30914,38 +31032,41 @@ import flash.display.Sprite;
                      }
                      if(this.SOFT_SCREEN)
                      {
-                        this.game.x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game.x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2)));
-                        this.game.y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game.y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
-                     }
+                        this.game_x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game_x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2)));
+                        this.game_y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game_y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
+						this.drawMap(this.game_x, this.game_y);
+					 }
                      else
                      {
-                        this.game.x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game.x) / 2));
-                        this.game.y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game.y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
-                     }
+                        this.game_x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game_x) / 2));
+                        this.game_y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game_y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
+						this.drawMap(this.game_x, this.game_y);
+					 }
                      if(this.MP_spectator)
                      {
-                        this.myCursor.x = (this.myCursor.x + look_x) / 2 - this.game.x + old_x;
-                        this.myCursor.y = (this.myCursor.y + look_y) / 2 - this.game.y + old_y;
+                        this.myCursor.x = (this.myCursor.x + look_x) / 2 - this.game_x + old_x;
+                        this.myCursor.y = (this.myCursor.y + look_y) / 2 - this.game_y + old_y;
                      }
                   }
                   else
                   {
                      if(this.key_left)
                      {
-                        this.game.x += 15;
+                        this.game_x += 15;
                      }
                      if(this.key_right)
                      {
-                        this.game.x -= 15;
+                        this.game_x -= 15;
                      }
                      if(this.key_up)
                      {
-                        this.game.y += 15;
+                        this.game_y += 15;
                      }
                      if(this.key_down)
                      {
-                        this.game.y -= 15;
+                        this.game_y -= 15;
                      }
+					 this.drawMap(this.game_x, this.game_y);
                   }
                   if(this.darkness.alpha >= 0.25 || this.MP_spectator || this.death_cam == -1 || this.death_cam != this.MP_myid)
                   {
@@ -30968,14 +31089,16 @@ import flash.display.Sprite;
                {
                   if(this.SOFT_SCREEN)
                   {
-                     this.game.x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game.x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2));
-                     this.game.y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game.y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
-                  }
+                     this.game_x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game_x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2));
+                     this.game_y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game_y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
+					 this.drawMap(this.game_x, this.game_y);
+				  }
                   else
                   {
-                     this.game.x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game.x) / 2);
-                     this.game.y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game.y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
-                  }
+                     this.game_x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game_x) / 2);
+                     this.game_y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game_y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
+					 this.drawMap(this.game_x, this.game_y);
+				  }
                   this.death_cam = this.MP_myid;
                }
                if(this.SHAKEAMMOUT > 0.05)
@@ -30993,8 +31116,8 @@ import flash.display.Sprite;
                }
                if(this.new_active.visible)
                {
-                  this.new_active.x = this.mens[this.MP_myid].x + this.game.x;
-                  this.new_active.y = Number(this.mens[this.MP_myid].y) - 90 + this.game.y;
+                  this.new_active.x = this.mens[this.MP_myid].x + this.game_x;
+                  this.new_active.y = Number(this.mens[this.MP_myid].y) - 90 + this.game_y;
                }
                if(!this.MP_spectator)
                {
@@ -31032,8 +31155,8 @@ import flash.display.Sprite;
                                                          {
                                                             this.ok = true;
                                                             this.need_heal.visible = true;
-                                                            this.need_heal.x = Number(this.ax[this.mens[i2].b_body]) * this.game_scale + this.game.x;
-                                                            this.need_heal.y = (Number(this.ay[this.mens[i2].b_body]) - 41) * this.game_scale + this.game.y;
+                                                            this.need_heal.x = Number(this.ax[this.mens[i2].b_body]) * this.game_scale + this.game_x;
+                                                            this.need_heal.y = (Number(this.ay[this.mens[i2].b_body]) - 41) * this.game_scale + this.game_y;
                                                          }
                                                       }
                                                    }
@@ -31062,11 +31185,12 @@ import flash.display.Sprite;
                   this.graphics_3d_front.scaleX = this.graphics_3d.scaleX = this.game_scale;
                   this.graphics_3d_front.scaleY = this.graphics_3d.scaleY = this.game_scale;
                   this.lgame_scale = this.game_scale;
-                  this.game.x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.mouse_x + this.hscreenX);
-                  this.game.y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.mouse_y + this.hscreenY);
+                  this.game_x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.mouse_x + this.hscreenX);
+                  this.game_y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.mouse_y + this.hscreenY);
+				  this.drawMap(this.game_x, this.game_y);
                }
-               this.graphics_3d_front.x = this.graphics_3d.x = this.game.x;
-               this.graphics_3d_front.y = this.graphics_3d.y = this.game.y;
+               this.graphics_3d_front.x = this.graphics_3d.x = this.game_x;
+               this.graphics_3d_front.y = this.graphics_3d.y = this.game_y;
                i = 0;
                while(i < this.surf_lnk.length)
                {
@@ -31756,8 +31880,9 @@ import flash.display.Sprite;
                                     i2 = int(this.mc.master);
                                     this.PutoutCar(i);
                                     this.mens[i2].stability = -1;
-                                    this.mens[i2].x = this.xx;
-                                    this.mens[i2].y = this.yy;
+                                    this.mens[i2]._x = this.xx;
+                                    this.mens[i2]._y = this.yy;
+									this.drawCharacterPos(this.mens[i2].x_,this.mens[i2].y_,i2);
                                     this.mens[i2].tox = 0;
                                     this.mens[i2].toy = 0;
                                  }
@@ -31768,8 +31893,9 @@ import flash.display.Sprite;
                               this.mc2 = this.mens[this.mc.master];
                               this.mc2.stability = -0.1;
                               this.mc2.side = this.mc.side;
-                              this.mc2.x = this.mc.x;
-                              this.mc2.y = this.mc.y;
+                              this.mc2.x_ = this.mc.x_;
+                              this.mc2.y_ = this.mc.y_;
+							  this.drawCharacterPos(this.mc2.x_,this.mc2.y_,this.mc.master);
                               this.mc2.tox = 0;
                               this.mc2.toy = 0;
                               this.xx2 = 0;
@@ -33264,7 +33390,7 @@ import flash.display.Sprite;
                i = 0;
                while(i < this.barrelstotal)
                {
-                  if(this.barrels[i].x > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.barrels[i].x < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.barrels[i].y > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.barrels[i].y < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_top] > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_top] < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_top] > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_top] < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_bottom] > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_bottom] < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_bottom] > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_bottom] < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale)
+                  if(this.barrels[i].x > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.barrels[i].x < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.barrels[i].y > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.barrels[i].y < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_top] > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_top] < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_top] > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_top] < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_bottom] > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_bottom] < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_bottom] > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_bottom] < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale)
                   {
                      this.aactive[-100 - i] = true;
                      this.mc = this.barrels[i];
@@ -33342,7 +33468,7 @@ import flash.display.Sprite;
                while(i < this.flarestotal)
                {
                   this.mc = this.flare[i];
-                  if(this.mc.x > -this.game.x / this.game_scale && this.mc.x < (-this.game.x + this.screenX) / this.game_scale && this.mc.y > -this.game.y / this.game_scale && this.mc.y < (-this.game.y + this.screenY) / this.game_scale)
+                  if(this.mc.x > -this.game_x / this.game_scale && this.mc.x < (-this.game_x + this.screenX) / this.game_scale && this.mc.y > -this.game_y / this.game_scale && this.mc.y < (-this.game_y + this.screenY) / this.game_scale)
                   {
                      this.mc.alpha = (this.mc.alpha + this.flare_power[i]) / 2;
                      if(!this.mc.visible)
@@ -33362,16 +33488,16 @@ import flash.display.Sprite;
                   {
                      if(this.HQ || this.SUPER_COMPUTER)
                      {
-                        this.mc.f2.x = (-this.game.x + this.hscreenX - this.mc.x) * 0.4;
-                        this.mc.f2.y = (-this.game.y + this.hscreenY - this.mc.y) * 0.4;
-                        this.mc.f3.x = (-this.game.x + this.hscreenX - this.mc.x) * 0.8;
-                        this.mc.f3.y = (-this.game.y + this.hscreenY - this.mc.y) * 0.8;
-                        this.mc.f4.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.4;
-                        this.mc.f4.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.4;
-                        this.mc.f5.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.8;
-                        this.mc.f5.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.8;
-                        this.mc.f6.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.5;
-                        this.mc.f6.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.5;
+                        this.mc.f2.x = (-this.game_x + this.hscreenX - this.mc.x) * 0.4;
+                        this.mc.f2.y = (-this.game_y + this.hscreenY - this.mc.y) * 0.4;
+                        this.mc.f3.x = (-this.game_x + this.hscreenX - this.mc.x) * 0.8;
+                        this.mc.f3.y = (-this.game_y + this.hscreenY - this.mc.y) * 0.8;
+                        this.mc.f4.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.4;
+                        this.mc.f4.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.4;
+                        this.mc.f5.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.8;
+                        this.mc.f5.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.8;
+                        this.mc.f6.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.5;
+                        this.mc.f6.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.5;
                      }
                      else if(this.mc.f2.visible)
                      {
@@ -33818,7 +33944,7 @@ import flash.display.Sprite;
                this.myCursor.ch1.scaleX = this.myCursor.ch2.scaleX = this.myCursor.ch3.scaleX = this.myCursor.ch4.scaleX = this.myCursor.ch3.scaleY = this.myCursor.ch4.scaleY = this.xx * this.xx + 0.5;
                if(this.TOOLTIPS && !this.ANONYMOUS_MODE)
                {
-                  if(this.Math_abs(this.lastcurx - this.myCursor.x - this.game.x) + this.Math_abs(this.lastcury - this.myCursor.y - this.game.y) < 10)
+                  if(this.Math_abs(this.lastcurx - this.myCursor.x - this.game_x) + this.Math_abs(this.lastcury - this.myCursor.y - this.game_y) < 10)
                   {
                      if(!this.tooltip_updated)
                      {
@@ -33830,13 +33956,13 @@ import flash.display.Sprite;
                         {
                            if(this.wa_friction[i2])
                            {
-                              if(this.myCursor.x > Number(this.wax[i2]) * this.game_scale + this.game.x)
+                              if(this.myCursor.x > Number(this.wax[i2]) * this.game_scale + this.game_x)
                               {
-                                 if(this.myCursor.x < (this.wax[i2] + this.waw[i2]) * this.game_scale + this.game.x)
+                                 if(this.myCursor.x < (this.wax[i2] + this.waw[i2]) * this.game_scale + this.game_x)
                                  {
-                                    if(this.myCursor.y > Number(this.way[i2]) * this.game_scale + this.game.y)
+                                    if(this.myCursor.y > Number(this.way[i2]) * this.game_scale + this.game_y)
                                     {
-                                       if(this.myCursor.y < (this.way[i2] + this.wah[i2]) * this.game_scale + this.game.y)
+                                       if(this.myCursor.y < (this.way[i2] + this.wah[i2]) * this.game_scale + this.game_y)
                                        {
                                           if(this.wadamage[i2] > 0)
                                           {
@@ -33860,7 +33986,7 @@ import flash.display.Sprite;
                         {
                            if(this.vehicles[i2].nick != "")
                            {
-                              if(this.Dist2D(Number(this.vehicles[i2].x) * this.game_scale + this.game.x,Number(this.vehicles[i2].y) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 150)
+                              if(this.Dist2D(Number(this.vehicles[i2].x) * this.game_scale + this.game_x,Number(this.vehicles[i2].y) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 150)
                               {
                                  if(this.vehicles[i2].dead)
                                  {
@@ -33928,7 +34054,7 @@ import flash.display.Sprite;
                               {
                                  if(this.mens[i].alpha > 0.5)
                                  {
-                                    if(this.Dist2D(Number(this.ax[this.mens[i].b_body]) * this.game_scale + this.game.x,Number(this.ay[this.mens[i].b_body]) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 50)
+                                    if(this.Dist2D(Number(this.ax[this.mens[i].b_body]) * this.game_scale + this.game_x,Number(this.ay[this.mens[i].b_body]) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 50)
                                     {
                                        this.str = this.mens[i].nick + "\n";
                                        if(this.mens[i].team == this.mens[this.MP_myid].team)
@@ -34005,7 +34131,7 @@ import flash.display.Sprite;
                                     {
                                        if(!this.guns[i].forcars)
                                        {
-                                          if(this.Dist2D(Number(this.guns[i].x) * this.game_scale + this.game.x,Number(this.guns[i].y) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 40)
+                                          if(this.Dist2D(Number(this.guns[i].x) * this.game_scale + this.game_x,Number(this.guns[i].y) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 40)
                                           {
                                              this.str = this.GunModelToGunName(this.guns[i].model) + "\n";
                                              if(this.guns[i].upg != undefined)
@@ -34048,8 +34174,8 @@ import flash.display.Sprite;
                   else
                   {
                      this.lastcurmove = 0;
-                     this.lastcurx = this.myCursor.x + this.game.x;
-                     this.lastcury = this.myCursor.y + this.game.y;
+                     this.lastcurx = this.myCursor.x + this.game_x;
+                     this.lastcury = this.myCursor.y + this.game_y;
                      this.tooltip_updated = false;
                   }
                }
@@ -34212,8 +34338,8 @@ import flash.display.Sprite;
             {
                try
                {
-                  this.debug_screen.x = this.game.x;
-                  this.debug_screen.y = this.game.y;
+                  this.debug_screen.x = this.game_x;
+                  this.debug_screen.y = this.game_y;
                }
                catch(e:*)
                {
@@ -34594,9 +34720,10 @@ import flash.display.Sprite;
                                  ++this.i4;
                               }
                               this.tnds = 10;
-                              this.game.x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX);
-                              this.game.y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY);
-                              this.system_non_stop = true;
+                              this.game_x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX);
+                              this.game_y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY);
+							  this.drawMap(this.game_x, this.game_y);
+							  this.system_non_stop = true;
                            }
                         }
                         else
@@ -34669,6 +34796,13 @@ import flash.display.Sprite;
                               }
                               this.FUN_TIME_SPEND = 0;
 							  this.SaveGame();
+						  
+							  removeEventListener(Event.ENTER_FRAME,this.fr_func);
+							  this.gt_timer.removeEventListener(TimerEvent.TIMER, this.gt_func);
+							  this.gt_timer.stop();
+							  this.rt_timer.removeEventListener(TimerEvent.TIMER, this.rt_func);
+							  this.rt_timer.stop();
+
                               gotoAndStop("main");
                            }
                            if(this.LEVEL_END_FORCE == "complete")
@@ -34683,6 +34817,11 @@ import flash.display.Sprite;
                               catch(e:*)
                               {
                               }
+							  removeEventListener(Event.ENTER_FRAME,this.fr_func);
+							  this.gt_timer.stop();
+							  this.rt_timer.stop();
+							  this.gt_timer.removeEventListener(TimerEvent.TIMER, this.gt_func);
+							  this.rt_timer.removeEventListener(TimerEvent.TIMER, this.rt_func);
                               if(this.MP_mode)
                               {
                                  gotoAndStop("channel");
@@ -34814,8 +34953,8 @@ import flash.display.Sprite;
                   {
                      if(this.decors[this.i].currentFrameLabel == "antigravity" || this.decors[this.i].currentFrameLabel == "antigravity_left" || this.decors[this.i].currentFrameLabel == "antigravity_right" || this.decors[this.i].currentFrameLabel == "doomwrath_rapier_active" || this.decors[this.i].currentFrameLabel == "doomwrath_rapier_active2" || this.decors[this.i].currentFrameLabel == "falkok_ship3" || this.decors[this.i].currentFrameLabel == "falkok_ship6")
                      {
-                        this.smod = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game.x - 400 - 300,Number(this.decors[this.i].y) * this.game_scale + this.game.y - 200,this.dist_to_face);
-                        this.smod2 = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game.x - 400 + 300,Number(this.decors[this.i].y) * this.game_scale + this.game.y - 200,this.dist_to_face);
+                        this.smod = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game_x - 400 - 300,Number(this.decors[this.i].y) * this.game_scale + this.game_y - 200,this.dist_to_face);
+                        this.smod2 = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game_x - 400 + 300,Number(this.decors[this.i].y) * this.game_scale + this.game_y - 200,this.dist_to_face);
                         this.xx += this.smod2 * 0.5;
                         this.yy += 0;
                         this.xx2 += this.smod * 0.5;
@@ -34949,7 +35088,7 @@ import flash.display.Sprite;
                   this.musTransform.leftToRight = 0;
                   this.musTransform.rightToRight = this.CUR_MUSIC_VOLUME * (1 - this.darkness.alpha);
                   this.musTransform.rightToLeft = 0;
-                  if(!this.NOBASE && this.graphics_3d.hitTestPoint(Number(this.mens[this.MP_myid].x) * this.game_scale + this.game.x,(Number(this.mens[this.MP_myid].y) - 41) * this.game_scale + this.game.y,true))
+                  if(!this.NOBASE && this.graphics_3d.hitTestPoint(Number(this.mens[this.MP_myid].x) * this.game_scale + this.game_x,(Number(this.mens[this.MP_myid].y) - 41) * this.game_scale + this.game_y,true))
                   {
                      this.wind_base += 0.1;
                   }
@@ -37329,7 +37468,7 @@ import flash.display.Sprite;
             m = new Matrix();
             if(where == 0)
             {
-               m.translate(-(mouseX - this.game.x) / this.game_scale + 200 / scale,-(mouseY - this.game.y) / this.game_scale + 100 / scale);
+               m.translate(-(mouseX - this.game_x) / this.game_scale + 200 / scale,-(mouseY - this.game_y) / this.game_scale + 100 / scale);
             }
             else
             {
