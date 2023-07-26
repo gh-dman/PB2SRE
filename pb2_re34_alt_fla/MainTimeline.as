@@ -30844,18 +30844,15 @@ import flash.display.Sprite;
                      this.energy -= 0.4 * this.GSPEED2;
                   }
                }
-			   if(getTimer() > this.physicstime + ((1 / this.temp_fps) * 100))
+
+			   if(this.GET_LITE_PHYS())
 			   {
-				   if(this.GET_LITE_PHYS())
-				   {
-					  this.Physics();
-					  this.LITE_PHYS_tim = !this.LITE_PHYS_tim;
-				   }
-				   else
-				   {
-					  this.Physics();
-				   }
-				   this.physicstime = getTimer();
+				  this.Physics();
+				  this.LITE_PHYS_tim = !this.LITE_PHYS_tim;
+			   }
+			   else
+			   {
+				  this.Physics();
 			   }
                this.UpdateAtomPathCache();
                this.DoorLogic();
