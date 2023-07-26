@@ -24,6 +24,10 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var game_x = 0;
+	   
+	  public var game_y = 0;
+	   
 	  public var fps_toggle_perf = false;
 	   
 	  public var bottomsurface = [];
@@ -2901,6 +2905,26 @@
 		 init3DMenu();
       }
   
+      public function updateMap()
+      {
+         this.game.x = this.game_x;
+		 this.game.y = this.game_y;
+	     this.graphics_3d_front.x = this.graphics_3d.x = this.game_x;
+	     this.graphics_3d_front.y = this.graphics_3d.y = this.game_y;
+      }
+  
+      public function updateEffects()
+      {
+		 var i = 0;
+		 while(i < this.maxef) {
+			 if(this.ef[i] != null) {
+				 this.ef[i].x = this.ef[i].x_;
+				 this.ef[i].y = this.ef[i].y_;
+			 }
+			 i++;
+		 }
+      }
+  
 	  public function fr_func(param1:Event) {
 		  if(this.LEVEL_END_FORCE == "" && this.fr_real != null) {
 			++this.frames_display;
@@ -2915,7 +2939,7 @@
 	  }
   
 	  public function gt_func(e:TimerEvent) {
-		  if(this.ui_elements_visible[3] && this.gt_ms_text != null) 
+		  if(this.ui_elements_visible[3] && this.gt_real != null) 
 		  {
 			 if(this.system_non_stop && !this.pauze.visible) {
 				 if(this.LEVEL_END_FORCE == "") {
@@ -2996,7 +3020,7 @@
   
   
 	  public function rt_func(e:TimerEvent) {
-		  if(this.ui_elements_visible[2] && this.rt_ms_text != null) 
+		  if(this.ui_elements_visible[2] && this.rt_real != null) 
 		  {
 			 if(this.LEVEL_END_FORCE != "complete") {
 				 this.end_ms = getTimer();
@@ -4667,7 +4691,8 @@ import flash.display.Sprite;
       
       public function RestoreLimbColor(param1:MovieClip) : void
       {
-         param1.filters = new Array(this.clrs[0]);
+         //param1.filters = new Array(this.clrs[0]);
+		  // FILTERS
       }
       
       public function UpdatePlayerColorSP(param1:MovieClip, param2:int) : void
@@ -4676,7 +4701,7 @@ import flash.display.Sprite;
          {
             if(param2 == 0 || param2 == 1)
             {
-               param1.head.filters = new Array(this.clrs[this.skin_color_head[param2]]);
+               /*param1.head.filters = new Array(this.clrs[this.skin_color_head[param2]]);
                param1.body.filters = new Array(this.clrs[this.skin_color_body[param2]]);
                param1.arm1.upper.filters = new Array(this.clrs[this.skin_color_arms[param2]]);
                param1.arm1.lower.filters = new Array(this.clrs[this.skin_color_arms[param2]]);
@@ -4688,7 +4713,8 @@ import flash.display.Sprite;
                param1.leg2.upper.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
                param1.leg2.middle.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
                param1.leg2.lower.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
-               param1.toe.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
+               param1.toe.filters = new Array(this.clrs[this.skin_color_legs[param2]]);*/
+			   // FILTER
             }
          }
       }
@@ -4724,7 +4750,7 @@ import flash.display.Sprite;
          var _loc4_:ColorMatrixFilter = this.BlueHue(param1.palette[1]);
          var _loc5_:ColorMatrixFilter = this.BlueHue(param1.palette[2]);
          var _loc6_:ColorMatrixFilter = this.BlueHue(param1.palette[3]);
-         param1.head.filters = new Array(_loc3_);
+         /*param1.head.filters = new Array(_loc3_);
          param1.body.filters = new Array(_loc6_);
          param1.arm1.upper.filters = new Array(_loc4_);
          param1.arm1.lower.filters = new Array(_loc4_);
@@ -4736,7 +4762,8 @@ import flash.display.Sprite;
          param1.leg2.upper.filters = new Array(_loc5_);
          param1.leg2.middle.filters = new Array(_loc5_);
          param1.leg2.lower.filters = new Array(_loc5_);
-         param1.toe.filters = new Array(_loc5_);
+         param1.toe.filters = new Array(_loc5_);*/
+		  // FILTERS
       }
       
       public function LoadGame() : void
@@ -5233,8 +5260,8 @@ import flash.display.Sprite;
                {
                   this.s_channel[this.last_channel].stop();
                }
-               this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game.x - 400 - 300,y * this.game_scale + this.game.y - 200,this.dist_to_face);
-               this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game.x - 400 + 300,y * this.game_scale + this.game.y - 200,this.dist_to_face);
+               this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 - 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
+               this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 + 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
                this.vol3d[this.last_channel].volume = this.vol.volume;
                if(src.custom_volume == undefined)
                {
@@ -5509,10 +5536,7 @@ import flash.display.Sprite;
                         if(this.mens[this.MP_myid].curwea == this.upd_weps_i2)
                         {
                            this.weps["gi" + this.upd_weps_i].alpha = 1;
-                           if(this.weps["gi" + this.upd_weps_i].currentFrame != 1)
-                           {
-                              this.weps["gi" + this.upd_weps_i].gotoAndStop(1);
-                           }
+                           this.weps["gi" + this.upd_weps_i].gotoAndStop(1);
                         }
                         else
                         {
@@ -5529,10 +5553,7 @@ import flash.display.Sprite;
                if(this.mens[this.MP_myid].curwea == -1)
                {
                   this.weps["gi" + this.upd_weps_i].alpha = 1;
-                  if(this.weps["gi" + this.upd_weps_i].currentFrame != 1)
-                  {
-                     this.weps["gi" + this.upd_weps_i].gotoAndStop(1);
-                  }
+                  this.weps["gi" + this.upd_weps_i].gotoAndStop(1);
                }
                else
                {
@@ -6187,8 +6208,8 @@ import flash.display.Sprite;
                {
                   this.flakes[this.i] = this.graphics_3d.addChildAt(new flake(),0) as MovieClip;
                }
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                this.flakes[this.i]._z = _loc1_;
                _loc2_ = Math.random() * Math.PI * 2;
                _loc3_ = Math.random() * 30 - 10;
@@ -6234,10 +6255,10 @@ import flash.display.Sprite;
          this.i = 0;
          while(this.i < this.flakes_total)
          {
-            if(this.flakes[this.i]._x > this.screenX - this.game.x + this.flakes_spreadout)
+            if(this.flakes[this.i]._x > this.screenX - this.game_x + this.flakes_spreadout)
             {
                this.flakes[this.i]._x -= this.screenX + this.flakes_spreadout * 2;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6249,10 +6270,10 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._x < -this.game.x - this.flakes_spreadout)
+            if(this.flakes[this.i]._x < -this.game_x - this.flakes_spreadout)
             {
                this.flakes[this.i]._x += this.screenX + this.flakes_spreadout * 2;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6264,11 +6285,11 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._y > this.screenY - this.game.y + this.flakes_spreadout)
+            if(this.flakes[this.i]._y > this.screenY - this.game_y + this.flakes_spreadout)
             {
                this.flakes[this.i]._y -= this.screenY + this.flakes_spreadout * 2;
                this.flakes[this.i].rotation = Math.random() * 360;
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6280,10 +6301,10 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._y < -this.game.y - this.flakes_spreadout)
+            if(this.flakes[this.i]._y < -this.game_y - this.flakes_spreadout)
             {
                this.flakes[this.i]._y += this.screenY + this.flakes_spreadout * 2;
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6297,8 +6318,8 @@ import flash.display.Sprite;
             }
             this.flakes[this.i]._x += Number(this.flakes[this.i].tox) * this.GSPEED;
             this.flakes[this.i]._y += Number(this.flakes[this.i].toy) * this.GSPEED;
-            this.flakes[this.i].x = Number(this.flakes[this.i]._x) - (Number(this.flakes[this.i]._x) - this.hscreenX + this.game.x) * Number(this.flakes[this.i]._z);
-            this.flakes[this.i].y = Number(this.flakes[this.i]._y) - (Number(this.flakes[this.i]._y) - this.hscreenY + this.game.y) * Number(this.flakes[this.i]._z);
+            this.flakes[this.i].x = Number(this.flakes[this.i]._x) - (Number(this.flakes[this.i]._x) - this.hscreenX + this.game_x) * Number(this.flakes[this.i]._z);
+            this.flakes[this.i].y = Number(this.flakes[this.i]._y) - (Number(this.flakes[this.i]._y) - this.hscreenY + this.game_y) * Number(this.flakes[this.i]._z);
             this.flakes[this.i].scaleX = this.flakes[this.i].scaleY = Number(this.flakes[this.i]._scale) * (1 - Number(this.flakes[this.i]._z));
             this.flakes[this.i].toy += this.gravity * 0.5 * this.GSPEED;
             this.flakes[this.i].tox *= Math.pow(0.8,this.GSPEED);
@@ -6333,7 +6354,7 @@ import flash.display.Sprite;
       public function Effect(param1:Number, param2:Number, param3:int, param4:Number, param5:Number) : void
       {
          this.ok2 = false;
-         if(param1 > -this.game.x / this.game_scale - 150 && param1 < -this.game.x / this.game_scale + this.screenX / this.game_scale + 150 && param2 > -this.game.y / this.game_scale - 150 && param2 < -this.game.y / this.game_scale + this.screenY / this.game_scale + 150)
+         if(param1 > -this.game_x / this.game_scale - 150 && param1 < -this.game_x / this.game_scale + this.screenX / this.game_scale + 150 && param2 > -this.game_y / this.game_scale - 150 && param2 < -this.game_y / this.game_scale + this.screenY / this.game_scale + 150)
          {
             this.ok2 = true;
          }
@@ -6501,7 +6522,7 @@ import flash.display.Sprite;
                   this.NoMouse(this.ef[this.nextef]);
                   this.ef[this.nextef].typ = 5;
                   this.ef[this.nextef].rotation = Math.random() * 360;
-                  this.ef[this.nextef].gotoAndStop(1);
+                  //this.ef[this.nextef].gotoAndStop(1);
                   this.ef[this.nextef].float_frame = 1;
                   this.ef[this.nextef].framespeed = 0.7;
                   if(this.effcolor >= 0)
@@ -6695,8 +6716,8 @@ import flash.display.Sprite;
          if(this.ok2)
          {
             this.ef[this.nextef].life = 0;
-            this.ef[this.nextef].x = param1;
-            this.ef[this.nextef].y = param2;
+            this.ef[this.nextef].x_ = param1;
+            this.ef[this.nextef].y_ = param2;
             if(this.ef[this.nextef].typ == 3)
             {
                this.ef[this.nextef].tox = param4;
@@ -6787,7 +6808,7 @@ import flash.display.Sprite;
       
       public function nextpul() : void
       {
-		 this.ForceRasterize(this.puls[this.pulscur]);
+		 //this.ForceRasterize(this.puls[this.pulscur]);
          ++this.pulscur;
          if(this.pulscur > this.pulsmax)
          {
@@ -6863,8 +6884,8 @@ import flash.display.Sprite;
             param1.voice_channel = param2.play();
             if(param1.voice_channel != null)
             {
-               this.smod = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game.x - 400 - 300,param1.y * this.game_scale + this.game.y - 200,this.dist_to_face);
-               this.smod2 = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game.x - 400 + 300,param1.y * this.game_scale + this.game.y - 200,this.dist_to_face);
+               this.smod = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 - 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
+               this.smod2 = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 + 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
                if(param2.custom_volume == undefined)
                {
                   param2.custom_volume = 1;
@@ -7313,7 +7334,7 @@ import flash.display.Sprite;
          param1.ch_body_ang4 = new int(this.Connect(param1.b_leg1,param1.b_leg2,2,30,-1));
          param1.ch_body_ang4b = new int(this.Connect(param1.b_leg1,param1.b_leg2,2,30,0.4));
          param1.ch_body_ang5 = new int(this.Connect(param1.b_toe,param1.b_head_end,1,36,-1));
-         param1.gotoAndStop(2);
+		 //param1.gotoAndStop(1);
          param1.toe.bloddy.visible = false;
          param1.mdl_leg1_upper = new int(1);
          param1.mdl_leg1_middle = new int(1);
@@ -10485,8 +10506,8 @@ import flash.display.Sprite;
                   {
                      if(this.MP_myid == this.mc.idd)
                      {
-                        this.game.x = -this.mc.x + this.hscreenX;
-                        this.game.y = -this.mc.y + this.hscreenY;
+                        this.game_x = -this.mc.x + this.hscreenX;
+                        this.game_y = -this.mc.y + this.hscreenY;
                      }
                      this.mc.isplayer = new Boolean(true);
                      ++this.MP_playerstotal;
@@ -11912,7 +11933,8 @@ import flash.display.Sprite;
                   }
                   loadmap_stage = "1331";
                   g.graphics.endFill();
-                  g.filters = [new BlurFilter(1.1,1.1,3)];
+                  //g.filters = [new BlurFilter(1.1,1.1,3)];
+				  // FILTER
                   loadmap_stage = "1332";
                   this.lamps_sprites[this.i4] = g;
                   loadmap_stage = "1333";
@@ -12610,8 +12632,8 @@ import flash.display.Sprite;
                               this.mcc.y = this.regions[this.triggers[a].actions_targetB[tr]].y + Number(this.regions[this.triggers[a].actions_targetB[tr]].h) / 2;
                               if(this.triggers[a].actions_targetA[tr] == this.MP_myid)
                               {
-                                 this.game.x += u;
-                                 this.game.y += this.v;
+                                 this.game_x += u;
+                                 this.game_y += this.v;
                               }
                               this.i4 = 0;
                               while(this.i4 < this.atotal)
@@ -12986,8 +13008,8 @@ import flash.display.Sprite;
                                              }
                                              if(this.tr2 == this.MP_myid)
                                              {
-                                                this.game.x += u;
-                                                this.game.y += this.v;
+                                                this.game_x += u;
+                                                this.game_y += this.v;
                                              }
                                              this.i4 = 0;
                                              while(this.i4 < this.atotal)
@@ -13059,8 +13081,8 @@ import flash.display.Sprite;
                                              this.v = this.ay[this.mcc.b_toe] - (this.regions[this.triggers[a].actions_targetB[tr]].y + Number(this.regions[this.triggers[a].actions_targetB[tr]].h) / 2);
                                              if(this.tr2 == this.MP_myid)
                                              {
-                                                this.game.x += u;
-                                                this.game.y += this.v;
+                                                this.game_x += u;
+                                                this.game_y += this.v;
                                              }
                                              this.i4 = 0;
                                              while(this.i4 < this.atotal)
@@ -13681,8 +13703,8 @@ import flash.display.Sprite;
                               }
                               if(this.tr2 == this.MP_myid)
                               {
-                                 this.game.x += u;
-                                 this.game.y += this.v;
+                                 this.game_x += u;
+                                 this.game_y += this.v;
                               }
                               this.i4 = 0;
                               while(this.i4 < this.atotal)
@@ -13758,7 +13780,8 @@ import flash.display.Sprite;
                            matrix = matrix.concat([0,0,1,0,blue]);
                            matrix = matrix.concat([0,0,0,1,0]);
                            clrs_mov.matrix = matrix;
-                           block.filters = new Array(clrs_mov);
+                           //block.filters = new Array(clrs_mov);
+						   // FILTERS
                         }
                         break;
                      case 72:
@@ -16588,7 +16611,7 @@ import flash.display.Sprite;
          {
             if(param7)
             {
-               this.SHAKEAMMOUT += this.dist_to_face / this.Dist3Dm((param1 + this.game.x - 400) * this.game_scale,(param2 + this.game.y - 200) * this.game_scale,this.dist_to_face) * Math.max(param3 / 50 * 3,param4) * 0.2;
+               this.SHAKEAMMOUT += this.dist_to_face / this.Dist3Dm((param1 + this.game_x - 400) * this.game_scale,(param2 + this.game_y - 200) * this.game_scale,this.dist_to_face) * Math.max(param3 / 50 * 3,param4) * 0.2;
             }
          }
          this.i6 = 0;
@@ -19292,8 +19315,8 @@ import flash.display.Sprite;
       {
          if(param1.notspawned)
          {
-            param1.gotoAndStop(3);
-            param1.gotoAndStop(2);
+            //param1.gotoAndStop(3);
+            //param1.gotoAndStop(2);
          }
          if(param1.info == undefined || this.SHOW_EXP_BAR == 1)
          {
@@ -19991,7 +20014,7 @@ import flash.display.Sprite;
          }
       }
       
-      public function MeasureStart(param1:uint) : void
+      /*public function MeasureStart(param1:uint) : void
       {
       }
       
@@ -20006,7 +20029,7 @@ import flash.display.Sprite;
       public function MeasuresMaybePrint() : void
       {
          var _loc1_:uint = 0;
-      }
+      }*/
       
       public function Physics() : void
       {
@@ -20034,7 +20057,7 @@ import flash.display.Sprite;
          {
             if(this.GET_LITE_PHYS() && Math.ceil(Number(this.aof[this.i]) / 2 - Math.floor(Number(this.aof[this.i]) / 2)) == this.LITE_PHYS_from)
             {
-               this.MeasureStart(0);
+               //this.MeasureStop(0);
                if(this.aio[this.i] == true)
                {
                   if(!this.MP_mode || this.TraceLineF_nopushers(this.ax[this.i],this.ay[this.i],this.lax[this.i] + this.atox[this.i],this.lay[this.i] + this.atoy[this.i]))
@@ -20043,11 +20066,11 @@ import flash.display.Sprite;
                      this.ay[this.i] = this.lay[this.i] + Number(this.atoy[this.i]) * this.GSPEED;
                   }
                }
-               this.MeasureStop(0);
+               //this.MeasureStop(0);
             }
             else if(this.aio[this.i] != -1)
             {
-               this.MeasureStart(1);
+               //this.MeasureStop(1);
                if(this.aof[this.i] == this.MP_myid)
                {
                   this.thispulspeed = this.GSPEED2;
@@ -20064,7 +20087,7 @@ import flash.display.Sprite;
                }
                if(this.aactive[this.i] == 1000 || Boolean(this.aactive[this.aof[this.i]]))
                {
-                  this.MeasureStart(4);
+                  //this.MeasureStop(4);
                   if(this.RAGDOLL_COLLIDE && (this.MP_gamestate != 2 || !this.MP_mode))
                   {
                      if(this.arad[this.i] > 1)
@@ -20076,7 +20099,7 @@ import flash.display.Sprite;
                               this.i2 = this.i + 1;
                               while(this.i2 < this.atotal)
                               {
-                                 this.MeasureStart(2);
+                                 //this.MeasureStop(2);
                                  _loc1_ = this.arad[this.i] + this.arad[this.i2];
                                  if(this.ax[this.i] > Number(this.ax[this.i2]) - _loc1_)
                                  {
@@ -20102,13 +20125,13 @@ import flash.display.Sprite;
                                                                {
                                                                   if(this.aof[this.i2] < 0 || this.mens[this.aof[this.i2]].incar == -1)
                                                                   {
-                                                                     this.MeasureStop(2);
+                                                                     //this.MeasureStop(2);
                                                                      this.xx = this.Dist2D(this.ax[this.i],this.ay[this.i],this.ax[this.i2],this.ay[this.i2]);
                                                                      if(this.xx > 1)
                                                                      {
                                                                         if(this.xx < _loc1_)
                                                                         {
-                                                                           this.MeasureStart(3);
+                                                                           //this.MeasureStop(3);
                                                                            this.cx = (this.ax[this.i] + this.ax[this.i2]) * 0.5;
                                                                            this.cy = (this.ay[this.i] + this.ay[this.i2]) * 0.5;
                                                                            this.offset_balance = this.arad[this.i2] / (this.arad[this.i] + this.arad[this.i2]);
@@ -20152,7 +20175,7 @@ import flash.display.Sprite;
                                                                               this.ForceAtomSleep(this.i2);
                                                                               this.ForceAtomSleep(this.i);
                                                                            }
-                                                                           this.MeasureStop(3);
+                                                                           //this.MeasureStop(3);
                                                                         }
                                                                      }
                                                                   }
@@ -20173,10 +20196,10 @@ import flash.display.Sprite;
                         }
                      }
                   }
-                  this.MeasureStop(4);
+                  //this.MeasureStop(4);
                   if(this.aio[this.i] == true)
                   {
-                     this.MeasureStart(5);
+                     //this.MeasureStop(5);
                      this.ax[this.i] += Number(this.atox[this.i]) * this.thispulspeed;
                      this.ay[this.i] += Number(this.atoy[this.i]) * this.thispulspeed;
                      this.i2 = 0;
@@ -20350,8 +20373,8 @@ import flash.display.Sprite;
                      this.near_atom = this.GetNearBoxBSP_at(this.ax[this.i],this.ay[this.i]);
                      this.f_ok = true;
                      this.f_min = this.gravity * this.thispulspeed;
-                     this.MeasureStop(5);
-                     this.MeasureStart(6);
+                     //this.MeasureStop(5);
+                     //this.MeasureStop(6);
                      for each(this.i2 in this.near_atom)
                      {
                         if(this.ax[this.i] >= this.boxx[this.i2] && this.ax[this.i] <= this.boxx[this.i2] + this.boxw[this.i2] && this.ay[this.i] + this.arad[this.i] + this.thispulspeed >= this.boxy[this.i2] && this.ay[this.i] <= this.boxy[this.i2] + this.boxh[this.i2])
@@ -20365,8 +20388,8 @@ import flash.display.Sprite;
                      {
                         this.atoy[this.i] += this.f_min;
                      }
-                     this.MeasureStop(6);
-                     this.MeasureStart(7);
+                     //this.MeasureStop(6);
+                     //this.MeasureStop(7);
                      _loc2_ = this.GetAtomOriginalPosition(this.i);
                      if(this.amat[this.i] != 1 && this.amat[this.i] != 0 || (this.amat[this.i] == 1 || this.amat[this.i] == 0) && this.mens[this.aof[this.i]].incar == -1)
                      {
@@ -20381,8 +20404,8 @@ import flash.display.Sprite;
                            ++this.i2;
                         }
                      }
-                     this.MeasureStop(7);
-                     this.MeasureStart(8);
+                     //this.MeasureStop(7);
+                     //this.MeasureStop(8);
                      if(this.pres_ok)
                      {
                         if(this.aof[this.i] >= 0 && this.aof[this.i] < 100)
@@ -20449,7 +20472,7 @@ import flash.display.Sprite;
                            }
                         }
                      }
-                     this.MeasureStop(8);
+                     //this.MeasureStop(8);
                   }
                   else if(this.aio[this.i] == false)
                   {
@@ -20466,11 +20489,11 @@ import flash.display.Sprite;
                {
                   this.ForceAtomSleep(this.i);
                }
-               this.MeasureStop(1);
+               //this.MeasureStop(1);
             }
             ++this.i;
          }
-         this.MeasuresMaybePrint();
+         //this.MeasuresMaybePrint();
          this.Physics2();
       }
       
@@ -24707,8 +24730,8 @@ import flash.display.Sprite;
                                        this.mcc.toy += this.puls[_loc1_].spy;
                                        if(this.puls[_loc1_].master == this.MP_myid)
                                        {
-                                          this.game.x += this.u;
-                                          this.game.y += this.v;
+                                          this.game_x += this.u;
+                                          this.game_y += this.v;
                                        }
                                        this.i4 = 0;
                                        while(this.i4 < this.atotal)
@@ -25950,9 +25973,9 @@ import flash.display.Sprite;
                         {
                            if(this.ef[this.i].contains(this.ef[this.i].expl))
                            {
-                              this.MeasureStart(9);
-                              this.ef[this.i].expl.gotoAndStop(Math.min(this.ef[this.i].expl.totalFrames,this.ef[this.i].expl.currentFrame + Math.ceil(Number(this.ef[this.i].framespeed) * this.GSPEED)));
-                              this.MeasureStop(9);
+                              //this.MeasureStop(9);
+							  this.ef[this.i].expl.gotoAndStop(Math.min(this.ef[this.i].expl.totalFrames,this.ef[this.i].expl.currentFrame + Math.ceil(Number(this.ef[this.i].framespeed) * this.GSPEED)));
+							  //this.MeasureStop(9);
                            }
                         }
                      }
@@ -25960,15 +25983,15 @@ import flash.display.Sprite;
                   if(this.ef[this.i].typ == 1 || this.ef[this.i].typ == 4)
                   {
                      this.ok = true;
-                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x,this.ef[this.i].y))
+                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x_,this.ef[this.i].y_))
                      {
-                        if(this.ef[this.i].x > this.boxx[this.i2])
+                        if(this.ef[this.i].x_ > this.boxx[this.i2])
                         {
-                           if(this.ef[this.i].x < this.boxx[this.i2] + this.boxw[this.i2])
+                           if(this.ef[this.i].x_ < this.boxx[this.i2] + this.boxw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.boxy[this.i2])
+                              if(this.ef[this.i].y_ > this.boxy[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.boxy[this.i2] + this.boxh[this.i2])
+                                 if(this.ef[this.i].y_ < this.boxy[this.i2] + this.boxh[this.i2])
                                  {
                                     this.ok = false;
                                     break;
@@ -25979,8 +26002,8 @@ import flash.display.Sprite;
                      }
                      if(this.ok)
                      {
-                        this.ef[this.i].x += Number(this.ef[this.i].tox) * this.GSPEED;
-                        this.ef[this.i].y += Number(this.ef[this.i].toy) * this.GSPEED;
+                        this.ef[this.i].x_ += Number(this.ef[this.i].tox) * this.GSPEED;
+                        this.ef[this.i].y_ += Number(this.ef[this.i].toy) * this.GSPEED;
                         this.ef[this.i].toy += this.gravity * this.GSPEED;
                         if(this.ef[this.i].typ == 1)
                         {
@@ -25995,13 +26018,13 @@ import flash.display.Sprite;
                      this.i2 = 0;
                      while(this.i2 < this.watertotal && !this.ok)
                      {
-                        if(this.ef[this.i].x > this.wax[this.i2])
+                        if(this.ef[this.i].x_ > this.wax[this.i2])
                         {
-                           if(this.ef[this.i].x < this.wax[this.i2] + this.waw[this.i2])
+                           if(this.ef[this.i].x_ < this.wax[this.i2] + this.waw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.way[this.i2])
+                              if(this.ef[this.i].y_ > this.way[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.way[this.i2] + this.wah[this.i2])
+                                 if(this.ef[this.i].y_ < this.way[this.i2] + this.wah[this.i2])
                                  {
                                     if(this.wa_friction[this.i2])
                                     {
@@ -26029,7 +26052,7 @@ import flash.display.Sprite;
                      }
                      if(this.ef[this.i].typ == 1)
                      {
-                        this.MeasureStart(10);
+                        //this.MeasureStop(10);
                         if(this.ef[this.i].inner_blood_cloud == undefined)
                         {
                            _loc1_ = Math.ceil(Number(this.ef[this.i].framespeed) * this.GSPEED);
@@ -26043,24 +26066,24 @@ import flash.display.Sprite;
                         {
                            this.Logic_eff_blood(this.ef[this.i]);
                         }
-                        this.MeasureStop(10);
+                        //this.MeasureStop(10);
                      }
                   }
                   if(this.ef[this.i].typ == 2)
                   {
-                     this.ef[this.i].x += -1 + Math.random() * 2;
-                     this.ef[this.i].y -= this.gravity * 5;
+                     this.ef[this.i].x_ += -1 + Math.random() * 2;
+                     this.ef[this.i].y_ -= this.gravity * 5;
                      this.ok = false;
                      this.i2 = 0;
                      while(this.i2 < this.watertotal && !this.ok)
                      {
-                        if(this.ef[this.i].x > this.wax[this.i2])
+                        if(this.ef[this.i].x_ > this.wax[this.i2])
                         {
-                           if(this.ef[this.i].x < this.wax[this.i2] + this.waw[this.i2])
+                           if(this.ef[this.i].x_ < this.wax[this.i2] + this.waw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.way[this.i2])
+                              if(this.ef[this.i].y_ > this.way[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.way[this.i2] + this.wah[this.i2])
+                                 if(this.ef[this.i].y_ < this.way[this.i2] + this.wah[this.i2])
                                  {
                                     if(this.wa_friction[this.i2])
                                     {
@@ -26075,15 +26098,15 @@ import flash.display.Sprite;
                      }
                      if(this.ok)
                      {
-                        for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x,this.ef[this.i].y))
+                        for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x_,this.ef[this.i].y_))
                         {
-                           if(this.ef[this.i].x > this.boxx[this.i2])
+                           if(this.ef[this.i].x_ > this.boxx[this.i2])
                            {
-                              if(this.ef[this.i].x < this.boxx[this.i2] + this.boxw[this.i2])
+                              if(this.ef[this.i].x_ < this.boxx[this.i2] + this.boxw[this.i2])
                               {
-                                 if(this.ef[this.i].y > this.boxy[this.i2])
+                                 if(this.ef[this.i].y_ > this.boxy[this.i2])
                                  {
-                                    if(this.ef[this.i].y < this.boxy[this.i2] + this.boxh[this.i2])
+                                    if(this.ef[this.i].y_ < this.boxy[this.i2] + this.boxh[this.i2])
                                     {
                                        this.ok = false;
                                        break;
@@ -26100,20 +26123,20 @@ import flash.display.Sprite;
                   }
                   if(this.ef[this.i].typ == 3)
                   {
-                     this.ef[this.i].x += Number(this.ef[this.i].tox) * this.GSPEED;
-                     this.ef[this.i].y += Number(this.ef[this.i].toy) * this.GSPEED;
+                     this.ef[this.i].x_ += Number(this.ef[this.i].tox) * this.GSPEED;
+                     this.ef[this.i].y_ += Number(this.ef[this.i].toy) * this.GSPEED;
                      this.ef[this.i].toy += this.gravity * this.GSPEED;
                      this.ok = true;
                      this.i2 = 0;
                      while(this.i2 < this.watertotal && this.ok)
                      {
-                        if(this.ef[this.i].x > this.wax[this.i2])
+                        if(this.ef[this.i].x_ > this.wax[this.i2])
                         {
-                           if(this.ef[this.i].x < this.wax[this.i2] + this.waw[this.i2])
+                           if(this.ef[this.i].x_ < this.wax[this.i2] + this.waw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.way[this.i2])
+                              if(this.ef[this.i].y_ > this.way[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.way[this.i2] + this.wah[this.i2])
+                                 if(this.ef[this.i].y_ < this.way[this.i2] + this.wah[this.i2])
                                  {
                                     if(this.wa_friction[this.i2])
                                     {
@@ -26127,15 +26150,15 @@ import flash.display.Sprite;
                         ++this.i2;
                      }
                      this.ok = true;
-                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x,this.ef[this.i].y))
+                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x_,this.ef[this.i].y_))
                      {
-                        if(this.ef[this.i].x > this.boxx[this.i2])
+                        if(this.ef[this.i].x_ > this.boxx[this.i2])
                         {
-                           if(this.ef[this.i].x < this.boxx[this.i2] + this.boxw[this.i2])
+                           if(this.ef[this.i].x_ < this.boxx[this.i2] + this.boxw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.boxy[this.i2])
+                              if(this.ef[this.i].y_ > this.boxy[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.boxy[this.i2] + this.boxh[this.i2])
+                                 if(this.ef[this.i].y_ < this.boxy[this.i2] + this.boxh[this.i2])
                                  {
                                     this.ef[this.i].tox = 0;
                                     this.ef[this.i].toy = 0;
@@ -26150,15 +26173,15 @@ import flash.display.Sprite;
                   if(this.ef[this.i].typ == 5)
                   {
                      this.ok = false;
-                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x,this.ef[this.i].y))
+                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x_,this.ef[this.i].y_))
                      {
-                        if(this.ef[this.i].x > this.boxx[this.i2])
+                        if(this.ef[this.i].x_ > this.boxx[this.i2])
                         {
-                           if(this.ef[this.i].x < this.boxx[this.i2] + this.boxw[this.i2])
+                           if(this.ef[this.i].x_ < this.boxx[this.i2] + this.boxw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.boxy[this.i2])
+                              if(this.ef[this.i].y_ > this.boxy[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.boxy[this.i2] + this.boxh[this.i2])
+                                 if(this.ef[this.i].y_ < this.boxy[this.i2] + this.boxh[this.i2])
                                  {
                                     this.ok = true;
                                     break;
@@ -26177,10 +26200,10 @@ import flash.display.Sprite;
                            this.ef[this.i].visible = false;
                         }
                      }
-                     this.ef[this.i].x += Number(this.ef[this.i].tox) * this.GSPEED;
-                     this.ef[this.i].y += Number(this.ef[this.i].toy) * this.GSPEED;
+                     this.ef[this.i].x_ += Number(this.ef[this.i].tox) * this.GSPEED;
+                     this.ef[this.i].y_ += Number(this.ef[this.i].toy) * this.GSPEED;
                      this.ef[this.i].toy += this.gravity * this.GSPEED;
-                     this.MeasureStart(11);
+                     //this.MeasureStop(11);
                      if(this.ef[this.i].inner_blood_splat1 == undefined)
                      {
                         _loc1_ = Math.ceil(Number(this.ef[this.i].framespeed) * this.GSPEED);
@@ -26194,16 +26217,16 @@ import flash.display.Sprite;
                      {
                         this.Logic_eff_blood_sprite(this.ef[this.i]);
                      }
-                     this.MeasureStop(11);
+                     //this.MeasureStop(11);
                   }
                   if(this.ef[this.i].typ == 6)
                   {
-                     if(Math.abs(Number(this.ef[this.i].x) - Number(this.ax[this.mens[this.ef[this.i].attached].b_head_start])) < 200)
+                     if(Math.abs(Number(this.ef[this.i].x_) - Number(this.ax[this.mens[this.ef[this.i].attached].b_head_start])) < 200)
                      {
-                        if(Math.abs(this.ef[this.i].y - (Number(this.ay[this.mens[this.ef[this.i].attached].b_head_start]) - 30)) < 200)
+                        if(Math.abs(this.ef[this.i].y_ - (Number(this.ay[this.mens[this.ef[this.i].attached].b_head_start]) - 30)) < 200)
                         {
-                           this.ef[this.i].x = (Number(this.ax[this.mens[this.ef[this.i].attached].b_head_start]) * this.GSPEED + Number(this.ef[this.i].x) * 5) / (5 + this.GSPEED);
-                           this.ef[this.i].y = ((Number(this.ay[this.mens[this.ef[this.i].attached].b_head_start]) - 30) * this.GSPEED + Number(this.ef[this.i].y) * 5) / (5 + this.GSPEED);
+                           this.ef[this.i].x_ = (Number(this.ax[this.mens[this.ef[this.i].attached].b_head_start]) * this.GSPEED + Number(this.ef[this.i].x_) * 5) / (5 + this.GSPEED);
+                           this.ef[this.i].y_ = ((Number(this.ay[this.mens[this.ef[this.i].attached].b_head_start]) - 30) * this.GSPEED + Number(this.ef[this.i].y_) * 5) / (5 + this.GSPEED);
                         }
                      }
                      if(this.ef[this.i].totalFrames < 90)
@@ -26697,8 +26720,8 @@ import flash.display.Sprite;
                               this.mc.act_movex = 0;
                               this.mc.act_movey = 0;
                            }
-                           this.mc.tarx = (this.mouse_x - this.game.x) / this.game_scale;
-                           this.mc.tary = (this.mouse_y - this.game.y) / this.game_scale;
+                           this.mc.tarx = (this.mouse_x - this.game_x) / this.game_scale;
+                           this.mc.tary = (this.mouse_y - this.game_y) / this.game_scale;
                            if(Boolean(is_firing) && this.MP_gamestate == 0)
                            {
                               if(this.mc.act_fire == false)
@@ -27827,8 +27850,8 @@ import flash.display.Sprite;
                                  {
                                     if(is_firing)
                                     {
-                                       this.mc.tarx = (this.mouse_x - this.game.x) / this.game_scale;
-                                       this.mc.tary = (this.mouse_y - this.game.y) / this.game_scale;
+                                       this.mc.tarx = (this.mouse_x - this.game_x) / this.game_scale;
+                                       this.mc.tary = (this.mouse_y - this.game_y) / this.game_scale;
                                     }
                                     if(this.key_up)
                                     {
@@ -27944,8 +27967,8 @@ import flash.display.Sprite;
                                     {
                                        this.xx *= 0.1;
                                     }
-                                    this.game.x += Math.sin(this.xx) * 200;
-                                    this.game.y += Math.cos(this.xx) * 200;
+                                    this.game_x += Math.sin(this.xx) * 200;
+                                    this.game_y += Math.cos(this.xx) * 200;
                                  }
                                  if(!this.MP_mode)
                                  {
@@ -27968,8 +27991,8 @@ import flash.display.Sprite;
                                  {
                                     this.xx *= 0.1;
                                  }
-                                 this.game.x += Math.sin(this.xx) * 200;
-                                 this.game.y += Math.cos(this.xx) * 200;
+                                 this.game_x += Math.sin(this.xx) * 200;
+                                 this.game_y += Math.cos(this.xx) * 200;
                               }
                               if(!this.MP_mode)
                               {							  
@@ -30513,6 +30536,7 @@ import flash.display.Sprite;
       
       public function VarChangePreventStart() : void
       {
+		 return;
          if(currentFrame != 18)
          {
             return;
@@ -30607,6 +30631,7 @@ import flash.display.Sprite;
       
       public function VarChangePreventEnd() : void
       {
+		 return;
          var i:int;
          if(currentFrame != 18)
          {
@@ -30737,8 +30762,8 @@ import flash.display.Sprite;
 			 }
 		 }
          this.VarChangePreventStart();
-         try
-         {
+         //try
+         //{
             this.allow_unlag_fps = true;
             this.DebugBugCaches();
             /*if(this.MP_get_done_HAP)
@@ -30800,10 +30825,10 @@ import flash.display.Sprite;
             {
                if(this.FREEZE_OFFSCREEN_ENTITIES)
                {
-                  this.render_minX = (-this.game.x - 300) / this.game_scale;
-                  this.render_minY = (-this.game.y - 200) / this.game_scale;
-                  this.render_maxX = (-this.game.x + this.screenX + 300) / this.game_scale;
-                  this.render_maxY = (-this.game.y + this.screenY + 200) / this.game_scale;
+                  this.render_minX = (-this.game_x - 300) / this.game_scale;
+                  this.render_minY = (-this.game_y - 200) / this.game_scale;
+                  this.render_maxX = (-this.game_x + this.screenX + 300) / this.game_scale;
+                  this.render_maxY = (-this.game_y + this.screenY + 200) / this.game_scale;
                }
                else
                {
@@ -30860,16 +30885,18 @@ import flash.display.Sprite;
                this.PlayerLogic();
                this.ThinkOfFlakes();
                this.EffectsLogic();
+			   this.updateEffects();
+			   this.updateMap();
                if(this.lock_camera_intensity > 0)
                {
                   if(this.lock_camera_intensity > 1)
                   {
                      this.lock_camera_intensity = 1;
                   }
-                  this.xx2 = this.game.x;
-                  this.yy2 = this.game.y;
-                  this.xx = -Number(this.lock_camera_region.x) * this.game.scaleX * this.lock_camera_intensity + this.game.x * (1 - this.lock_camera_intensity);
-                  this.yy = -Number(this.lock_camera_region.y) * this.game.scaleY * this.lock_camera_intensity + this.game.y * (1 - this.lock_camera_intensity) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale;
+                  this.xx2 = this.game_x;
+                  this.yy2 = this.game_y;
+                  this.xx = -Number(this.lock_camera_region.x) * this.game.scaleX * this.lock_camera_intensity + this.game_x * (1 - this.lock_camera_intensity);
+                  this.yy = -Number(this.lock_camera_region.y) * this.game.scaleY * this.lock_camera_intensity + this.game_y * (1 - this.lock_camera_intensity) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale;
                   if(Math.round(this.xx) == this.xx2)
                   {
                      if(this.xx > -Number(this.lock_camera_region.x) * this.game.scaleX)
@@ -30892,15 +30919,15 @@ import flash.display.Sprite;
                         this.yy += 1 * this.game.scaleY;
                      }
                   }
-                  this.game.x = Math.round(this.xx);
-                  this.game.y = Math.round(this.yy);
+                  this.game_x = Math.round(this.xx);
+                  this.game_y = Math.round(this.yy);
                }
                else if(this.MP_mode && this.mens[this.MP_myid].dead || this.MP_spectator)
                {
                   if(this.death_cam >= 0 && this.death_cam < this.playerstotal)
                   {
-                     old_x = this.game.x;
-                     old_y = this.game.y;
+                     old_x = this.game_x;
+                     old_y = this.game_y;
                      if(this.MP_spectator)
                      {
                         if(this.MP_myid != this.death_cam)
@@ -30913,8 +30940,8 @@ import flash.display.Sprite;
                               i++;
                            }
                         }
-                        look_x = this.mens[this.death_cam].tarx + this.game.x;
-                        look_y = this.mens[this.death_cam].tary + this.game.y;
+                        look_x = this.mens[this.death_cam].tarx + this.game_x;
+                        look_y = this.mens[this.death_cam].tary + this.game_y;
                      }
                      else
                      {
@@ -30923,37 +30950,37 @@ import flash.display.Sprite;
                      }
                      if(this.SOFT_SCREEN)
                      {
-                        this.game.x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game.x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2)));
-                        this.game.y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game.y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
+                        this.game_x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game_x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2)));
+                        this.game_y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game_y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
                      }
                      else
                      {
-                        this.game.x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game.x) / 2));
-                        this.game.y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game.y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
+                        this.game_x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game_x) / 2));
+                        this.game_y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game_y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
                      }
                      if(this.MP_spectator)
                      {
-                        this.myCursor.x = (this.myCursor.x + look_x) / 2 - this.game.x + old_x;
-                        this.myCursor.y = (this.myCursor.y + look_y) / 2 - this.game.y + old_y;
+                        this.myCursor.x = (this.myCursor.x + look_x) / 2 - this.game_x + old_x;
+                        this.myCursor.y = (this.myCursor.y + look_y) / 2 - this.game_y + old_y;
                      }
                   }
                   else
                   {
                      if(this.key_left)
                      {
-                        this.game.x += 15;
+                        this.game_x += 15;
                      }
                      if(this.key_right)
                      {
-                        this.game.x -= 15;
+                        this.game_x -= 15;
                      }
                      if(this.key_up)
                      {
-                        this.game.y += 15;
+                        this.game_y += 15;
                      }
                      if(this.key_down)
                      {
-                        this.game.y -= 15;
+                        this.game_y -= 15;
                      }
                   }
                   if(this.darkness.alpha >= 0.25 || this.MP_spectator || this.death_cam == -1 || this.death_cam != this.MP_myid)
@@ -30977,13 +31004,13 @@ import flash.display.Sprite;
                {
                   if(this.SOFT_SCREEN)
                   {
-                     this.game.x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game.x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2));
-                     this.game.y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game.y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
+                     this.game_x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game_x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2));
+                     this.game_y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game_y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
                   }
                   else
                   {
-                     this.game.x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game.x) / 2);
-                     this.game.y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game.y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
+                     this.game_x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game_x) / 2);
+                     this.game_y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game_y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
                   }
                   this.death_cam = this.MP_myid;
                }
@@ -31002,8 +31029,8 @@ import flash.display.Sprite;
                }
                if(this.new_active.visible)
                {
-                  this.new_active.x = this.mens[this.MP_myid].x + this.game.x;
-                  this.new_active.y = Number(this.mens[this.MP_myid].y) - 90 + this.game.y;
+                  this.new_active.x = this.mens[this.MP_myid].x + this.game_x;
+                  this.new_active.y = Number(this.mens[this.MP_myid].y) - 90 + this.game_y;
                }
                if(!this.MP_spectator)
                {
@@ -31041,8 +31068,8 @@ import flash.display.Sprite;
                                                          {
                                                             this.ok = true;
                                                             this.need_heal.visible = true;
-                                                            this.need_heal.x = Number(this.ax[this.mens[i2].b_body]) * this.game_scale + this.game.x;
-                                                            this.need_heal.y = (Number(this.ay[this.mens[i2].b_body]) - 41) * this.game_scale + this.game.y;
+                                                            this.need_heal.x = Number(this.ax[this.mens[i2].b_body]) * this.game_scale + this.game_x;
+                                                            this.need_heal.y = (Number(this.ay[this.mens[i2].b_body]) - 41) * this.game_scale + this.game_y;
                                                          }
                                                       }
                                                    }
@@ -31071,11 +31098,11 @@ import flash.display.Sprite;
                   this.graphics_3d_front.scaleX = this.graphics_3d.scaleX = this.game_scale;
                   this.graphics_3d_front.scaleY = this.graphics_3d.scaleY = this.game_scale;
                   this.lgame_scale = this.game_scale;
-                  this.game.x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.mouse_x + this.hscreenX);
-                  this.game.y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.mouse_y + this.hscreenY);
+                  this.game_x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.mouse_x + this.hscreenX);
+                  this.game_y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.mouse_y + this.hscreenY);
                }
-               this.graphics_3d_front.x = this.graphics_3d.x = this.game.x;
-               this.graphics_3d_front.y = this.graphics_3d.y = this.game.y;
+               //this.graphics_3d_front.x = this.graphics_3d.x = this.game_x;
+               //this.graphics_3d_front.y = this.graphics_3d.y = this.game_y;
                i = 0;
                while(i < this.surf_lnk.length)
                {
@@ -31689,7 +31716,7 @@ import flash.display.Sprite;
                            this.chdef[this.mc.ch_leg2upper] = this.chdef[this.mc.ch_leg2lower] = this.Dist2D(this.ax[this.mc.b_p1],this.ay[this.mc.b_p1],this.ax[this.mc.b_w2],this.ay[this.mc.b_w2]) / 3;
                            this.mc.x = this.ax[this.mc.b_p1];
                            this.mc.y = this.ay[this.mc.b_p1];
-                           this.MeasureStart(12);
+                           //this.MeasureStop(12);
                            this.mc.carbody.rotation = 270 - this.xx / Math.PI * 180;
                            this.mc.leg1.rotation = 180 - Math.atan2(Number(this.ax[this.mc.b_p1]) - Number(this.ax[this.mc.b_w1]),Number(this.ay[this.mc.b_p1]) - Number(this.ay[this.mc.b_w1])) / Math.PI * 180;
                            this.SetMCFrame(this.mc.leg1,Math.max(1,Math.min(100,Math.round(this.Dist2D(this.ax[this.mc.b_p1],this.ay[this.mc.b_p1],this.ax[this.mc.b_w1],this.ay[this.mc.b_w1]) / 210 * 100))),5);
@@ -31715,7 +31742,7 @@ import flash.display.Sprite;
                            {
                               this.mc.leg2b.rotation = (this.mc.leg2.rotation + Number(this.mc.leg2b.rotation) * 5) / 6;
                            }
-                           this.MeasureStop(12);
+                           //this.MeasureStop(12);
                         }
                         if(this.mc.typ == 2)
                         {
@@ -32672,7 +32699,7 @@ import flash.display.Sprite;
                         {
                            this.guns[i].floatframe += this.GSPEED * Number(this.guns[i].speed_multiplier);
                         }
-                        this.MeasureStart(13);
+                        //this.MeasureStop(13);
                         if(this.guns[i].floatframe >= this.guns[i].totalFrames)
                         {
                            if(!this.guns[i].ready)
@@ -32712,7 +32739,7 @@ import flash.display.Sprite;
                         {
                            this.SetMCFrame(this.guns[i],Math.floor(this.guns[i].floatframe));
                         }
-                        this.MeasureStop(13);
+                        //this.MeasureStop(13);
                      }
                      if(this.guns[i].ready)
                      {
@@ -33196,7 +33223,7 @@ import flash.display.Sprite;
                               }
                            }
                         }
-                        this.MeasureStart(14);
+                        //this.MeasureStop(14);
                         if(this.guns[i].ready)
                         {
                            if(this.guns[i].riflestatus != undefined)
@@ -33211,7 +33238,7 @@ import flash.display.Sprite;
                               }
                            }
                         }
-                        this.MeasureStop(14);
+                        //this.MeasureStop(14);
                         if(this.ok2 && Boolean(this.guns[i].ready))
                         {
                            this.guns[i].ray.scaleX = this.u / 100;
@@ -33273,7 +33300,7 @@ import flash.display.Sprite;
                i = 0;
                while(i < this.barrelstotal)
                {
-                  if(this.barrels[i].x > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.barrels[i].x < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.barrels[i].y > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.barrels[i].y < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_top] > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_top] < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_top] > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_top] < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_bottom] > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_bottom] < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_bottom] > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_bottom] < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale)
+                  if(this.barrels[i].x > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.barrels[i].x < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.barrels[i].y > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.barrels[i].y < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_top] > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_top] < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_top] > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_top] < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_bottom] > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_bottom] < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_bottom] > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_bottom] < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale)
                   {
                      this.aactive[-100 - i] = true;
                      this.mc = this.barrels[i];
@@ -33351,7 +33378,7 @@ import flash.display.Sprite;
                while(i < this.flarestotal)
                {
                   this.mc = this.flare[i];
-                  if(this.mc.x > -this.game.x / this.game_scale && this.mc.x < (-this.game.x + this.screenX) / this.game_scale && this.mc.y > -this.game.y / this.game_scale && this.mc.y < (-this.game.y + this.screenY) / this.game_scale)
+                  if(this.mc.x > -this.game_x / this.game_scale && this.mc.x < (-this.game_x + this.screenX) / this.game_scale && this.mc.y > -this.game_y / this.game_scale && this.mc.y < (-this.game_y + this.screenY) / this.game_scale)
                   {
                      this.mc.alpha = (this.mc.alpha + this.flare_power[i]) / 2;
                      if(!this.mc.visible)
@@ -33371,16 +33398,16 @@ import flash.display.Sprite;
                   {
                      if(this.HQ || this.SUPER_COMPUTER)
                      {
-                        this.mc.f2.x = (-this.game.x + this.hscreenX - this.mc.x) * 0.4;
-                        this.mc.f2.y = (-this.game.y + this.hscreenY - this.mc.y) * 0.4;
-                        this.mc.f3.x = (-this.game.x + this.hscreenX - this.mc.x) * 0.8;
-                        this.mc.f3.y = (-this.game.y + this.hscreenY - this.mc.y) * 0.8;
-                        this.mc.f4.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.4;
-                        this.mc.f4.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.4;
-                        this.mc.f5.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.8;
-                        this.mc.f5.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.8;
-                        this.mc.f6.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.5;
-                        this.mc.f6.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.5;
+                        this.mc.f2.x = (-this.game_x + this.hscreenX - this.mc.x) * 0.4;
+                        this.mc.f2.y = (-this.game_y + this.hscreenY - this.mc.y) * 0.4;
+                        this.mc.f3.x = (-this.game_x + this.hscreenX - this.mc.x) * 0.8;
+                        this.mc.f3.y = (-this.game_y + this.hscreenY - this.mc.y) * 0.8;
+                        this.mc.f4.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.4;
+                        this.mc.f4.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.4;
+                        this.mc.f5.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.8;
+                        this.mc.f5.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.8;
+                        this.mc.f6.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.5;
+                        this.mc.f6.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.5;
                      }
                      else if(this.mc.f2.visible)
                      {
@@ -33827,7 +33854,7 @@ import flash.display.Sprite;
                this.myCursor.ch1.scaleX = this.myCursor.ch2.scaleX = this.myCursor.ch3.scaleX = this.myCursor.ch4.scaleX = this.myCursor.ch3.scaleY = this.myCursor.ch4.scaleY = this.xx * this.xx + 0.5;
                if(this.TOOLTIPS && !this.ANONYMOUS_MODE)
                {
-                  if(this.Math_abs(this.lastcurx - this.myCursor.x - this.game.x) + this.Math_abs(this.lastcury - this.myCursor.y - this.game.y) < 10)
+                  if(this.Math_abs(this.lastcurx - this.myCursor.x - this.game_x) + this.Math_abs(this.lastcury - this.myCursor.y - this.game_y) < 10)
                   {
                      if(!this.tooltip_updated)
                      {
@@ -33839,13 +33866,13 @@ import flash.display.Sprite;
                         {
                            if(this.wa_friction[i2])
                            {
-                              if(this.myCursor.x > Number(this.wax[i2]) * this.game_scale + this.game.x)
+                              if(this.myCursor.x > Number(this.wax[i2]) * this.game_scale + this.game_x)
                               {
-                                 if(this.myCursor.x < (this.wax[i2] + this.waw[i2]) * this.game_scale + this.game.x)
+                                 if(this.myCursor.x < (this.wax[i2] + this.waw[i2]) * this.game_scale + this.game_x)
                                  {
-                                    if(this.myCursor.y > Number(this.way[i2]) * this.game_scale + this.game.y)
+                                    if(this.myCursor.y > Number(this.way[i2]) * this.game_scale + this.game_y)
                                     {
-                                       if(this.myCursor.y < (this.way[i2] + this.wah[i2]) * this.game_scale + this.game.y)
+                                       if(this.myCursor.y < (this.way[i2] + this.wah[i2]) * this.game_scale + this.game_y)
                                        {
                                           if(this.wadamage[i2] > 0)
                                           {
@@ -33869,7 +33896,7 @@ import flash.display.Sprite;
                         {
                            if(this.vehicles[i2].nick != "")
                            {
-                              if(this.Dist2D(Number(this.vehicles[i2].x) * this.game_scale + this.game.x,Number(this.vehicles[i2].y) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 150)
+                              if(this.Dist2D(Number(this.vehicles[i2].x) * this.game_scale + this.game_x,Number(this.vehicles[i2].y) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 150)
                               {
                                  if(this.vehicles[i2].dead)
                                  {
@@ -33937,7 +33964,7 @@ import flash.display.Sprite;
                               {
                                  if(this.mens[i].alpha > 0.5)
                                  {
-                                    if(this.Dist2D(Number(this.ax[this.mens[i].b_body]) * this.game_scale + this.game.x,Number(this.ay[this.mens[i].b_body]) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 50)
+                                    if(this.Dist2D(Number(this.ax[this.mens[i].b_body]) * this.game_scale + this.game_x,Number(this.ay[this.mens[i].b_body]) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 50)
                                     {
                                        this.str = this.mens[i].nick + "\n";
                                        if(this.mens[i].team == this.mens[this.MP_myid].team)
@@ -34014,7 +34041,7 @@ import flash.display.Sprite;
                                     {
                                        if(!this.guns[i].forcars)
                                        {
-                                          if(this.Dist2D(Number(this.guns[i].x) * this.game_scale + this.game.x,Number(this.guns[i].y) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 40)
+                                          if(this.Dist2D(Number(this.guns[i].x) * this.game_scale + this.game_x,Number(this.guns[i].y) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 40)
                                           {
                                              this.str = this.GunModelToGunName(this.guns[i].model) + "\n";
                                              if(this.guns[i].upg != undefined)
@@ -34057,8 +34084,8 @@ import flash.display.Sprite;
                   else
                   {
                      this.lastcurmove = 0;
-                     this.lastcurx = this.myCursor.x + this.game.x;
-                     this.lastcury = this.myCursor.y + this.game.y;
+                     this.lastcurx = this.myCursor.x + this.game_x;
+                     this.lastcury = this.myCursor.y + this.game_y;
                      this.tooltip_updated = false;
                   }
                }
@@ -34221,8 +34248,8 @@ import flash.display.Sprite;
             {
                try
                {
-                  this.debug_screen.x = this.game.x;
-                  this.debug_screen.y = this.game.y;
+                  this.debug_screen.x = this.game_x;
+                  this.debug_screen.y = this.game_y;
                }
                catch(e:*)
                {
@@ -34248,11 +34275,11 @@ import flash.display.Sprite;
                   i++;
                }
             }
-         }
-         catch(e:*)
-         {
-            SpawnLevelLogicErrorIfNeeded(e,"Some level objects or logic have caused error within game loop");
-         }
+         //}
+         //catch(e:*)
+         //{
+          //  SpawnLevelLogicErrorIfNeeded(e,"Some level objects or logic have caused error within game loop");
+         //}
          try
          {
             this.HandleRespawnAndLevelEnd();
@@ -34603,8 +34630,8 @@ import flash.display.Sprite;
                                  ++this.i4;
                               }
                               this.tnds = 10;
-                              this.game.x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX);
-                              this.game.y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY);
+                              this.game_x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX);
+                              this.game_y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY);
                               this.system_non_stop = true;
                            }
                         }
@@ -34835,8 +34862,8 @@ import flash.display.Sprite;
                   {
                      if(this.decors[this.i].currentFrameLabel == "antigravity" || this.decors[this.i].currentFrameLabel == "antigravity_left" || this.decors[this.i].currentFrameLabel == "antigravity_right" || this.decors[this.i].currentFrameLabel == "doomwrath_rapier_active" || this.decors[this.i].currentFrameLabel == "doomwrath_rapier_active2" || this.decors[this.i].currentFrameLabel == "falkok_ship3" || this.decors[this.i].currentFrameLabel == "falkok_ship6")
                      {
-                        this.smod = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game.x - 400 - 300,Number(this.decors[this.i].y) * this.game_scale + this.game.y - 200,this.dist_to_face);
-                        this.smod2 = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game.x - 400 + 300,Number(this.decors[this.i].y) * this.game_scale + this.game.y - 200,this.dist_to_face);
+                        this.smod = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game_x - 400 - 300,Number(this.decors[this.i].y) * this.game_scale + this.game_y - 200,this.dist_to_face);
+                        this.smod2 = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game_x - 400 + 300,Number(this.decors[this.i].y) * this.game_scale + this.game_y - 200,this.dist_to_face);
                         this.xx += this.smod2 * 0.5;
                         this.yy += 0;
                         this.xx2 += this.smod * 0.5;
@@ -34970,7 +34997,7 @@ import flash.display.Sprite;
                   this.musTransform.leftToRight = 0;
                   this.musTransform.rightToRight = this.CUR_MUSIC_VOLUME * (1 - this.darkness.alpha);
                   this.musTransform.rightToLeft = 0;
-                  if(!this.NOBASE && this.graphics_3d.hitTestPoint(Number(this.mens[this.MP_myid].x) * this.game_scale + this.game.x,(Number(this.mens[this.MP_myid].y) - 41) * this.game_scale + this.game.y,true))
+                  if(!this.NOBASE && this.graphics_3d.hitTestPoint(Number(this.mens[this.MP_myid].x) * this.game_scale + this.game_x,(Number(this.mens[this.MP_myid].y) - 41) * this.game_scale + this.game_y,true))
                   {
                      this.wind_base += 0.1;
                   }
@@ -36119,9 +36146,10 @@ import flash.display.Sprite;
          _loc2_ = new ColorMatrixFilter(_loc1_.CalculateFinalFlatArray());
          _loc3_ = [];
          _loc3_.push(_loc2_);
-         this.earth.filters = _loc3_;
+         /*this.earth.filters = _loc3_;
          this.menu_buttons.filters = _loc3_;
-         this.errmenu.filters = _loc3_;
+         this.errmenu.filters = _loc3_;*/
+		  // FILTERS
       }
       
       public function k_down_space(param1:KeyboardEvent) : void
@@ -36277,7 +36305,7 @@ import flash.display.Sprite;
          {
             this.skin_color_legs[param1] = this.clrs.length - 1;
          }
-         _loc2_.head.filters = new Array(this.clrs[this.skin_color_head[param1]]);
+         /*_loc2_.head.filters = new Array(this.clrs[this.skin_color_head[param1]]);
          _loc2_.body.filters = new Array(this.clrs[this.skin_color_body[param1]]);
          _loc2_.arm1_lower.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
          _loc2_.arm2_lower.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
@@ -36289,7 +36317,8 @@ import flash.display.Sprite;
          _loc2_.leg2_lower.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
          _loc2_.toe.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
          _loc2_.arm1_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
-         _loc2_.arm2_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
+         _loc2_.arm2_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);*/
+		// FILTER
       }
       
       public function RefrSkin(param1:int) : void
@@ -36375,11 +36404,13 @@ import flash.display.Sprite;
             this.gunsA[this.i].ok = this.ok;
             if(this.ok)
             {
-               this.gunsA[this.i].filters = this.game.sample.filters;
+               //this.gunsA[this.i].filters = this.game.sample.filters;
+				// FILTERS
             }
             else
             {
-               this.gunsA[this.i].filters = this.game.sample_no.filters;
+               //this.gunsA[this.i].filters = this.game.sample_no.filters;
+				// FILTERS
             }
             if(this.gunsAt[this.i] == undefined || this.gunsAt[this.i] == null)
             {
@@ -36618,11 +36649,13 @@ import flash.display.Sprite;
             this.gunsB[this.i].ok = this.ok;
             if(this.ok)
             {
-               this.gunsB[this.i].filters = this.game.sample.filters;
+               //this.gunsB[this.i].filters = this.game.sample.filters;
+				// FILTERS
             }
             else
             {
-               this.gunsB[this.i].filters = this.game.sample_no.filters;
+               //this.gunsB[this.i].filters = this.game.sample_no.filters;
+				// FILTERS
             }
             if(this.gunsBt[this.i] == undefined || this.gunsBt[this.i] == null)
             {
@@ -37350,7 +37383,7 @@ import flash.display.Sprite;
             m = new Matrix();
             if(where == 0)
             {
-               m.translate(-(mouseX - this.game.x) / this.game_scale + 200 / scale,-(mouseY - this.game.y) / this.game_scale + 100 / scale);
+               m.translate(-(mouseX - this.game_x) / this.game_scale + 200 / scale,-(mouseY - this.game_y) / this.game_scale + 100 / scale);
             }
             else
             {
