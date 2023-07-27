@@ -24,6 +24,10 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var slots = new<MovieClip>[];
+	   
+	  public var slotstotal = 0;
+	   
 	  public var previous_channel = 0;
 	   
 	  public var game_x = 0;
@@ -40,6 +44,8 @@
 	   
 	  public var topsurfacebox = [];
 	   
+	  public var bgtexture = [];
+	   
 	  public var ledgebox = [];
 	   
 	  public var decorbox = [];
@@ -47,6 +53,8 @@
 	  public var gamedoor = [];
 	   
 	  public var gamebox = [];
+	  
+	  public var bgbox = [];
 	   
 	  public var ui_elements_x = [];
 	   
@@ -74,8 +82,6 @@
 	  
 	  public var gt_m = 0;
 	  
-	  public var gt_timer:Timer = new Timer(1, 0);
-	  
 	  public var rt_counter = 0;
 	  
 	  public var rt_ms_text = "";
@@ -87,8 +93,6 @@
 	  public var rt_h = 0;
 	  
 	  public var rt_m = 0;
-	  
-	  public var rt_timer:Timer = new Timer(1, 0);
 	  
 	  public var start_ms = 0;
 	  
@@ -2927,7 +2931,7 @@
 		 }
       }
   
-	  public function fr_func(param1:Event) {
+	  public function fr_func() {
 		  if(this.LEVEL_END_FORCE == "" && this.fr_real != null) {
 			++this.frames_display;
 			if(getTimer() - this.prev_frames >= 500)
@@ -2941,7 +2945,7 @@
 		  }
 	  }
   
-	  public function gt_func(e:TimerEvent) {
+	  public function gt_func() {
 		  if(this.ui_elements_visible[3] && this.gt_real != null) 
 		  {
 			 if(this.system_non_stop && !this.pauze.visible) {
@@ -2965,20 +2969,20 @@
 					 }
 				
 					 if(String(this.gt_ms_text).length == 1) {
-						this.gt_ms_text = "0" + "0" + this.gt_ms_text;
+						this.gt_ms_text = "0".concat("0", this.gt_ms_text);
 					 }
 					 if(String(this.gt_ms_text).length == 2) {
-						this.gt_ms_text = "0" + this.gt_ms_text;
+						this.gt_ms_text = "0".concat(this.gt_ms_text);
 					 }
 				 
 					 if(String(this.gt_s).length == 1) {
-						 this.gt_s = "0" + this.gt_s;
+						 this.gt_s = "0".concat(this.gt_s);
 					 }
 					 if(String(this.gt_m).length == 1) {
-						 this.gt_m = "0" + this.gt_m;
+						 this.gt_m = "0".concat(this.gt_m);
 					 }
 					 if(String(this.gt_h).length == 1) {
-						 this.gt_h = "0" + this.gt_h;
+						 this.gt_h = "0".concat(this.gt_h);
 					 }
 				 
 				 	 if(String(this.gt_m).length == 0) {
@@ -2986,9 +2990,9 @@
 					 }
 				 
 					 if(this.gt_h <= 0) {
-						this.gt_real.time.text = "GT " + this.gt_m + ":" + this.gt_s + "." + this.gt_ms_text;
+						this.gt_real.time.text = "GT ".concat(this.gt_m, ":", this.gt_s, ".", this.gt_ms_text);
 					 } else {
-						this.gt_real.time.text = "GT " + this.gt_h + " " + this.gt_m + ":" + this.gt_s + "." + this.gt_ms_text;
+						this.gt_real.time.text = "GT ".concat(this.gt_h, " ", this.gt_m, ":", this.gt_s, "." , this.gt_ms_text);
 					 }
 				 }
 			 } else {
@@ -3022,7 +3026,7 @@
 	  }
   
   
-	  public function rt_func(e:TimerEvent) {
+	  public function rt_func() {
 		  if(this.ui_elements_visible[2] && this.rt_real != null) 
 		  {
 			 if(this.LEVEL_END_FORCE != "complete") {
@@ -3046,20 +3050,20 @@
 			 
 				
 				 if(String(this.rt_ms_text).length == 1) {
-					 this.rt_ms_text = "0" + "0" + this.rt_ms_text;
+					 this.rt_ms_text = "0".concat("0", this.rt_ms_text);
 				 }
 				 if(String(this.rt_ms_text).length == 2) {
-					 this.rt_ms_text = "0" + this.rt_ms_text;
+					 this.rt_ms_text = "0".concat(this.rt_ms_text);
 				 }
 			 
 				 if(String(this.rt_s).length == 1) {
-					 this.rt_s = "0" + this.rt_s;
+					 this.rt_s = "0".concat(this.rt_s);
 				 }
 				 if(String(this.rt_m).length == 1) {
-					 this.rt_m = "0" + this.rt_m;
+					 this.rt_m = "0".concat(this.rt_m);
 				 }
 				 if(String(this.rt_h).length == 1) {
-					 this.rt_h = "0" + this.rt_h;
+					 this.rt_h = "0".concat(this.rt_h);
 				 }
 				 
 				 if(String(this.rt_m).length == 0) {
@@ -3067,9 +3071,9 @@
 				 }
 			
 				 if(this.rt_h <= 0) {
-					this.rt_real.time.text = this.rt_m + ":" + this.rt_s + "." + this.rt_ms_text;
+					this.rt_real.time.text = this.rt_m.concat(":", this.rt_s, ".", this.rt_ms_text);
 				 } else {
-					this.rt_real.time.text = this.rt_h + ":" + this.rt_m + ":" + this.rt_s + "." + this.rt_ms_text;
+					this.rt_real.time.text = this.rt_h.concat(":", this.rt_m, ":", this.rt_s, ".", this.rt_ms_text);
 				 }
 			 }
 		  }
@@ -4370,8 +4374,6 @@
       
       public function StartGameTimer() : void
       {
-		 this.last_gun_b4_psi = -1;
-		 this.mens[this.MP_myid].curwea = -1;
          addEventListener(Event.ENTER_FRAME,this.onEnterFrame);
          /*if(this.MP_mode)
          {
@@ -4722,13 +4724,14 @@ import flash.display.Sprite;
          }
       }
       
-      public function BlueHue(param1:String) : ColorMatrixFilter
+      public function BlueHue(param1:String)// : ColorMatrixFilter
       {
+		 return;
          var _loc3_:* = undefined;
          var _loc4_:* = undefined;
          var _loc5_:Number = NaN;
          var _loc6_:* = undefined;
-         var _loc2_:ColorMatrixFilter = new ColorMatrixFilter();
+         //var _loc2_:ColorMatrixFilter = new ColorMatrixFilter();
          if(param1 != "-")
          {
             if(!isNaN(parseInt(param1,10)) && this.clrs[parseInt(param1,10)] != undefined)
@@ -4741,7 +4744,7 @@ import flash.display.Sprite;
                _loc4_ = this.MPclr[param1][1];
                _loc5_ = Number(this.MPclr[param1][2]);
                _loc6_ = (_loc6_ = (_loc6_ = (_loc6_ = (_loc6_ = []).concat([_loc3_ * 0.3,_loc3_ * 0.4 + _loc4_ * 0.2,_loc3_ * 0.6 + _loc5_ * 0.2,0,0])).concat([_loc4_ * 0.3 + _loc3_ * 0.2,_loc4_ * 0.4,_loc4_ * 0.6 + _loc5_ * 0.2,0,0])).concat([_loc5_ * 0.3 + _loc3_ * 0.2,_loc5_ * 0.4 + _loc4_ * 0.2,_loc5_ * 0.6,0,0])).concat([0,0,0,1,0]);
-               _loc2_.matrix = _loc6_;
+               //_loc2_.matrix = _loc6_;
             }
          }
          return _loc2_;
@@ -4749,10 +4752,10 @@ import flash.display.Sprite;
       
       public function UpdatePlayerColorMP(param1:MovieClip, param2:Boolean = false) : void
       {
-         var _loc3_:ColorMatrixFilter = this.BlueHue(param1.palette[0]);
-         var _loc4_:ColorMatrixFilter = this.BlueHue(param1.palette[1]);
-         var _loc5_:ColorMatrixFilter = this.BlueHue(param1.palette[2]);
-         var _loc6_:ColorMatrixFilter = this.BlueHue(param1.palette[3]);
+         //var _loc3_:ColorMatrixFilter = this.BlueHue(param1.palette[0]);
+         //var _loc4_:ColorMatrixFilter = this.BlueHue(param1.palette[1]);
+         //var _loc5_:ColorMatrixFilter = this.BlueHue(param1.palette[2]);
+         //var _loc6_:ColorMatrixFilter = this.BlueHue(param1.palette[3]);
          /*param1.head.filters = new Array(_loc3_);
          param1.body.filters = new Array(_loc6_);
          param1.arm1.upper.filters = new Array(_loc4_);
@@ -5246,18 +5249,16 @@ import flash.display.Sprite;
       {
          return Math.sqrt(param1 * param1 + param2 * param2 + param3 * param3);
       }
-  /*
-	  public function FinishSound(e:Event) {
-		 this.s_channel[this.previous_channel] = null;
-		 removeEventListener(Event.SOUND_COMPLETE, this.FinishSound);
+  
+	  /*public function FinishSound(e) {
 		 var i = 0;
-	     while(i < max_channels) {
-		   if(this.s_channel[i] == null) {
-			   this.last_channel = i;
-			   break;
-		   }
-		   i++;
-	     }
+		 while(i < this.last_channel) {
+			   if(this.s_channel[i] == e.currentTarget) {
+				   this.s_channel[i] = null;
+				   break;
+			   }
+			   i++;
+		 }
 	  }*/
       
       public function PlaySound(param1:*, param2:Number, param3:Number, param4:MovieClip = null) : void
@@ -5272,13 +5273,10 @@ import flash.display.Sprite;
 		 {
 			if(this.game.visible)
 			{
-			   if(this.s_channel[Math.max(0,this.last_channel - 1)] == null) {
-					this.last_channel = this.last_channel - 1;
-			   }
 			   if(this.s_channel[this.last_channel] != null)
 			   {
 				  this.s_channel[this.last_channel].stop();
-			   }
+			   }			   
 			   this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 - 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
 			   this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 + 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
 			   this.vol3d[this.last_channel].volume = this.vol.volume;
@@ -5295,9 +5293,6 @@ import flash.display.Sprite;
 			   this.vol3d[this.last_channel].rightToRight = this.smod;
 			   this.vol3d[this.last_channel].rightToLeft = 0;
 			   this.s_channel[this.last_channel] = src.play(0,0,this.vol3d[this.last_channel]);
-			   /*if(this.s_channel[this.last_channel] != null) {
-					this.s_channel[this.last_channel].addEventListener(Event.SOUND_COMPLETE, this.FinishSound);
-			   }*/
 			   ++this.last_channel;
 			   if(this.last_channel >= this.max_channels)
                {
@@ -5314,13 +5309,11 @@ import flash.display.Sprite;
          {
             if(currentFrameLabel != "gaming" || this.game.visible)
             {
-			   if(this.s_channel[Math.max(0,this.last_channel - 1)] == null) {
-					this.last_channel = this.last_channel - 1;
-			   }
                if(this.s_channel[this.last_channel] != null)
                {
                   this.s_channel[this.last_channel].stop();
                }
+
                this.vol3d[this.last_channel].volume = this.vol.volume;
                if(param1.custom_volume == undefined)
                {
@@ -5334,7 +5327,6 @@ import flash.display.Sprite;
                this.vol3d[this.last_channel].leftToRight = 0;
                this.vol3d[this.last_channel].rightToRight = 1;
                this.vol3d[this.last_channel].rightToLeft = 0;
-			   this.previous_channel = this.last_channel;
                this.s_channel[this.last_channel] = param1.play(0,0,this.vol3d[this.last_channel]);
                ++this.last_channel;
                if(this.last_channel >= this.max_channels)
@@ -5531,11 +5523,11 @@ import flash.display.Sprite;
       public function UpdateWeps() : void
       {
          this.upd_weps_i = 0;
-         while(this.upd_weps_i < 10)
+         while(this.upd_weps_i <= 9)
          {
-            this.weps["gi" + this.upd_weps_i].visible = false;
+            this.slots[this.upd_weps_i].visible = false;
             this.upd_weps_i2 = 0;
-            while(this.upd_weps_i2 < this.gunstotal && !this.weps["gi" + this.upd_weps_i].visible)
+            while(this.upd_weps_i2 < this.gunstotal && !this.slots[this.upd_weps_i].visible)
             {
                if(this.guns[this.upd_weps_i2].io)
                {
@@ -5543,15 +5535,15 @@ import flash.display.Sprite;
                   {
                      if(this.guns[this.upd_weps_i2].wep == this.upd_weps_i)
                      {
-                        this.weps["gi" + this.upd_weps_i].visible = true;
+                        this.slots[this.upd_weps_i].visible = true;
                         if(this.mens[this.MP_myid].curwea == this.upd_weps_i2)
                         {
-                           this.weps["gi" + this.upd_weps_i].alpha = 1;
-                           this.weps["gi" + this.upd_weps_i].gotoAndStop(1);
+                           this.slots[this.upd_weps_i].alpha = 1;
+                           this.slots[this.upd_weps_i].gotoAndStop(1);
                         }
                         else
                         {
-                           this.weps["gi" + this.upd_weps_i].alpha = 0.4;
+                           this.slots[this.upd_weps_i].alpha = 0.4;
                         }
                      }
                   }
@@ -5560,40 +5552,39 @@ import flash.display.Sprite;
             }
             if(this.upd_weps_i == 0)
             {
-               this.weps["gi" + this.upd_weps_i].visible = true;
+               this.slots[this.upd_weps_i].visible = true;
                if(this.mens[this.MP_myid].curwea == -1)
                {
-                  this.weps["gi" + this.upd_weps_i].alpha = 1;
-                  this.weps["gi" + this.upd_weps_i].gotoAndStop(1);
+                  this.slots[this.upd_weps_i].alpha = 1;
+                  this.slots[this.upd_weps_i].gotoAndStop(1);
                }
                else
                {
-                  this.weps["gi" + this.upd_weps_i].alpha = 0.4;
+                  this.slots[this.upd_weps_i].alpha = 0.4;
                }
             }
-            if(this.weps["gi" + this.upd_weps_i].visible)
+            if(this.slots[this.upd_weps_i].visible)
             {
-               this.weps["gi" + this.upd_weps_i].txt.text = this.upd_weps_i;
+               this.slots[this.upd_weps_i].txt.text = this.upd_weps_i;
             }
-            if(this.weps["gi" + this.upd_weps_i].currentFrame == 2)
+            if(this.slots[this.upd_weps_i].currentFrame == 2)
             {
-               this.weps["gi" + this.upd_weps_i].alpha = 0.7;
+               this.slots[this.upd_weps_i].alpha = 0.7;
             }
             ++this.upd_weps_i;
          }
-         this.upd_weps_i = 0;
+         this.upd_weps_i = 10;
          if(this.PLAZMA_GAME)
          {
             if(!this.MP_mode)
             {
-               this.upd_weps_i = 0;
-               while(this.upd_weps_i < 6)
+               this.upd_weps_i = 16;
+               while(this.upd_weps_i <= 27)
                {
-                  this.weps["te" + this.upd_weps_i].visible = false;
-                  this.weps["sh" + this.upd_weps_i].visible = false;
+                  this.slots[this.upd_weps_i].visible = false;
                   ++this.upd_weps_i;
                }
-               this.upd_weps_i = 0;
+               this.upd_weps_i = 10;
                this.upd_weps_i2 = 0;
                while(this.upd_weps_i2 < this.gunstotal)
                {
@@ -5603,9 +5594,9 @@ import flash.display.Sprite;
                      {
                         if(this.guns[this.upd_weps_i2].picken_by == this.MP_myid && !this.guns[this.upd_weps_i2].forcars)
                         {
-                           if(this.upd_weps_i < 6)
+                           if(this.upd_weps_i <= 15)
                            {
-                              this.weps["gr" + this.upd_weps_i].gotoAndStop(1);
+                              this.slots[this.upd_weps_i].gotoAndStop(1);
                               ++this.upd_weps_i;
                            }
                         }
@@ -5613,13 +5604,13 @@ import flash.display.Sprite;
                   }
                   ++this.upd_weps_i2;
                }
-               this.grenades_total = this.upd_weps_i;
+               this.grenades_total = this.upd_weps_i - 10;
             }
             else
             {
-               while(this.upd_weps_i < 6 && this.upd_weps_i < this.grenades_total)
+               while(this.upd_weps_i <= 15 && this.upd_weps_i - 10 < this.grenades_total)
                {
-                  this.weps["gr" + this.upd_weps_i].gotoAndStop(1);
+                  this.slots[this.upd_weps_i].gotoAndStop(1);
                   ++this.upd_weps_i;
                }
                if(!this.MP_spectator)
@@ -5649,47 +5640,45 @@ import flash.display.Sprite;
                }
             }
             this.upd_weps_i;
-            while(this.upd_weps_i < 6)
+            while(this.upd_weps_i <= 15)
             {
-               this.weps["gr" + this.upd_weps_i].gotoAndStop(2);
+               this.slots[this.upd_weps_i].gotoAndStop(2);
                ++this.upd_weps_i;
             }
             if(this.MP_mode)
             {
-               this.upd_weps_i = 0;
-               while(this.upd_weps_i < 6 && this.upd_weps_i < this.grenades_port_total)
+               this.upd_weps_i = 16;
+               while(this.upd_weps_i <= 21 && this.upd_weps_i - 16 < this.grenades_port_total)
                {
-                  this.weps["te" + this.upd_weps_i].gotoAndStop(1);
+                  this.slots[this.upd_weps_i].gotoAndStop(1);
                   ++this.upd_weps_i;
                }
-               this.upd_weps_i;
-               while(this.upd_weps_i < 6)
+               this.upd_weps_i = 16;
+               while(this.upd_weps_i <= 21)
                {
-                  this.weps["te" + this.upd_weps_i].gotoAndStop(2);
+                  this.slots[this.upd_weps_i].gotoAndStop(2);
                   ++this.upd_weps_i;
                }
-               this.upd_weps_i = 0;
-               while(this.upd_weps_i < 6 && this.upd_weps_i < this.grenades_sh_total)
+               this.upd_weps_i = 22;
+               while(this.upd_weps_i <= 27 && this.upd_weps_i - 22 < this.grenades_sh_total)
                {
-                  this.weps["sh" + this.upd_weps_i].gotoAndStop(1);
+                  this.slots[this.upd_weps_i].gotoAndStop(1);
                   ++this.upd_weps_i;
                }
-               this.upd_weps_i;
-               while(this.upd_weps_i < 6)
+               this.upd_weps_i = 22;
+               while(this.upd_weps_i <= 27)
                {
-                  this.weps["sh" + this.upd_weps_i].gotoAndStop(2);
+                  this.slots[this.upd_weps_i].gotoAndStop(2);
                   ++this.upd_weps_i;
                }
             }
          }
          else
          {
-            this.upd_weps_i = 0;
-            while(this.upd_weps_i < 6)
+            this.upd_weps_i = 10;
+            while(this.upd_weps_i <= 27)
             {
-               this.weps["gr" + this.upd_weps_i].visible = false;
-               this.weps["te" + this.upd_weps_i].visible = false;
-               this.weps["sh" + this.upd_weps_i].visible = false;
+               this.slots[this.upd_weps_i].visible = false;
                ++this.upd_weps_i;
             }
          }
@@ -6885,30 +6874,32 @@ import flash.display.Sprite;
       {
          var _loc5_:* = undefined;
          var _loc4_:* = getTimer();
-         if(param3 || _loc4_ > (param1.last_say_sound || 0) + 500)
-         {
-            param1.last_say_sound = _loc4_;
-            if(param1.voice_channel != null)
-            {
-               param1.voice_channel.stop();
-            }
-            param1.voice_channel = param2.play();
-            if(param1.voice_channel != null)
-            {
-               this.smod = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 - 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
-               this.smod2 = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 + 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
-               if(param2.custom_volume == undefined)
-               {
-                  param2.custom_volume = 1;
-               }
-               (_loc5_ = new SoundTransform(this.FX_VOLUME * Number(param2.custom_volume))).leftToLeft = this.smod2;
-               _loc5_.leftToRight = 0;
-               _loc5_.rightToRight = this.smod;
-               _loc5_.rightToLeft = 0;
-               param1.voice_channel.soundTransform = _loc5_;
-            }
-            return;
-         }
+		 if(this.NONMUTE && this.FX_VOLUME != 0) {
+			 if(param3 || _loc4_ > (param1.last_say_sound || 0) + 500)
+			 {
+				param1.last_say_sound = _loc4_;
+				if(param1.voice_channel != null)
+				{
+				   param1.voice_channel.stop();
+				}
+				param1.voice_channel = param2.play();
+				if(param1.voice_channel != null)
+				{
+				   this.smod = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 - 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
+				   this.smod2 = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 + 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
+				   if(param2.custom_volume == undefined)
+				   {
+					  param2.custom_volume = 1;
+				   }
+				   (_loc5_ = new SoundTransform(this.FX_VOLUME * Number(param2.custom_volume))).leftToLeft = this.smod2;
+				   _loc5_.leftToRight = 0;
+				   _loc5_.rightToRight = this.smod;
+				   _loc5_.rightToLeft = 0;
+				   param1.voice_channel.soundTransform = _loc5_;
+				}
+				return;
+			 }
+		 }
       }
       
       public function SimHitSound(param1:MovieClip, param2:Number, param3:Number, param4:int) : void
@@ -7167,6 +7158,12 @@ import flash.display.Sprite;
          this.arad[param1.b_head_end] *= _loc3_;
          this.RedrawPsi(param1.idd);
       }
+  
+	  public function create_slots(param1:MovieClip,param2) : void
+	  {
+		 this.slots[param2] = param1;
+		  
+	  }
       
       public function create_player(param1:MovieClip, param2:Number, param3:Number) : void
       {
@@ -9330,13 +9327,13 @@ import flash.display.Sprite;
                if(a == "bg")
                {
                   foreground = b["#f"] == "1" || b["#f"] == "true";
-                  sprite_to_draw_at = foreground ? mShape_front : this.mShape;
+                  //this.bgbox[this.bgstotal] = foreground ? mShape_front : this.mShape;
+				  this.bgtexture[this.bgstotal] = new Sprite();
                   if(b["#a"] != "-1" && b["#a"] != "" && b["#a"] != undefined)
                   {
-                     sprite_to_draw_at = new Sprite();
                      this.attachments.push({
                         "parent":b["#a"],
-                        "child":sprite_to_draw_at,
+                        "child":this.bgtexture[this.bgstotal],
                         "type":1,
                         "foreground":foreground
                      });
@@ -9480,12 +9477,12 @@ import flash.display.Sprite;
                            bitmap_data.colorTransform(bitmap_data.rect,new ColorTransform((dec >> 16 & 255) / 255 * 2,(dec >> 8 & 255) / 255 * 2,(dec & 255) / 255 * 2));
                         }
                      }
-                     sprite_to_draw_at.graphics.beginBitmapFill(bitmap_data,matr,true,true);
-                     sprite_to_draw_at.graphics.moveTo(Number(b["#x"]),Number(b["#y"]));
-                     sprite_to_draw_at.graphics.lineTo(Number(b["#x"]) + Number(b["#w"]),Number(b["#y"]));
-                     sprite_to_draw_at.graphics.lineTo(Number(b["#x"]) + Number(b["#w"]),Number(b["#y"]) + Number(b["#h"]));
-                     sprite_to_draw_at.graphics.lineTo(Number(b["#x"]),Number(b["#y"]) + Number(b["#h"]));
-                     sprite_to_draw_at.graphics.endFill();
+                     this.bgtexture[this.bgstotal].graphics.beginBitmapFill(bitmap_data,matr,true,true);
+                     this.bgtexture[this.bgstotal].graphics.moveTo(Number(b["#x"]),Number(b["#y"]));
+                     this.bgtexture[this.bgstotal].graphics.lineTo(Number(b["#x"]) + Number(b["#w"]),Number(b["#y"]));
+                     this.bgtexture[this.bgstotal].graphics.lineTo(Number(b["#x"]) + Number(b["#w"]),Number(b["#y"]) + Number(b["#h"]));
+                     this.bgtexture[this.bgstotal].graphics.lineTo(Number(b["#x"]),Number(b["#y"]) + Number(b["#h"]));
+                     this.bgtexture[this.bgstotal].graphics.endFill();
                   }
                   if(this.spec_debug)
                   {
@@ -10920,6 +10917,15 @@ import flash.display.Sprite;
 			   }
                i++;
             }
+		
+			i = 0;
+			while(i < this.bgstotal) {
+				if(this.bgtexture[i] != undefined) {
+					this.bgbox[i] = this.mShape.addChildAt(this.bgtexture[i],this.mShape.numChildren);
+				}
+				i++;
+			}		
+		
             this.cx = (this.g_maxx - this.g_minx) / 20;
             this.cy = (this.g_maxy - this.g_miny) / 20;
             this.temp = this.graphics_3d.addChildAt(this.mShape,this.graphics_3d.numChildren);
@@ -11700,7 +11706,7 @@ import flash.display.Sprite;
                   ++this.i2;
                }
                i++;
-            }
+            }		
             this.temp = this.graphics_3d.addChildAt(this.mShape,this.graphics_3d.numChildren);
 			i = 0;
 			while(i < this.boxestotal) {
@@ -11712,6 +11718,7 @@ import flash.display.Sprite;
 				}
 				i++;
 			}
+		
             loadmap_stage = "13";
             traces_start = Number(getTimer());
             if(this.HQ)
@@ -12221,7 +12228,7 @@ import flash.display.Sprite;
          var id:Number = NaN;
          var custom_image:Object = null;
          var sf:* = undefined;
-         var clrs_mov:ColorMatrixFilter = null;
+         //var clrs_mov:ColorMatrixFilter = null;
          var matrix:* = undefined;
          var loader:* = undefined;
          var request:URLRequest = null;
@@ -13784,13 +13791,13 @@ import flash.display.Sprite;
                            red = (hex & 16711680) >> 16;
                            green = (hex & 65280) >> 8;
                            blue = hex & 255;
-                           clrs_mov = new ColorMatrixFilter();
+                           //clrs_mov = new ColorMatrixFilter();
                            matrix = [];
                            matrix = matrix.concat([1,0,0,0,red]);
                            matrix = matrix.concat([0,1,0,0,green]);
                            matrix = matrix.concat([0,0,1,0,blue]);
                            matrix = matrix.concat([0,0,0,1,0]);
-                           clrs_mov.matrix = matrix;
+                           //clrs_mov.matrix = matrix;
                            //block.filters = new Array(clrs_mov);
 						   // FILTERS
                         }
@@ -16049,6 +16056,7 @@ import flash.display.Sprite;
       
       public function HurtMyPlayer(param1:Number, param2:Number, param3:Number) : void
       {
+		 var hurt_0;
          if(this.PSYCHOBLOOD_MODE == 1)
          {
             if(this.Math_abs(param1) > this.Math_abs(param2))
@@ -16073,11 +16081,12 @@ import flash.display.Sprite;
             this.hurt_i4 = 0;
             while(this.hurt_i4 < 4)
             {
-               this._root["pb" + this.hurt_i4].alpha += param3 * 0.015;
-               this._root["pb" + this.hurt_i4].visible = true;
-               if(this._root["pb" + this.hurt_i4].alpha > 0.9)
+			   hurt_0 = "pb".concat(this.hurt_i4);
+               this._root[hurt_0].alpha += param3 * 0.015;
+               this._root[hurt_0].visible = true;
+               if(this._root[hurt_0].alpha > 0.9)
                {
-                  this._root["pb" + this.hurt_i4].alpha = 0.9;
+                  this._root[hurt_0].alpha = 0.9;
                }
                ++this.hurt_i4;
             }
@@ -16109,10 +16118,11 @@ import flash.display.Sprite;
                this.hurt_i4 = 0;
                while(this.hurt_i4 < 5)
                {
+				  hurt_0 = "pb" + this.hurt_i4;
                   this.pb4.visible = true;
-                  if(this._root["pb" + this.hurt_i4].alpha > 0.9)
+                  if(this._root[hurt_0].alpha > 0.9)
                   {
-                     this._root["pb" + this.hurt_i4].alpha = 0.9;
+                     this._root[hurt_0].alpha = 0.9;
                   }
                   ++this.hurt_i4;
                }
@@ -16122,10 +16132,11 @@ import flash.display.Sprite;
                this.hurt_i4 = 0;
                while(this.hurt_i4 < 4)
                {
+				  hurt_0 = "pb" + this.hurt_i4;
                   this.pb4.visible = true;
-                  if(this._root["pb" + this.hurt_i4].alpha > 0.9)
+                  if(this._root[hurt_0].alpha > 0.9)
                   {
-                     this._root["pb" + this.hurt_i4].alpha = 0.9;
+                     this._root[hurt_0].alpha = 0.9;
                   }
                   ++this.hurt_i4;
                }
@@ -30897,8 +30908,14 @@ import flash.display.Sprite;
                this.PlayerLogic();
                this.ThinkOfFlakes();
                this.EffectsLogic();
+		   
 			   this.updateEffects();
 			   this.updateMap();
+
+			   this.fr_func();
+			   this.gt_func();
+			   this.rt_func();
+		   
                if(this.lock_camera_intensity > 0)
                {
                   if(this.lock_camera_intensity > 1)
@@ -31239,6 +31256,25 @@ import flash.display.Sprite;
 				   i++;
 			   }
 		   
+			   i = 0;
+			   while(i < this.bgstotal) {
+				   if(this.bgbox != undefined) {
+					   if(this.bgx[i] + (this.bgw[i] * 100) < this.render_minX || this.bgx[i] > this.render_maxX) {
+						   if(!this.bgbox[i].visible) {
+							   i++;
+							   continue;
+						   }
+						   this.bgbox[i].visible = false;
+					   } else {
+						   if(this.bgbox[i].visible) {
+							   i++;
+							   continue;
+						   }
+						   this.bgbox[i].visible = true;
+					   }
+					   i++;
+				   }
+			   }
 		   
                /*if(this.game.contains(this.ef[this.nextef]))
                {
@@ -33106,7 +33142,7 @@ import flash.display.Sprite;
                                                                            {
                                                                               if(this.mc.wep <= 9)
                                                                               {
-                                                                                 this.weps["gi" + this.mc.wep].gotoAndStop(2);
+                                                                                 this.slots[this.mc.wep].gotoAndStop(2);
                                                                               }
                                                                            }
                                                                         }
@@ -34717,13 +34753,6 @@ import flash.display.Sprite;
                               }
                               this.FUN_TIME_SPEND = 0;
 							  this.SaveGame();
-						  
-							  removeEventListener(Event.ENTER_FRAME,this.fr_func);
-							  this.gt_timer.removeEventListener(TimerEvent.TIMER, this.gt_func);
-							  this.gt_timer.stop();
-							  this.rt_timer.removeEventListener(TimerEvent.TIMER, this.rt_func);
-							  this.rt_timer.stop();
-
                               gotoAndStop("main");
                            }
                            if(this.LEVEL_END_FORCE == "complete")
@@ -34738,11 +34767,6 @@ import flash.display.Sprite;
                               catch(e:*)
                               {
                               }
-							  removeEventListener(Event.ENTER_FRAME,this.fr_func);
-							  this.gt_timer.stop();
-							  this.rt_timer.stop();
-							  this.gt_timer.removeEventListener(TimerEvent.TIMER, this.gt_func);
-							  this.rt_timer.removeEventListener(TimerEvent.TIMER, this.rt_func);
                               if(this.MP_mode)
                               {
                                  gotoAndStop("channel");
@@ -34859,7 +34883,7 @@ import flash.display.Sprite;
       
       public function UpdateGravitatorVol() : void
       {
-         if(this.NONMUTE)
+         if(this.NONMUTE && this.FX_VOLUME != 0)
          {
             if(this.grav_working)
             {
@@ -36148,16 +36172,16 @@ import flash.display.Sprite;
       public function UpdateMenuHue() : void
       {
          var _loc1_:AdjustColor = null;
-         var _loc2_:ColorMatrixFilter = null;
+         //var _loc2_:ColorMatrixFilter = null;
          var _loc3_:Array = null;
          _loc1_ = new AdjustColor();
          _loc1_.brightness = 0;
          _loc1_.contrast = 0;
          _loc1_.hue = this.menu_hue;
          _loc1_.saturation = 0;
-         _loc2_ = new ColorMatrixFilter(_loc1_.CalculateFinalFlatArray());
+         //_loc2_ = new ColorMatrixFilter(_loc1_.CalculateFinalFlatArray());
          _loc3_ = [];
-         _loc3_.push(_loc2_);
+         //_loc3_.push(_loc2_);
          /*this.earth.filters = _loc3_;
          this.menu_buttons.filters = _loc3_;
          this.errmenu.filters = _loc3_;*/
@@ -36416,13 +36440,11 @@ import flash.display.Sprite;
             this.gunsA[this.i].ok = this.ok;
             if(this.ok)
             {
-               //this.gunsA[this.i].filters = this.game.sample.filters;
-				// FILTERS
+               this.gunsA[this.i].filters = this.game.sample.filters;
             }
             else
             {
-               //this.gunsA[this.i].filters = this.game.sample_no.filters;
-				// FILTERS
+               this.gunsA[this.i].filters = this.game.sample_no.filters;
             }
             if(this.gunsAt[this.i] == undefined || this.gunsAt[this.i] == null)
             {
@@ -36661,13 +36683,11 @@ import flash.display.Sprite;
             this.gunsB[this.i].ok = this.ok;
             if(this.ok)
             {
-               //this.gunsB[this.i].filters = this.game.sample.filters;
-				// FILTERS
+               this.gunsB[this.i].filters = this.game.sample.filters;
             }
             else
             {
-               //this.gunsB[this.i].filters = this.game.sample_no.filters;
-				// FILTERS
+               this.gunsB[this.i].filters = this.game.sample_no.filters;
             }
             if(this.gunsBt[this.i] == undefined || this.gunsBt[this.i] == null)
             {
