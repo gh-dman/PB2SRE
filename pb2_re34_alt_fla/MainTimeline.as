@@ -24,6 +24,8 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var LESS_NOISE = false;
+	   
 	  public var slots = new<MovieClip>[];
 	   
 	  public var slotstotal = 0;
@@ -4847,6 +4849,7 @@ import flash.display.Sprite;
             this.my_so.data["fx_vol"] = 0.5;
             this.my_so.data["music_vol"] = 0.5;
             this.my_so.data["CUSTOM_MUSIC_VOLUME"] = 0.5;
+			this.my_so.data["LESS_NOISE"] = false;
             this.my_so.data["hq"] = true;
             this.my_so.data["easy_mode"] = false;
             this.my_so.data["pro_bots"] = false;
@@ -4955,6 +4958,7 @@ import flash.display.Sprite;
          this.FX_VOLUME = Number(this.my_so.data["fx_vol"]);
          this.MUSIC_VOLUME = Number(this.my_so.data["music_vol"]);
          this.CUSTOM_MUSIC_VOLUME = Number(this.my_so.data["CUSTOM_MUSIC_VOLUME"]);
+		 this.LESS_NOISE = this.my_so.data["LESS_NOISE"];
          this.HQ = Boolean(this.my_so.data["hq"]);
          this.EASY_MODE = Boolean(this.my_so.data["easy_mode"]);
          this.LOW_HPS = Boolean(this.my_so.data["LOW_HPS"]);
@@ -5199,6 +5203,7 @@ import flash.display.Sprite;
          this.my_so.data["music_vol"] = this.MUSIC_VOLUME;
          this.my_so.data["CUSTOM_MUSIC_VOLUME"] = this.CUSTOM_MUSIC_VOLUME;
          this.my_so.data["hq"] = this.HQ;
+	     this.my_so.data["LESS_NOISE"] = this.LESS_NOISE;
          this.my_so.data["mouse_wheel"] = this.MOUSE_WHEEL;
          this.my_so.data["OVERSCROLL"] = this.OVERSCROLL;
          this.my_so.data["RECONNECT_ON_LOST_CONNECTION"] = this.RECONNECT_ON_LOST_CONNECTION;
@@ -6874,7 +6879,7 @@ import flash.display.Sprite;
       {
          var _loc5_:* = undefined;
          var _loc4_:* = getTimer();
-		 if(this.NONMUTE && this.FX_VOLUME != 0) {
+		 if(this.NONMUTE && this.FX_VOLUME != 0 && !this.LESS_NOISE) {
 			 if(param3 || _loc4_ > (param1.last_say_sound || 0) + 500)
 			 {
 				param1.last_say_sound = _loc4_;
@@ -20766,1186 +20771,1192 @@ import flash.display.Sprite;
          var _loc6_:String = null;
          var _loc7_:Number = NaN;
          var _loc8_:Number = NaN;
-		 if (param1.keyCode == 13) trace("uh oh");
-         this.VarChangePreventStart();
-         if(this.last_key_code != param1.keyCode)
-         {
-            this.last_key_code = param1.keyCode;
-            this.keys_are_being_pressed = true;
-         }
-         if(param1.keyCode == Keyboard.CONTROL)
-         {
-            this.key_ctrl = true;
-         }
-         if(currentLabel == "intro")
-         {
-            if(param1.keyCode == 27)
-            {
-               // intr.removeChild(vidobj);
-               // nc.close();
-               // ns.close();
-               gotoAndStop("ads");
-            }
-         }
-         /*if(currentLabel == "loginform")
-         {
-            if(param1.keyCode == 13 || param1.keyCode == 32 && stage.focus != this.flogin && stage.focus != this.fpassword)
-            {
-               this.proceed();
-            }
-         }*/
-         if(currentLabel == "gaming")
-         {
-            if(param1.keyCode == 112)
-            {
-               this.TakeScreenShot(0,0.75);
-            }
-            else if(!this.MP_mode)
-            {
-               if(param1.keyCode == 113)
-               {
-                  this.TakeScreenShot(0,0.5);
-               }
-               else if(param1.keyCode == 114)
-               {
-                  this.TakeScreenShot(0,0.25);
-               }
-               else if(param1.keyCode == 115)
-               {
-                  this.TakeScreenShot(0,0.1);
-               }
-            }
-			if(param1.keyCode == 82 && !this.MP_mode) {
-               GotoMap(CUR_LOADING);
-			}
-            if(param1.keyCode == 27)
-            {
-               if(!this.gamemenu.visible)
-               {
-                  if(!this.MP_mode)
-                  {
-                     this.system_non_stop = false;
-                     if(this.MP_myid < this.playerstotal && !this.mens[this.MP_myid].dead)
-                     {
-                        this.pauze.visible = true;
-                     }
-                     this.stoped_by_focus = false;
-                  }
-                  this.gamemenu.visible = true;
-                  this.myCursor.alpha = 1;
-               }
-               else if(this.conmenu_set.visible)
-               {
-                  this.conmenu_set.visible = false;
-               }
-               else if(this.conmenu.visible)
-               {
-                  this.conmenu.visible = false;
-               }
-               else
-               {
-                  if(!this.MP_mode)
-                  {
-                     this.system_non_stop = true;
-                     if(this.MP_myid < this.playerstotal && !this.mens[this.MP_myid].dead)
-                     {
-                        this.pauze.visible = false;
-                     }
-                  }
-                  this.gamemenu.visible = false;
-               }
-            }
-            if(this.trigger_to_key_binds_down[param1.keyCode] != undefined)
-            {
-               this.EXEC_TRIGGER(this.trigger_to_key_binds_down[param1.keyCode]);
-            }
-            if(param1.keyCode == 9 || param1.keyCode == 35)
-            {
-               if(this.MP_mode)
-               {
-                  if(!this.herolist.visible)
-                  {
-                     _loc2_ = 0;
-                     while(_loc2_ < this.MP_playerstotal)
-                     {
-                        this.UpdateHeroList(_loc2_);
-                        _loc2_++;
-                     }
-                     this.herolist.visible = true;
-                  }
-               }
-               else if(this.CASUAL_MODE)
-               {
-                  this.ok = true;
-                  _loc2_ = this.MP_myid;
-                  this.i4 = _loc2_ + 1;
-                  while(this.i4 != _loc2_ && this.ok)
-                  {
-                     if(this.i4 >= this.playerstotal)
-                     {
-                        this.i4 = 0;
-                     }
-                     else
-                     {
-                        if(this.mens[this.i4].io)
-                        {
-                           if(this.mens[this.i4].team == this.mens[this.MP_myid].team)
-                           {
-                              if(this.mens[this.i4].hea > 0)
-                              {
-                                 if(!this.mens[this.i4].dying)
-                                 {
-                                    this.ok = false;
-                                    this.MP_myid = this.i4;
-                                    this.GSPEED = 0.01;
-                                    this.new_active.visible = true;
-                                    this.new_active.gotoAndPlay(1);
-                                    this.PlaySound_full(this.s_team_switch);
-                                    this.mens[this.i4].isplayer = true;
-                                    this.mens[_loc2_].isplayer = false;
-                                    this.UpdateWeps();
-                                 }
-                              }
-                           }
-                        }
-                        ++this.i4;
-                     }
-                  }
-               }
-            }
-            if(this.MP_spectator)
-            {
-               this.VarChangePreventEnd();
-               return;
-            }
-            if(param1.keyCode == 13 || this.MP_mode && param1.keyCode == 84 && !this.MP_chat_input)
-            {
-               if(this.MP_chat_input && param1.keyCode == 13)
-               {
-                  this.MP_chat_input = false;
-                  this.chat_win.gamechat_input.text = "";
-                  if(!this.MP_mode || this.gamechat_input_text == "bot 1" || this.gamechat_input_text == "bot 0")
-                  {
-                     if(this.gamechat_input_text.length > 0)
-                     {
-                        if(false/*this.FORCE_CUSTOM_MAP*/)
-                        {
-                           this.ChatNewMsg("<font color=\"#78DBE2\">" + this.mens[this.MP_myid].nick + "</font><font color=\"#FFFFFF\">: " + this.gamechat_input_text + "</font>");
-                           this.PlaySound_full(this.s_chat);
-                           this.UserSays(this.MP_myid,this.gamechat_input_text);
-                        }
-                        else
-                        {
-                           this.ChatNewMsg(this.new_nick2 + this.gamechat_input_text);
-                           this.ok = true;
-                           if(this.gamechat_input_text == "god 1" || this.gamechat_input_text == "god")
-                           {
-                              this.mens[this.MP_myid].hmax *= 100000;
-                              this.mens[this.MP_myid].hea = this.mens[this.MP_myid].hmax;
-                              if(this.mens[this.MP_myid].dead)
-                              {
-                                 this.mens[this.MP_myid].dead = false;
-                              }
-                              if(this.mens[this.MP_myid].dying)
-                              {
-                                 this.mens[this.MP_myid].dying = false;
-                              }
-                              this.Hurt_nopain(this.MP_myid);
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "gm")
-                           {
-                              this.ARCADE_GAME_MODE = !this.ARCADE_GAME_MODE;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "grow")
-                           {
-                              this.SetPlayerScale(this.mens[this.MP_myid],Number(this.mens[this.MP_myid].scale) * 1.25);
-                              this.mens[this.MP_myid].hmax *= 1.25 * 1.25;
-                              this.mens[this.MP_myid].hea *= 1.25 * 1.25;
-                              this.game_scale /= 1.25;
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "shrink")
-                           {
-                              this.SetPlayerScale(this.mens[this.MP_myid],Number(this.mens[this.MP_myid].scale) / 1.25);
-                              this.mens[this.MP_myid].hmax /= 1.25 * 1.25;
-                              this.mens[this.MP_myid].hea /= 1.25 * 1.25;
-                              this.game_scale *= 1.25;
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "grow enemies")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(_loc2_ != this.MP_myid)
-                                 {
-                                    this.SetPlayerScale(this.mens[_loc2_],Number(this.mens[_loc2_].scale) * 1.25);
-                                    this.mens[_loc2_].hmax *= 1.25 * 1.25;
-                                    this.mens[_loc2_].hea *= 1.25 * 1.25;
-                                 }
-                                 _loc2_++;
-                              }
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "shrink enemies")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(_loc2_ != this.MP_myid)
-                                 {
-                                    this.SetPlayerScale(this.mens[_loc2_],Number(this.mens[_loc2_].scale) / 1.25);
-                                    this.mens[_loc2_].hmax /= 1.25 * 1.25;
-                                    this.mens[_loc2_].hea /= 1.25 * 1.25;
-                                 }
-                                 _loc2_++;
-                              }
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text.indexOf("give ") == 0)
-                           {
-                              _loc3_ = this.gamechat_input_text.substr(5);
-                              this.mc = this.MakeGunByClass(_loc3_,{
-                                 "x":this.mens[this.MP_myid].x,
-                                 "y":this.mens[this.MP_myid].y,
-                                 "upg":3,
-                                 "command":-1
-                              });
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text.indexOf("skin enemies ") == 0)
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(_loc2_ != this.MP_myid)
-                                 {
-                                    _loc4_ = int(this.gamechat_input_text.substr(13));
-                                    this.mc = this.mens[_loc2_];
-                                    this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "-";
-                                    this.mc.char = _loc4_;
-                                    this.mc.mdl_head = this.mc.char;
-                                    this.mc.mdl_leg1_upper = this.mc.char;
-                                    this.mc.mdl_leg1_middle = this.mc.char;
-                                    this.mc.mdl_leg1_lower = this.mc.char;
-                                    this.mc.mdl_leg2_upper = this.mc.char;
-                                    this.mc.mdl_leg2_middle = this.mc.char;
-                                    this.mc.mdl_leg2_lower = this.mc.char;
-                                    this.mc.mdl_arm1_upper = this.mc.char;
-                                    this.mc.mdl_arm1_lower = this.mc.char;
-                                    this.mc.mdl_arm2_upper = this.mc.char;
-                                    this.mc.mdl_arm2_lower = this.mc.char;
-                                    this.mc.mdl_toe = this.mc.char;
-                                    this.mc.mdl_body = this.mc.char;
-                                    this.mc.alpha = 1;
-                                    this.UpdateCharProps(this.mc);
-                                    this.SpawnPlayerImmediately(this.mc);
-                                 }
-                                 _loc2_++;
-                              }
-                           }
-                           else if(this.gamechat_input_text.indexOf("skin ") == 0)
-                           {
-                              _loc2_ = this.MP_myid;
-                              _loc4_ = int(this.gamechat_input_text.substr(5));
-                              this.mc = this.mens[_loc2_];
-                              this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "-";
-                              this.mc.char = _loc4_;
-                              this.mc.mdl_head = this.mc.char;
-                              this.mc.mdl_leg1_upper = this.mc.char;
-                              this.mc.mdl_leg1_middle = this.mc.char;
-                              this.mc.mdl_leg1_lower = this.mc.char;
-                              this.mc.mdl_leg2_upper = this.mc.char;
-                              this.mc.mdl_leg2_middle = this.mc.char;
-                              this.mc.mdl_leg2_lower = this.mc.char;
-                              this.mc.mdl_arm1_upper = this.mc.char;
-                              this.mc.mdl_arm1_lower = this.mc.char;
-                              this.mc.mdl_arm2_upper = this.mc.char;
-                              this.mc.mdl_arm2_lower = this.mc.char;
-                              this.mc.mdl_toe = this.mc.char;
-                              this.mc.mdl_body = this.mc.char;
-                              this.mc.alpha = 1;
-                              this.UpdateCharProps(this.mc);
-                              this.SpawnPlayerImmediately(this.mc);
-                           }
-                           if(this.gamechat_input_text == "quick start")
-                           {
-                              this.CMPG_money = 999999;
-                              if(this.LEVELS_PASSED < this.LEVELS_TOTAL)
-                              {
-                                 this.LEVELS_PASSED = this.LEVELS_TOTAL;
-                              }
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text.indexOf("hero1skin ") != -1)
-                           {
-                              this.skin_model[0] = int(this.gamechat_input_text.split(" ")[1]);
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text.indexOf("hero2skin ") != -1)
-                           {
-                              this.skin_model[1] = int(this.gamechat_input_text.split(" ")[1]);
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no players")
-                           {
-                              this.playerstotal = 1;
-                              this.MP_myid = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no barrels")
-                           {
-                              this.barrelstotal = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no vehicles")
-                           {
-                              this.vehiclestotal = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no lights" || this.gamechat_input_text == "no lamps")
-                           {
-                              this.lampstotal = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no guns")
-                           {
-                              this.gunstotal = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "debug" || this.gamechat_input_text == "debug 1")
-                           {
-                              this.DEBUG_MODE = true;
-                              this.debug_screen.visible = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "debug 0")
-                           {
-                              this.DEBUG_MODE = false;
-                              this.debug_screen.graphics.clear();
-                              this.debug_screen.visible = false;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "god 0")
-                           {
-                              this.mens[this.MP_myid].hea /= 100000;
-                              this.mens[this.MP_myid].hmax /= 100000;
-                              this.Hurt_nopain(this.MP_myid);
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "headshot")
-                           {
-                              this.xx = this.mens[this.MP_myid].hea;
-                              this.mens[this.MP_myid].hp_head = 0;
-                              this.Hurt(this.MP_myid);
-                              this.mens[this.MP_myid].hea = this.xx;
-                              this.mens[this.MP_myid].dead = false;
-                              this.mens[this.MP_myid].dying = false;
-                              this.mens[this.MP_myid].stability = -2;
-                              this.atoy[this.mens[this.MP_myid].b_head_end] -= 10;
-                              this.atox[this.mens[this.MP_myid].b_head_end] -= Number(this.mens[this.MP_myid].side) * 5;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "friends")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(this.mens[_loc2_].io)
-                                 {
-                                    this.mens[_loc2_].team = 0;
-                                 }
-                                 _loc2_++;
-                              }
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "dm")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(this.mens[_loc2_].io)
-                                 {
-                                    this.mens[_loc2_].team = _loc2_;
-                                 }
-                                 _loc2_++;
-                              }
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "kill enemies")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(this.mens[_loc2_].io)
-                                 {
-                                    if(this.mens[_loc2_].team != this.mens[this.MP_myid].team)
-                                    {
-                                       this.mens[_loc2_].hea = 0;
-                                       this.Hurt_nopain(_loc2_);
-                                    }
-                                 }
-                                 _loc2_++;
-                              }
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "hyper jump")
-                           {
-                              this.mens[this.MP_myid].toy = -25;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "over fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 5;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "uber fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 4;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "extra fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 3;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "very fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 2;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "faster")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 1.5;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 1.25;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "normal")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = false;
-                           }
-                           if(this.gamechat_input_text == "slow")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 0.75;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "slower")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 0.5;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "very slow")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 0.25;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "zoom 100")
-                           {
-                              this.game_scale = 1;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "zoom 200")
-                           {
-                              this.game_scale = 2;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "zoom 50")
-                           {
-                              this.game_scale = 0.5;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "zoom 25")
-                           {
-                              this.game_scale = 0.25;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "give all")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.inventoryC.length)
-                              {
-                                 this.mc = this.MakeGunByClass(this.inventoryC[_loc2_].mdl,{
-                                    "x":this.mens[this.MP_myid].x,
-                                    "y":this.mens[this.MP_myid].y,
-                                    "upg":this.inventoryC[_loc2_].upg,
-                                    "command":-1
-                                 });
-                                 _loc2_++;
-                              }
-                              if(!this.FORCE_CUSTOM_MAP)
-                              {
-                                 this.IM_A_CHEATER = true;
-                              }
-                              this.ok = false;
-                           }
-                           if(this.ok)
-                           {
-                              this.ChatNewMsg("bash: " + this.gamechat_input_text + ": command not found");
-                              this.PlaySound_full(this.s_chat);
-                           }
-                           else
-                           {
-                              this.BADGES_ENABLED = false;
-                           }
-                           if(this.IM_A_CHEATER)
-                           {
-							   this.IM_A_CHEATER = false;
-                              // this.ShowNoAch();
-                              // this.SaveGame();
-                           }
-                           this.UserSays(this.MP_myid,this.gamechat_input_text);
-                        }
-                     }
-                     if(this.gamechat_input_text == "render 0")
-                     {
-                        this.game.visible = false;
-                        this.graphics_3d_front.visible = false;
-                        this.graphics_3d.visible = false;
-                        this.sky.visible = false;
-                     }
-                     if(this.gamechat_input_text == "render 1")
-                     {
-                        this.game.visible = true;
-                        this.graphics_3d_front.visible = true;
-                        this.graphics_3d.visible = true;
-                        this.sky.visible = true;
-                     }
-                     if(this.gamechat_input_text == "bot 1")
-                     {
-                        this.MP_half_bot = true;
-                        if(this.MP_mode)
-                        {
-                           this.EASY_MODE = true;
-                           this.PRO_BOTS = false;
-                           this.LOW_HPS = false;
-                        }
-                     }
-                     if(this.gamechat_input_text == "bot 0")
-                     {
-                        this.MP_half_bot = false;
-                     }
-                     if(this.gamechat_input_text == "kill")
-                     {
-                        this.mens[this.MP_myid].hp_head = 0;
-                        this.Hurt(this.MP_myid);
-                        this.mens[this.MP_myid].hea = 0;
-                     }
-                  }
-                  else
-                  {
-                     this.ok = true;
-                     if(this.gamechat_input_text == "-kill")
-                     {
-                        this.mens[this.MP_myid].hp_head = 0;
-                        this.Hurt(this.MP_myid);
-                        this.mens[this.MP_myid].hea = 0;
-                        this.ok = false;
-                     }
-                     if(this.gamechat_input_text.substr(0,5) == "-ping")
-                     {
-                        if(Number(getTimer()) - this.LAST_VOTE > 60000)
-                        {
-                           _loc5_ = Number(this.gamechat_input_text.substr(6,this.gamechat_input_text.length));
-                           if(Boolean(isNaN(_loc5_)) || !isNaN(_loc5_) && (_loc5_ < 10 || _loc5_ > 1000))
-                           {
-                              this.DialogSay("\'\'" + this.gamechat_input_text.substr(6,this.gamechat_input_text.length) + "\'\' is not a correct ping value.","#FFFF00");
-                              if(!isNaN(_loc5_) && (_loc5_ < 10 || _loc5_ > 1000))
-                              {
-                                 this.LAST_VOTE = getTimer();
-                              }
-                           }
-                           else
-                           {
-                              this.MP_custom_events += ";voteping|" + this.gamechat_input_text.substr(6,this.gamechat_input_text.length);
-                              this.LAST_VOTE = getTimer();
-                           }
-                        }
-                        else
-                        {
-                           this.DialogSay("You will be allowed to vote again in " + Math.ceil((60000 - (Number(getTimer()) - this.LAST_VOTE)) / 1000) + " seconds.","#FFFF00");
-                        }
-                     }
-                     if(this.MP_type == 3)
-                     {
-                        if(this.gamechat_input_text == "-blue")
-                        {
-                           this.mc = this.mens[this.MP_myid];
-                           if(Number(getTimer()) - Number(this.mc.whenlastshot) > 7000)
-                           {
-                              this.mc.lastshotby = -1;
-                           }
-                           if(this.mc.dead || this.mc.lastshotby == -1 || this.mc.lastshotby == this.MP_myid)
-                           {
-                              this.mc.team = 13;
-                              this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "B";
-                              this.spawn = false;
-                              this.mc.hea = 0;
-                              this.mc.mdl_head = this.mc.char;
-                              this.mc.mdl_leg1_upper = this.mc.char;
-                              this.mc.mdl_leg1_middle = this.mc.char;
-                              this.mc.mdl_leg1_lower = this.mc.char;
-                              this.mc.mdl_leg2_upper = this.mc.char;
-                              this.mc.mdl_leg2_middle = this.mc.char;
-                              this.mc.mdl_leg2_lower = this.mc.char;
-                              this.mc.mdl_arm1_upper = this.mc.char;
-                              this.mc.mdl_arm1_lower = this.mc.char;
-                              this.mc.mdl_arm2_upper = this.mc.char;
-                              this.mc.mdl_arm2_lower = this.mc.char;
-                              this.mc.mdl_toe = this.mc.char;
-                              this.mc.mdl_body = this.mc.char;
-                              this.UpdateCharProps(this.mc);
-                              this.ok = false;
-                              this.UpdateTeamTable();
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 this.UpdateTeamColor(this.mens[_loc2_]);
-                                 _loc2_++;
-                              }
-                           }
-                           else
-                           {
-                              this.DialogSay("Can\'t change team during fight.","#FFFF00");
-                           }
-                        }
-                        if(this.gamechat_input_text == "-red")
-                        {
-                           this.mc = this.mens[this.MP_myid];
-                           if(Number(getTimer()) - Number(this.mc.whenlastshot) > 7000)
-                           {
-                              this.mc.lastshotby = -1;
-                           }
-                           if(this.mc.dead || this.mc.lastshotby == -1 || this.mc.lastshotby == this.MP_myid)
-                           {
-                              this.mc.team = 12;
-                              this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "R";
-                              this.spawn = false;
-                              this.mc.hea = 0;
-                              this.mc.mdl_head = this.mc.char;
-                              this.mc.mdl_leg1_upper = this.mc.char;
-                              this.mc.mdl_leg1_middle = this.mc.char;
-                              this.mc.mdl_leg1_lower = this.mc.char;
-                              this.mc.mdl_leg2_upper = this.mc.char;
-                              this.mc.mdl_leg2_middle = this.mc.char;
-                              this.mc.mdl_leg2_lower = this.mc.char;
-                              this.mc.mdl_arm1_upper = this.mc.char;
-                              this.mc.mdl_arm1_lower = this.mc.char;
-                              this.mc.mdl_arm2_upper = this.mc.char;
-                              this.mc.mdl_arm2_lower = this.mc.char;
-                              this.mc.mdl_toe = this.mc.char;
-                              this.mc.mdl_body = this.mc.char;
-                              this.UpdateCharProps(this.mc);
-                              this.ok = false;
-                              this.UpdateTeamTable();
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 this.UpdateTeamColor(this.mens[_loc2_]);
-                                 _loc2_++;
-                              }
-                           }
-                           else
-                           {
-                              this.DialogSay("Can\'t change team during fight.","#FFFF00");
-                           }
-                        }
-                     }
-                     if(this.ok)
-                     {
-                        if(this.gamechat_input_text.length > 0)
-                        {
-                           this.MP_last_message_patience -= (Number(getTimer()) - this.MP_last_message) / 550;
-                           if(this.MP_last_message_patience < 0)
-                           {
-                              this.MP_last_message_patience = 0;
-                           }
-                           this.MP_last_message_patience += 20000 / Math.max(300,Number(getTimer()) - this.MP_last_message);
-                           this.MP_last_message = getTimer();
-                           if(this.MP_pass == "")
-                           {
-                              if(this.MP_last_message_patience > 110)
-                              {
-                                 if(this.mens[this.MP_myid].dead || this.mens[this.MP_myid].lastshotby == -1 || Number(getTimer()) - Number(this.mens[this.MP_myid].whenlastshot) > 7000)
-                                 {
-                                    this.DialogSay("Disconnected. You didn\'t stopped it, so we are sorry","#FF0000");
-                                    this.MP_force_disconnect = true;
-                                 }
-                              }
-                              else if(this.MP_last_message_patience > 90)
-                              {
-                                 this.DialogSay("Please don\'t send messages so quickly. You will be disconnected if you will continue","#FFFF00");
-                              }
-                              else if(this.MP_last_message_patience > 80)
-                              {
-                                 this.DialogSay("Please don\'t send messages so quickly. It is not allowed","#FFFF00");
-                              }
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("=","[eq]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("=","[eq]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("|","[i]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("|","[i]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace(";","[dc]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace(";","[dc]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("<","[lt]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("<","[lt]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace(">","[gt]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace(">","[gt]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("\"","[2q]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("\"","[2q]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("/","[sl]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("/","[sl]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("\\","[rsl]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("\\","[rsl]");
-                           }
-                           if(this.MP_chat_input_for == "all")
-                           {
-                              this.MP_custom_events += ";chat|" + this.gamechat_input_text;
-                           }
-                           else if(this.MP_chat_input_for == "team")
-                           {
-                              this.MP_custom_events += ";tchat|" + this.gamechat_input_text;
-                           }
-                           if(this.DISPLAY_CHAT < 1)
-                           {
-                              if(this.MP_mode)
-                              {
-                                 this.DialogSay("Note: You\'ve said something, but you have \'\'DISPLAY CHAT\'\' set to \'\'NO\'\' in your Graphics & Gameplay settings.","#FFFF00");
-                              }
-                           }
-                        }
-                     }
-                  }
-                  this.chat_win.visible = false;
-               }
-               else if(true || this.LEVELS_PASSED >= this.LEVELS_TOTAL || this.MP_mode || this.FORCE_CUSTOM_MAP)
-               {
-                  this.MP_chat_input = true;
-                  if(this.MP_mode && param1.keyCode == 84)
-                  {
-                     this.MP_chat_input_for = "team";
-                  }
-                  else
-                  {
-                     this.MP_chat_input_for = "all";
-                  }
-                  this.chat_win.gamechat_input.text = "";
-                  this.gamechat_input_text = "";
-                  this.chat_win.chatmode.gotoAndStop(this.MP_chat_input_for);
-                  this.chat_win.visible = true;
-               }
-               else
-               {
-                  this.ChatNewMsg("E: Access denied; complete all campaign levels first");
-               }
-            }
-            else if(this.MP_chat_input)
-            {
-               if(param1.keyCode == 8)
-               {
-                  this.gamechat_input_text = this.gamechat_input_text.slice(0,this.gamechat_input_text.length - 1);
-                  this.chat_win.gamechat_input.htmlText = "<b>" + this.gamechat_input_text + "</b>";
-               }
-               else
-               {
-                  _loc6_ = String.fromCharCode(param1.charCode);
-                  if(this.allowedText.indexOf(_loc6_) != -1)
-                  {
-                     this.gamechat_input_text += _loc6_;
-                     this.chat_win.gamechat_input.htmlText = "<b>" + this.gamechat_input_text.split("<").join("&lt;").split(">").join("&gt;") + "</b>";
-                  }
-               }
-            }
-            else
-            {
-               if(param1.keyCode == 65 || param1.keyCode == 37)
-               {
-                  this.key_left = true;
-               }
-               if(param1.keyCode == 68 || param1.keyCode == 39)
-               {
-                  this.key_right = true;
-               }
-               if(param1.keyCode == 32 || param1.keyCode == 82)
-               {
-                  if(this.LEVEL_END_FORCE != "" && this.LEVEL_END_FORCE != "complete" && this.LEVEL_END_FORCE != "credits")
-                  {
-                     if(!this.MP_mode)
-                     {
-                        if(this.darkness.alpha > 0.02)
-                        {
-                           this.darkness.visible = true;
-                           this.darkness.alpha = 1;
-                           if(this.LEVEL_END_FORCE == "failed")
-                           {
-                              this.LEVEL_END_FORCE = "restart";
-                           }
-                        }
-                     }
-                  }
-               }
-               if(param1.keyCode == 87 || param1.keyCode == 38 || param1.keyCode == 32)
-               {
-                  this.key_up = true;
-               }
-               if(param1.keyCode == 71 || param1.keyCode == 96)
-               {
-                  if(!this.MP_mode)
-                  {
-                     this.StartMiniScenario(0);
-                  }
-                  else if(this.MP_type != 2 || this.MP_gamestate == 0)
-                  {
-                     if(this.grenades_total > 0)
-                     {
-                        if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
-                        {
-                           this.MP_myspecials[this.MP_myspecials_total] = new Object();
-                           this.MP_myspecials[this.MP_myspecials_total].stat = 1;
-                           this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
-                           this.MP_myspecials[this.MP_myspecials_total].nadekind = 1;
-                           this.MP_custom_events += ";gren|1#" + this.MP_myspecials_total;
-                           ++this.MP_myspecials_total;
-                        }
-                     }
-                  }
-               }
-               if(this.MP_mode)
-               {
-                  if(this.MP_type != 2 || this.MP_gamestate == 0)
-                  {
-                     if(param1.keyCode == 67)
-                     {
-                        if(this.grenades_port_total > 0)
-                        {
-                           if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
-                           {
-                              this.MP_myspecials[this.MP_myspecials_total] = new Object();
-                              this.MP_myspecials[this.MP_myspecials_total].stat = 1;
-                              this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
-                              this.MP_myspecials[this.MP_myspecials_total].nadekind = 2;
-                              this.MP_custom_events += ";gren|2#" + this.MP_myspecials_total;
-                              ++this.MP_myspecials_total;
-                           }
-                        }
-                     }
-                     if(param1.keyCode == 90)
-                     {
-                        if(this.grenades_sh_total > 0)
-                        {
-                           if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
-                           {
-                              this.MP_myspecials[this.MP_myspecials_total] = new Object();
-                              this.MP_myspecials[this.MP_myspecials_total].stat = 1;
-                              this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
-                              this.MP_myspecials[this.MP_myspecials_total].nadekind = 3;
-                              this.MP_custom_events += ";gren|3#" + this.MP_myspecials_total;
-                              ++this.MP_myspecials_total;
-                           }
-                        }
-                     }
-                  }
-               }
-               if(param1.keyCode == 86 || param1.keyCode == 8)
-               {
-                  this.key_grab = true;
-               }
-               if(param1.keyCode == 81)
-               {
-                  if(this.last_gun_b4_psi != -1)
-                  {
-                     if(this.last_gun_b4_psi < this.gunstotal)
-                     {
-                        this.mc = this.guns[this.last_gun_b4_psi];
-                        if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
-                        {
-                           if(this.mc.model != "item_grenade" || this.mc.wep >= 0)
-                           {
-                              this.i4 = this.mens[this.MP_myid].curwea;
-                              this.mens[this.MP_myid].curwea = this.last_gun_b4_psi;
-                              this.last_gun_b4_psi = this.i4;
-                              this.ChangedGun(this.MP_myid);
-                           }
-                        }
-                     }
-                  }
-                  else
-                  {
-                     this.i4 = this.mens[this.MP_myid].curwea;
-                     this.mens[this.MP_myid].curwea = this.last_gun_b4_psi;
-                     this.last_gun_b4_psi = this.i4;
-                     this.ChangedGun(this.MP_myid);
-                  }
-               }
-               if(param1.keyCode == 70)
-               {
-               }
-               if(!this.MP_mode)
-               {
-                  if(param1.keyCode == 80)
-                  {
-                     if(this.system_non_stop)
-                     {
-                        this.system_non_stop = false;
-                        if(!this.mens[this.MP_myid].dead)
-                        {
-                           this.pauze.visible = true;
-                        }
-                     }
-                     else
-                     {
-                        this.system_non_stop = true;
-                        if(!this.mens[this.MP_myid].dead)
-                        {
-                           this.pauze.visible = false;
-                        }
-                     }
-                     this.stoped_by_focus = false;
-                  }
-               }
-               if(param1.keyCode == 83 || param1.keyCode == 40 || param1.keyCode == 17)
-               {
-                  this.key_down = true;
-               }
-               if(param1.keyCode == 71 || param1.keyCode == 96 || param1.keyCode == 13)
-               {
-                  this.key_grenade = true;
-               }
-               if(param1.keyCode == 69 || param1.keyCode == 45)
-               {
-                  this.key_pick = true;
-               }
-               if(param1.keyCode == 88)
-               {
-                  this.key_fall = true;
-               }
-               if(param1.keyCode == 90)
-               {
-                  if(!this.key_alt)
-                  {
-                     if(!this.MP_mode)
-                     {
-                        this.key_alt = true;
-                        if(this.timeshift > 0)
-                        {
-                           this.timeshift = 0;
-                           this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
-                           if(this.SCREEN_EFFECTS)
-                           {
-                              this.whitness.alpha += 1;
-                              this.whitness.visible = true;
-                           }
-                        }
-                        else if(this.ALLOW_TIMESHIFT)
-                        {
-                           if(this.energy > 10)
-                           {
-                              if(!this.mens[this.MP_myid].dead)
-                              {
-                                 this.energy -= 10;
-                                 this.timeshift = 1;
-                                 this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
-                                 if(this.SCREEN_EFFECTS)
-                                 {
-                                    this.whitness.alpha += 1;
-                                    this.whitness.visible = true;
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-               if(param1.keyCode == 34)
-               {
-                  if(!this.key_alt)
-                  {
-                     if(!this.MP_mode)
-                     {
-                        this.key_alt = true;
-                        if(this.timeshift > 0)
-                        {
-                           this.timeshift = 0;
-                           this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
-                           if(this.SCREEN_EFFECTS)
-                           {
-                              this.whitness.alpha += 1;
-                              this.whitness.visible = true;
-                           }
-                        }
-                     }
-                  }
-               }
-               if(param1.keyCode == 33)
-               {
-                  if(!this.key_alt)
-                  {
-                     if(!this.MP_mode)
-                     {
-                        this.key_alt = true;
-                        if(this.timeshift <= 0)
-                        {
-                           if(this.ALLOW_TIMESHIFT)
-                           {
-                              if(this.energy > 10)
-                              {
-                                 if(!this.mens[this.MP_myid].dead)
-                                 {
-                                    this.energy -= 10;
-                                    this.timeshift = 1;
-                                    this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
-                                    if(this.SCREEN_EFFECTS)
-                                    {
-                                       this.whitness.alpha += 1;
-                                       this.whitness.visible = true;
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-               if(this.KINETIC_MODULE_ENABLED)
-               {
-                  if(param1.keyCode == 67)
-                  {
-                     if(!this.key_kinetic)
-                     {
-                        this.key_kinetic = true;
-                        this.cinetic_target = -1;
-                        _loc7_ = -1;
-                        _loc2_ = 0;
-                        while(_loc2_ < this.atotal)
-                        {
-                           if(this.aio[_loc2_] == true || this.aio[_loc2_] == false)
-                           {
-                              if(this.aof[_loc2_] >= 0 && this.aof[_loc2_] < 100 && this.mens[this.aof[_loc2_]].incar == -1 && this.aof[_loc2_] != this.MP_myid || this.aof[_loc2_] >= 100 || this.aof[_loc2_] > -200 && this.aof[_loc2_] <= -100 || this.aof[_loc2_] < 0 && this.aof[_loc2_] > -100 && !this.guns[-Number(this.aof[_loc2_]) - 1].forcars && this.guns[-Number(this.aof[_loc2_]) - 1].alpha > 0)
-                              {
-                                 if(this.arad[_loc2_] < 16)
-                                 {
-                                    if(this.arad[_loc2_] > 0)
-                                    {
-                                       if((_loc8_ = this.Dist2D(this.ax[_loc2_],this.ay[_loc2_],this.mens[this.MP_myid].tarx,this.mens[this.MP_myid].tary)) < this.arad[_loc2_] + 40)
-                                       {
-                                          this.ok = true;
-                                          if(this.aactive[_loc2_] != 1000)
-                                          {
-                                             if(this.aof[_loc2_] < 0 && this.aof[_loc2_] > -100)
-                                             {
-                                                if(this.guns[-Number(this.aof[_loc2_]) - 1].picken_by != -1)
-                                                {
-                                                   if(!this.guns[-Number(this.aof[_loc2_]) - 1].forcars)
-                                                   {
-                                                      if(this.guns[-Number(this.aof[_loc2_]) - 1].picken_by == this.MP_myid || this.mens[this.guns[-Number(this.aof[_loc2_]) - 1].picken_by].team != this.mens[this.MP_myid].team)
-                                                      {
-                                                         this.ok = false;
-                                                      }
-                                                   }
-                                                }
-                                             }
-                                          }
-                                          if(this.ok)
-                                          {
-                                             if(_loc8_ < _loc7_ || _loc7_ == -1)
-                                             {
-                                                this.cinetic_target = _loc2_;
-                                                _loc7_ = _loc8_;
-                                             }
-                                          }
-                                       }
-                                    }
-                                 }
-                              }
-                           }
-                           _loc2_++;
-                        }
-                     }
-                  }
-               }
-               if(this.mens[this.MP_myid].hea > 0)
-               {
-                  if(param1.keyCode >= 48 && param1.keyCode <= 57 || param1.keyCode == 167 || param1.keyCode == 192 || param1.keyCode == 0)
-                  {
-                     if(param1.keyCode == 48 || param1.keyCode == 167 || param1.keyCode == 192 || param1.keyCode == 0)
-                     {
-                        if(this.mens[this.MP_myid].curwea != -1)
-                        {
-                           this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
-                           this.mens[this.MP_myid].curwea = -1;
-                           this.ChangedGun(this.MP_myid);
-                           this.UpdateCurGun();
-                        }
-                     }
-                     else
-                     {
-                        _loc2_ = 0;
-                        while(_loc2_ < this.gunstotal)
-                        {
-                           if(this.guns[_loc2_].io)
-                           {
-                              this.mc = this.guns[_loc2_];
-                              if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
-                              {
-                                 if(this.mc.wep == param1.keyCode - 48)
-                                 {
-                                    if(this.mens[this.MP_myid].curwea != _loc2_)
-                                    {
-                                       this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
-                                       this.mens[this.MP_myid].curwea = _loc2_;
-                                       this.ChangedGun(this.MP_myid);
-                                       this.UpdateCurGun();
-                                    }
-                                 }
-                              }
-                           }
-                           _loc2_++;
-                        }
-                     }
-                  }
-               }
-            }
-         }
-         this.VarChangePreventEnd();
-      }
-      
+		 //if (param1.keyCode == 13) trace("uh oh");
+		 try {
+			 this.VarChangePreventStart();
+			 if(this.last_key_code != param1.keyCode)
+			 {
+				this.last_key_code = param1.keyCode;
+				this.keys_are_being_pressed = true;
+			 }
+			 if(param1.keyCode == Keyboard.CONTROL)
+			 {
+				this.key_ctrl = true;
+			 }
+			 if(currentLabel == "intro")
+			 {
+				if(param1.keyCode == 27)
+				{
+				   // intr.removeChild(vidobj);
+				   // nc.close();
+				   // ns.close();
+				   gotoAndStop("ads");
+				}
+			 }
+			 /*if(currentLabel == "loginform")
+			 {
+				if(param1.keyCode == 13 || param1.keyCode == 32 && stage.focus != this.flogin && stage.focus != this.fpassword)
+				{
+				   this.proceed();
+				}
+			 }*/
+			 if(currentLabel == "gaming")
+			 {
+				if(param1.keyCode == 112)
+				{
+				   this.TakeScreenShot(0,0.75);
+				}
+				else if(!this.MP_mode)
+				{
+				   if(param1.keyCode == 113)
+				   {
+					  this.TakeScreenShot(0,0.5);
+				   }
+				   else if(param1.keyCode == 114)
+				   {
+					  this.TakeScreenShot(0,0.25);
+				   }
+				   else if(param1.keyCode == 115)
+				   {
+					  this.TakeScreenShot(0,0.1);
+				   }
+				}
+				if(param1.keyCode == 82 && !this.MP_mode) {
+				   GotoMap(CUR_LOADING);
+				}
+				if(param1.keyCode == 27)
+				{
+				   if(!this.gamemenu.visible)
+				   {
+					  if(!this.MP_mode)
+					  {
+						 this.system_non_stop = false;
+						 if(this.MP_myid < this.playerstotal && !this.mens[this.MP_myid].dead)
+						 {
+							this.pauze.visible = true;
+						 }
+						 this.stoped_by_focus = false;
+					  }
+					  this.gamemenu.visible = true;
+					  this.myCursor.alpha = 1;
+				   }
+				   else if(this.conmenu_set.visible)
+				   {
+					  this.conmenu_set.visible = false;
+				   }
+				   else if(this.conmenu.visible)
+				   {
+					  this.conmenu.visible = false;
+				   }
+				   else
+				   {
+					  if(!this.MP_mode)
+					  {
+						 this.system_non_stop = true;
+						 if(this.MP_myid < this.playerstotal && !this.mens[this.MP_myid].dead)
+						 {
+							this.pauze.visible = false;
+						 }
+					  }
+					  this.gamemenu.visible = false;
+				   }
+				}
+				if(this.trigger_to_key_binds_down[param1.keyCode] != undefined)
+				{
+				   this.EXEC_TRIGGER(this.trigger_to_key_binds_down[param1.keyCode]);
+				}
+				if(param1.keyCode == 9 || param1.keyCode == 35)
+				{
+				   if(this.MP_mode)
+				   {
+					  if(!this.herolist.visible)
+					  {
+						 _loc2_ = 0;
+						 while(_loc2_ < this.MP_playerstotal)
+						 {
+							this.UpdateHeroList(_loc2_);
+							_loc2_++;
+						 }
+						 this.herolist.visible = true;
+					  }
+				   }
+				   else if(this.CASUAL_MODE)
+				   {
+					  this.ok = true;
+					  _loc2_ = this.MP_myid;
+					  this.i4 = _loc2_ + 1;
+					  while(this.i4 != _loc2_ && this.ok)
+					  {
+						 if(this.i4 >= this.playerstotal)
+						 {
+							this.i4 = 0;
+						 }
+						 else
+						 {
+							if(this.mens[this.i4].io)
+							{
+							   if(this.mens[this.i4].team == this.mens[this.MP_myid].team)
+							   {
+								  if(this.mens[this.i4].hea > 0)
+								  {
+									 if(!this.mens[this.i4].dying)
+									 {
+										this.ok = false;
+										this.MP_myid = this.i4;
+										this.GSPEED = 0.01;
+										this.new_active.visible = true;
+										this.new_active.gotoAndPlay(1);
+										this.PlaySound_full(this.s_team_switch);
+										this.mens[this.i4].isplayer = true;
+										this.mens[_loc2_].isplayer = false;
+										this.UpdateWeps();
+									 }
+								  }
+							   }
+							}
+							++this.i4;
+						 }
+					  }
+				   }
+				}
+				if(this.MP_spectator)
+				{
+				   this.VarChangePreventEnd();
+				   return;
+				}
+				if(param1.keyCode == 13 || this.MP_mode && param1.keyCode == 84 && !this.MP_chat_input)
+				{
+				   if(this.MP_chat_input && param1.keyCode == 13)
+				   {
+					  this.MP_chat_input = false;
+					  this.chat_win.gamechat_input.text = "";
+					  if(!this.MP_mode || this.gamechat_input_text == "bot 1" || this.gamechat_input_text == "bot 0")
+					  {
+						 if(this.gamechat_input_text.length > 0)
+						 {
+							if(false/*this.FORCE_CUSTOM_MAP*/)
+							{
+							   this.ChatNewMsg("<font color=\"#78DBE2\">" + this.mens[this.MP_myid].nick + "</font><font color=\"#FFFFFF\">: " + this.gamechat_input_text + "</font>");
+							   this.PlaySound_full(this.s_chat);
+							   this.UserSays(this.MP_myid,this.gamechat_input_text);
+							}
+							else
+							{
+							   this.ChatNewMsg(this.new_nick2 + this.gamechat_input_text);
+							   this.ok = true;
+							   if(this.gamechat_input_text == "god 1" || this.gamechat_input_text == "god")
+							   {
+								  this.mens[this.MP_myid].hmax *= 100000;
+								  this.mens[this.MP_myid].hea = this.mens[this.MP_myid].hmax;
+								  if(this.mens[this.MP_myid].dead)
+								  {
+									 this.mens[this.MP_myid].dead = false;
+								  }
+								  if(this.mens[this.MP_myid].dying)
+								  {
+									 this.mens[this.MP_myid].dying = false;
+								  }
+								  this.Hurt_nopain(this.MP_myid);
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "gm")
+							   {
+								  this.ARCADE_GAME_MODE = !this.ARCADE_GAME_MODE;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "grow")
+							   {
+								  this.SetPlayerScale(this.mens[this.MP_myid],Number(this.mens[this.MP_myid].scale) * 1.25);
+								  this.mens[this.MP_myid].hmax *= 1.25 * 1.25;
+								  this.mens[this.MP_myid].hea *= 1.25 * 1.25;
+								  this.game_scale /= 1.25;
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "shrink")
+							   {
+								  this.SetPlayerScale(this.mens[this.MP_myid],Number(this.mens[this.MP_myid].scale) / 1.25);
+								  this.mens[this.MP_myid].hmax /= 1.25 * 1.25;
+								  this.mens[this.MP_myid].hea /= 1.25 * 1.25;
+								  this.game_scale *= 1.25;
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "grow enemies")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(_loc2_ != this.MP_myid)
+									 {
+										this.SetPlayerScale(this.mens[_loc2_],Number(this.mens[_loc2_].scale) * 1.25);
+										this.mens[_loc2_].hmax *= 1.25 * 1.25;
+										this.mens[_loc2_].hea *= 1.25 * 1.25;
+									 }
+									 _loc2_++;
+								  }
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "shrink enemies")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(_loc2_ != this.MP_myid)
+									 {
+										this.SetPlayerScale(this.mens[_loc2_],Number(this.mens[_loc2_].scale) / 1.25);
+										this.mens[_loc2_].hmax /= 1.25 * 1.25;
+										this.mens[_loc2_].hea /= 1.25 * 1.25;
+									 }
+									 _loc2_++;
+								  }
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text.indexOf("give ") == 0)
+							   {
+								  _loc3_ = this.gamechat_input_text.substr(5);
+								  this.mc = this.MakeGunByClass(_loc3_,{
+									 "x":this.mens[this.MP_myid].x,
+									 "y":this.mens[this.MP_myid].y,
+									 "upg":3,
+									 "command":-1
+								  });
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text.indexOf("skin enemies ") == 0)
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(_loc2_ != this.MP_myid)
+									 {
+										_loc4_ = int(this.gamechat_input_text.substr(13));
+										this.mc = this.mens[_loc2_];
+										this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "-";
+										this.mc.char = _loc4_;
+										this.mc.mdl_head = this.mc.char;
+										this.mc.mdl_leg1_upper = this.mc.char;
+										this.mc.mdl_leg1_middle = this.mc.char;
+										this.mc.mdl_leg1_lower = this.mc.char;
+										this.mc.mdl_leg2_upper = this.mc.char;
+										this.mc.mdl_leg2_middle = this.mc.char;
+										this.mc.mdl_leg2_lower = this.mc.char;
+										this.mc.mdl_arm1_upper = this.mc.char;
+										this.mc.mdl_arm1_lower = this.mc.char;
+										this.mc.mdl_arm2_upper = this.mc.char;
+										this.mc.mdl_arm2_lower = this.mc.char;
+										this.mc.mdl_toe = this.mc.char;
+										this.mc.mdl_body = this.mc.char;
+										this.mc.alpha = 1;
+										this.UpdateCharProps(this.mc);
+										this.SpawnPlayerImmediately(this.mc);
+									 }
+									 _loc2_++;
+								  }
+							   }
+							   else if(this.gamechat_input_text.indexOf("skin ") == 0)
+							   {
+								  _loc2_ = this.MP_myid;
+								  _loc4_ = int(this.gamechat_input_text.substr(5));
+								  this.mc = this.mens[_loc2_];
+								  this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "-";
+								  this.mc.char = _loc4_;
+								  this.mc.mdl_head = this.mc.char;
+								  this.mc.mdl_leg1_upper = this.mc.char;
+								  this.mc.mdl_leg1_middle = this.mc.char;
+								  this.mc.mdl_leg1_lower = this.mc.char;
+								  this.mc.mdl_leg2_upper = this.mc.char;
+								  this.mc.mdl_leg2_middle = this.mc.char;
+								  this.mc.mdl_leg2_lower = this.mc.char;
+								  this.mc.mdl_arm1_upper = this.mc.char;
+								  this.mc.mdl_arm1_lower = this.mc.char;
+								  this.mc.mdl_arm2_upper = this.mc.char;
+								  this.mc.mdl_arm2_lower = this.mc.char;
+								  this.mc.mdl_toe = this.mc.char;
+								  this.mc.mdl_body = this.mc.char;
+								  this.mc.alpha = 1;
+								  this.UpdateCharProps(this.mc);
+								  this.SpawnPlayerImmediately(this.mc);
+							   }
+							   if(this.gamechat_input_text == "quick start")
+							   {
+								  this.CMPG_money = 999999;
+								  if(this.LEVELS_PASSED < this.LEVELS_TOTAL)
+								  {
+									 this.LEVELS_PASSED = this.LEVELS_TOTAL;
+								  }
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text.indexOf("hero1skin ") != -1)
+							   {
+								  this.skin_model[0] = int(this.gamechat_input_text.split(" ")[1]);
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text.indexOf("hero2skin ") != -1)
+							   {
+								  this.skin_model[1] = int(this.gamechat_input_text.split(" ")[1]);
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no players")
+							   {
+								  this.playerstotal = 1;
+								  this.MP_myid = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no barrels")
+							   {
+								  this.barrelstotal = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no vehicles")
+							   {
+								  this.vehiclestotal = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no lights" || this.gamechat_input_text == "no lamps")
+							   {
+								  this.lampstotal = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no guns")
+							   {
+								  this.gunstotal = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "debug" || this.gamechat_input_text == "debug 1")
+							   {
+								  this.DEBUG_MODE = true;
+								  this.debug_screen.visible = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "debug 0")
+							   {
+								  this.DEBUG_MODE = false;
+								  this.debug_screen.graphics.clear();
+								  this.debug_screen.visible = false;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "god 0")
+							   {
+								  this.mens[this.MP_myid].hea /= 100000;
+								  this.mens[this.MP_myid].hmax /= 100000;
+								  this.Hurt_nopain(this.MP_myid);
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "headshot")
+							   {
+								  this.xx = this.mens[this.MP_myid].hea;
+								  this.mens[this.MP_myid].hp_head = 0;
+								  this.Hurt(this.MP_myid);
+								  this.mens[this.MP_myid].hea = this.xx;
+								  this.mens[this.MP_myid].dead = false;
+								  this.mens[this.MP_myid].dying = false;
+								  this.mens[this.MP_myid].stability = -2;
+								  this.atoy[this.mens[this.MP_myid].b_head_end] -= 10;
+								  this.atox[this.mens[this.MP_myid].b_head_end] -= Number(this.mens[this.MP_myid].side) * 5;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "friends")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(this.mens[_loc2_].io)
+									 {
+										this.mens[_loc2_].team = 0;
+									 }
+									 _loc2_++;
+								  }
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "dm")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(this.mens[_loc2_].io)
+									 {
+										this.mens[_loc2_].team = _loc2_;
+									 }
+									 _loc2_++;
+								  }
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "kill enemies")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(this.mens[_loc2_].io)
+									 {
+										if(this.mens[_loc2_].team != this.mens[this.MP_myid].team)
+										{
+										   this.mens[_loc2_].hea = 0;
+										   this.Hurt_nopain(_loc2_);
+										}
+									 }
+									 _loc2_++;
+								  }
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "hyper jump")
+							   {
+								  this.mens[this.MP_myid].toy = -25;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "over fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 5;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "uber fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 4;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "extra fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 3;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "very fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 2;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "faster")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 1.5;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 1.25;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "normal")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = false;
+							   }
+							   if(this.gamechat_input_text == "slow")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 0.75;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "slower")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 0.5;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "very slow")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 0.25;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "zoom 100")
+							   {
+								  this.game_scale = 1;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "zoom 200")
+							   {
+								  this.game_scale = 2;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "zoom 50")
+							   {
+								  this.game_scale = 0.5;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "zoom 25")
+							   {
+								  this.game_scale = 0.25;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "give all")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.inventoryC.length)
+								  {
+									 this.mc = this.MakeGunByClass(this.inventoryC[_loc2_].mdl,{
+										"x":this.mens[this.MP_myid].x,
+										"y":this.mens[this.MP_myid].y,
+										"upg":this.inventoryC[_loc2_].upg,
+										"command":-1
+									 });
+									 _loc2_++;
+								  }
+								  if(!this.FORCE_CUSTOM_MAP)
+								  {
+									 this.IM_A_CHEATER = true;
+								  }
+								  this.ok = false;
+							   }
+							   if(this.ok)
+							   {
+								  this.ChatNewMsg("bash: " + this.gamechat_input_text + ": command not found");
+								  this.PlaySound_full(this.s_chat);
+							   }
+							   else
+							   {
+								  this.BADGES_ENABLED = false;
+							   }
+							   if(this.IM_A_CHEATER)
+							   {
+								   this.IM_A_CHEATER = false;
+								  // this.ShowNoAch();
+								  // this.SaveGame();
+							   }
+							   this.UserSays(this.MP_myid,this.gamechat_input_text);
+							}
+						 }
+						 if(this.gamechat_input_text == "render 0")
+						 {
+							this.game.visible = false;
+							this.graphics_3d_front.visible = false;
+							this.graphics_3d.visible = false;
+							this.sky.visible = false;
+						 }
+						 if(this.gamechat_input_text == "render 1")
+						 {
+							this.game.visible = true;
+							this.graphics_3d_front.visible = true;
+							this.graphics_3d.visible = true;
+							this.sky.visible = true;
+						 }
+						 if(this.gamechat_input_text == "bot 1")
+						 {
+							this.MP_half_bot = true;
+							if(this.MP_mode)
+							{
+							   this.EASY_MODE = true;
+							   this.PRO_BOTS = false;
+							   this.LOW_HPS = false;
+							}
+						 }
+						 if(this.gamechat_input_text == "bot 0")
+						 {
+							this.MP_half_bot = false;
+						 }
+						 if(this.gamechat_input_text == "kill")
+						 {
+							this.mens[this.MP_myid].hp_head = 0;
+							this.Hurt(this.MP_myid);
+							this.mens[this.MP_myid].hea = 0;
+						 }
+					  }
+					  else
+					  {
+						 this.ok = true;
+						 if(this.gamechat_input_text == "-kill")
+						 {
+							this.mens[this.MP_myid].hp_head = 0;
+							this.Hurt(this.MP_myid);
+							this.mens[this.MP_myid].hea = 0;
+							this.ok = false;
+						 }
+						 if(this.gamechat_input_text.substr(0,5) == "-ping")
+						 {
+							if(Number(getTimer()) - this.LAST_VOTE > 60000)
+							{
+							   _loc5_ = Number(this.gamechat_input_text.substr(6,this.gamechat_input_text.length));
+							   if(Boolean(isNaN(_loc5_)) || !isNaN(_loc5_) && (_loc5_ < 10 || _loc5_ > 1000))
+							   {
+								  this.DialogSay("\'\'" + this.gamechat_input_text.substr(6,this.gamechat_input_text.length) + "\'\' is not a correct ping value.","#FFFF00");
+								  if(!isNaN(_loc5_) && (_loc5_ < 10 || _loc5_ > 1000))
+								  {
+									 this.LAST_VOTE = getTimer();
+								  }
+							   }
+							   else
+							   {
+								  this.MP_custom_events += ";voteping|" + this.gamechat_input_text.substr(6,this.gamechat_input_text.length);
+								  this.LAST_VOTE = getTimer();
+							   }
+							}
+							else
+							{
+							   this.DialogSay("You will be allowed to vote again in " + Math.ceil((60000 - (Number(getTimer()) - this.LAST_VOTE)) / 1000) + " seconds.","#FFFF00");
+							}
+						 }
+						 if(this.MP_type == 3)
+						 {
+							if(this.gamechat_input_text == "-blue")
+							{
+							   this.mc = this.mens[this.MP_myid];
+							   if(Number(getTimer()) - Number(this.mc.whenlastshot) > 7000)
+							   {
+								  this.mc.lastshotby = -1;
+							   }
+							   if(this.mc.dead || this.mc.lastshotby == -1 || this.mc.lastshotby == this.MP_myid)
+							   {
+								  this.mc.team = 13;
+								  this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "B";
+								  this.spawn = false;
+								  this.mc.hea = 0;
+								  this.mc.mdl_head = this.mc.char;
+								  this.mc.mdl_leg1_upper = this.mc.char;
+								  this.mc.mdl_leg1_middle = this.mc.char;
+								  this.mc.mdl_leg1_lower = this.mc.char;
+								  this.mc.mdl_leg2_upper = this.mc.char;
+								  this.mc.mdl_leg2_middle = this.mc.char;
+								  this.mc.mdl_leg2_lower = this.mc.char;
+								  this.mc.mdl_arm1_upper = this.mc.char;
+								  this.mc.mdl_arm1_lower = this.mc.char;
+								  this.mc.mdl_arm2_upper = this.mc.char;
+								  this.mc.mdl_arm2_lower = this.mc.char;
+								  this.mc.mdl_toe = this.mc.char;
+								  this.mc.mdl_body = this.mc.char;
+								  this.UpdateCharProps(this.mc);
+								  this.ok = false;
+								  this.UpdateTeamTable();
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 this.UpdateTeamColor(this.mens[_loc2_]);
+									 _loc2_++;
+								  }
+							   }
+							   else
+							   {
+								  this.DialogSay("Can\'t change team during fight.","#FFFF00");
+							   }
+							}
+							if(this.gamechat_input_text == "-red")
+							{
+							   this.mc = this.mens[this.MP_myid];
+							   if(Number(getTimer()) - Number(this.mc.whenlastshot) > 7000)
+							   {
+								  this.mc.lastshotby = -1;
+							   }
+							   if(this.mc.dead || this.mc.lastshotby == -1 || this.mc.lastshotby == this.MP_myid)
+							   {
+								  this.mc.team = 12;
+								  this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "R";
+								  this.spawn = false;
+								  this.mc.hea = 0;
+								  this.mc.mdl_head = this.mc.char;
+								  this.mc.mdl_leg1_upper = this.mc.char;
+								  this.mc.mdl_leg1_middle = this.mc.char;
+								  this.mc.mdl_leg1_lower = this.mc.char;
+								  this.mc.mdl_leg2_upper = this.mc.char;
+								  this.mc.mdl_leg2_middle = this.mc.char;
+								  this.mc.mdl_leg2_lower = this.mc.char;
+								  this.mc.mdl_arm1_upper = this.mc.char;
+								  this.mc.mdl_arm1_lower = this.mc.char;
+								  this.mc.mdl_arm2_upper = this.mc.char;
+								  this.mc.mdl_arm2_lower = this.mc.char;
+								  this.mc.mdl_toe = this.mc.char;
+								  this.mc.mdl_body = this.mc.char;
+								  this.UpdateCharProps(this.mc);
+								  this.ok = false;
+								  this.UpdateTeamTable();
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 this.UpdateTeamColor(this.mens[_loc2_]);
+									 _loc2_++;
+								  }
+							   }
+							   else
+							   {
+								  this.DialogSay("Can\'t change team during fight.","#FFFF00");
+							   }
+							}
+						 }
+						 if(this.ok)
+						 {
+							if(this.gamechat_input_text.length > 0)
+							{
+							   this.MP_last_message_patience -= (Number(getTimer()) - this.MP_last_message) / 550;
+							   if(this.MP_last_message_patience < 0)
+							   {
+								  this.MP_last_message_patience = 0;
+							   }
+							   this.MP_last_message_patience += 20000 / Math.max(300,Number(getTimer()) - this.MP_last_message);
+							   this.MP_last_message = getTimer();
+							   if(this.MP_pass == "")
+							   {
+								  if(this.MP_last_message_patience > 110)
+								  {
+									 if(this.mens[this.MP_myid].dead || this.mens[this.MP_myid].lastshotby == -1 || Number(getTimer()) - Number(this.mens[this.MP_myid].whenlastshot) > 7000)
+									 {
+										this.DialogSay("Disconnected. You didn\'t stopped it, so we are sorry","#FF0000");
+										this.MP_force_disconnect = true;
+									 }
+								  }
+								  else if(this.MP_last_message_patience > 90)
+								  {
+									 this.DialogSay("Please don\'t send messages so quickly. You will be disconnected if you will continue","#FFFF00");
+								  }
+								  else if(this.MP_last_message_patience > 80)
+								  {
+									 this.DialogSay("Please don\'t send messages so quickly. It is not allowed","#FFFF00");
+								  }
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("=","[eq]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("=","[eq]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("|","[i]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("|","[i]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace(";","[dc]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace(";","[dc]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("<","[lt]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("<","[lt]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace(">","[gt]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace(">","[gt]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("\"","[2q]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("\"","[2q]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("/","[sl]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("/","[sl]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("\\","[rsl]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("\\","[rsl]");
+							   }
+							   if(this.MP_chat_input_for == "all")
+							   {
+								  this.MP_custom_events += ";chat|" + this.gamechat_input_text;
+							   }
+							   else if(this.MP_chat_input_for == "team")
+							   {
+								  this.MP_custom_events += ";tchat|" + this.gamechat_input_text;
+							   }
+							   if(this.DISPLAY_CHAT < 1)
+							   {
+								  if(this.MP_mode)
+								  {
+									 this.DialogSay("Note: You\'ve said something, but you have \'\'DISPLAY CHAT\'\' set to \'\'NO\'\' in your Graphics & Gameplay settings.","#FFFF00");
+								  }
+							   }
+							}
+						 }
+					  }
+					  this.chat_win.visible = false;
+				   }
+				   else if(true || this.LEVELS_PASSED >= this.LEVELS_TOTAL || this.MP_mode || this.FORCE_CUSTOM_MAP)
+				   {
+					  this.MP_chat_input = true;
+					  if(this.MP_mode && param1.keyCode == 84)
+					  {
+						 this.MP_chat_input_for = "team";
+					  }
+					  else
+					  {
+						 this.MP_chat_input_for = "all";
+					  }
+					  this.chat_win.gamechat_input.text = "";
+					  this.gamechat_input_text = "";
+					  this.chat_win.chatmode.gotoAndStop(this.MP_chat_input_for);
+					  this.chat_win.visible = true;
+				   }
+				   else
+				   {
+					  this.ChatNewMsg("E: Access denied; complete all campaign levels first");
+				   }
+				}
+				else if(this.MP_chat_input)
+				{
+				   if(param1.keyCode == 8)
+				   {
+					  this.gamechat_input_text = this.gamechat_input_text.slice(0,this.gamechat_input_text.length - 1);
+					  this.chat_win.gamechat_input.htmlText = "<b>" + this.gamechat_input_text + "</b>";
+				   }
+				   else
+				   {
+					  _loc6_ = String.fromCharCode(param1.charCode);
+					  if(this.allowedText.indexOf(_loc6_) != -1)
+					  {
+						 this.gamechat_input_text += _loc6_;
+						 this.chat_win.gamechat_input.htmlText = "<b>" + this.gamechat_input_text.split("<").join("&lt;").split(">").join("&gt;") + "</b>";
+					  }
+				   }
+				}
+				else
+				{
+				   if(param1.keyCode == 65 || param1.keyCode == 37)
+				   {
+					  this.key_left = true;
+				   }
+				   if(param1.keyCode == 68 || param1.keyCode == 39)
+				   {
+					  this.key_right = true;
+				   }
+				   if(param1.keyCode == 32 || param1.keyCode == 82)
+				   {
+					  if(this.LEVEL_END_FORCE != "" && this.LEVEL_END_FORCE != "complete" && this.LEVEL_END_FORCE != "credits")
+					  {
+						 if(!this.MP_mode)
+						 {
+							if(this.darkness.alpha > 0.02)
+							{
+							   this.darkness.visible = true;
+							   this.darkness.alpha = 1;
+							   if(this.LEVEL_END_FORCE == "failed")
+							   {
+								  this.LEVEL_END_FORCE = "restart";
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(param1.keyCode == 87 || param1.keyCode == 38 || param1.keyCode == 32)
+				   {
+					  this.key_up = true;
+				   }
+				   if(param1.keyCode == 71 || param1.keyCode == 96)
+				   {
+					  if(!this.MP_mode)
+					  {
+						 this.StartMiniScenario(0);
+					  }
+					  else if(this.MP_type != 2 || this.MP_gamestate == 0)
+					  {
+						 if(this.grenades_total > 0)
+						 {
+							if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
+							{
+							   this.MP_myspecials[this.MP_myspecials_total] = new Object();
+							   this.MP_myspecials[this.MP_myspecials_total].stat = 1;
+							   this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
+							   this.MP_myspecials[this.MP_myspecials_total].nadekind = 1;
+							   this.MP_custom_events += ";gren|1#" + this.MP_myspecials_total;
+							   ++this.MP_myspecials_total;
+							}
+						 }
+					  }
+				   }
+				   if(this.MP_mode)
+				   {
+					  if(this.MP_type != 2 || this.MP_gamestate == 0)
+					  {
+						 if(param1.keyCode == 67)
+						 {
+							if(this.grenades_port_total > 0)
+							{
+							   if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
+							   {
+								  this.MP_myspecials[this.MP_myspecials_total] = new Object();
+								  this.MP_myspecials[this.MP_myspecials_total].stat = 1;
+								  this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
+								  this.MP_myspecials[this.MP_myspecials_total].nadekind = 2;
+								  this.MP_custom_events += ";gren|2#" + this.MP_myspecials_total;
+								  ++this.MP_myspecials_total;
+							   }
+							}
+						 }
+						 if(param1.keyCode == 90)
+						 {
+							if(this.grenades_sh_total > 0)
+							{
+							   if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
+							   {
+								  this.MP_myspecials[this.MP_myspecials_total] = new Object();
+								  this.MP_myspecials[this.MP_myspecials_total].stat = 1;
+								  this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
+								  this.MP_myspecials[this.MP_myspecials_total].nadekind = 3;
+								  this.MP_custom_events += ";gren|3#" + this.MP_myspecials_total;
+								  ++this.MP_myspecials_total;
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(param1.keyCode == 86 || param1.keyCode == 8)
+				   {
+					  this.key_grab = true;
+				   }
+				   if(param1.keyCode == 81)
+				   {
+					  if(this.last_gun_b4_psi != -1)
+					  {
+						 if(this.last_gun_b4_psi < this.gunstotal)
+						 {
+							this.mc = this.guns[this.last_gun_b4_psi];
+							if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
+							{
+							   if(this.mc.model != "item_grenade" || this.mc.wep >= 0)
+							   {
+								  this.i4 = this.mens[this.MP_myid].curwea;
+								  this.mens[this.MP_myid].curwea = this.last_gun_b4_psi;
+								  this.last_gun_b4_psi = this.i4;
+								  this.ChangedGun(this.MP_myid);
+							   }
+							}
+						 }
+					  }
+					  else
+					  {
+						 this.i4 = this.mens[this.MP_myid].curwea;
+						 this.mens[this.MP_myid].curwea = this.last_gun_b4_psi;
+						 this.last_gun_b4_psi = this.i4;
+						 this.ChangedGun(this.MP_myid);
+					  }
+				   }
+				   if(param1.keyCode == 70)
+				   {
+				   }
+				   if(!this.MP_mode)
+				   {
+					  if(param1.keyCode == 80)
+					  {
+						 if(this.system_non_stop)
+						 {
+							this.system_non_stop = false;
+							if(!this.mens[this.MP_myid].dead)
+							{
+							   this.pauze.visible = true;
+							}
+						 }
+						 else
+						 {
+							this.system_non_stop = true;
+							if(!this.mens[this.MP_myid].dead)
+							{
+							   this.pauze.visible = false;
+							}
+						 }
+						 this.stoped_by_focus = false;
+					  }
+				   }
+				   if(param1.keyCode == 83 || param1.keyCode == 40 || param1.keyCode == 17)
+				   {
+					  this.key_down = true;
+				   }
+				   if(param1.keyCode == 71 || param1.keyCode == 96 || param1.keyCode == 13)
+				   {
+					  this.key_grenade = true;
+				   }
+				   if(param1.keyCode == 69 || param1.keyCode == 45)
+				   {
+					  this.key_pick = true;
+				   }
+				   if(param1.keyCode == 88)
+				   {
+					  this.key_fall = true;
+				   }
+				   if(param1.keyCode == 90)
+				   {
+					  if(!this.key_alt)
+					  {
+						 if(!this.MP_mode)
+						 {
+							this.key_alt = true;
+							if(this.timeshift > 0)
+							{
+							   this.timeshift = 0;
+							   this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
+							   if(this.SCREEN_EFFECTS)
+							   {
+								  this.whitness.alpha += 1;
+								  this.whitness.visible = true;
+							   }
+							}
+							else if(this.ALLOW_TIMESHIFT)
+							{
+							   if(this.energy > 10)
+							   {
+								  if(!this.mens[this.MP_myid].dead)
+								  {
+									 this.energy -= 10;
+									 this.timeshift = 1;
+									 this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
+									 if(this.SCREEN_EFFECTS)
+									 {
+										this.whitness.alpha += 1;
+										this.whitness.visible = true;
+									 }
+								  }
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(param1.keyCode == 34)
+				   {
+					  if(!this.key_alt)
+					  {
+						 if(!this.MP_mode)
+						 {
+							this.key_alt = true;
+							if(this.timeshift > 0)
+							{
+							   this.timeshift = 0;
+							   this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
+							   if(this.SCREEN_EFFECTS)
+							   {
+								  this.whitness.alpha += 1;
+								  this.whitness.visible = true;
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(param1.keyCode == 33)
+				   {
+					  if(!this.key_alt)
+					  {
+						 if(!this.MP_mode)
+						 {
+							this.key_alt = true;
+							if(this.timeshift <= 0)
+							{
+							   if(this.ALLOW_TIMESHIFT)
+							   {
+								  if(this.energy > 10)
+								  {
+									 if(!this.mens[this.MP_myid].dead)
+									 {
+										this.energy -= 10;
+										this.timeshift = 1;
+										this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
+										if(this.SCREEN_EFFECTS)
+										{
+										   this.whitness.alpha += 1;
+										   this.whitness.visible = true;
+										}
+									 }
+								  }
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(this.KINETIC_MODULE_ENABLED)
+				   {
+					  if(param1.keyCode == 67)
+					  {
+						 if(!this.key_kinetic)
+						 {
+							this.key_kinetic = true;
+							this.cinetic_target = -1;
+							_loc7_ = -1;
+							_loc2_ = 0;
+							while(_loc2_ < this.atotal)
+							{
+							   if(this.aio[_loc2_] == true || this.aio[_loc2_] == false)
+							   {
+								  if(this.aof[_loc2_] >= 0 && this.aof[_loc2_] < 100 && this.mens[this.aof[_loc2_]].incar == -1 && this.aof[_loc2_] != this.MP_myid || this.aof[_loc2_] >= 100 || this.aof[_loc2_] > -200 && this.aof[_loc2_] <= -100 || this.aof[_loc2_] < 0 && this.aof[_loc2_] > -100 && !this.guns[-Number(this.aof[_loc2_]) - 1].forcars && this.guns[-Number(this.aof[_loc2_]) - 1].alpha > 0)
+								  {
+									 if(this.arad[_loc2_] < 16)
+									 {
+										if(this.arad[_loc2_] > 0)
+										{
+										   if((_loc8_ = this.Dist2D(this.ax[_loc2_],this.ay[_loc2_],this.mens[this.MP_myid].tarx,this.mens[this.MP_myid].tary)) < this.arad[_loc2_] + 40)
+										   {
+											  this.ok = true;
+											  if(this.aactive[_loc2_] != 1000)
+											  {
+												 if(this.aof[_loc2_] < 0 && this.aof[_loc2_] > -100)
+												 {
+													if(this.guns[-Number(this.aof[_loc2_]) - 1].picken_by != -1)
+													{
+													   if(!this.guns[-Number(this.aof[_loc2_]) - 1].forcars)
+													   {
+														  if(this.guns[-Number(this.aof[_loc2_]) - 1].picken_by == this.MP_myid || this.mens[this.guns[-Number(this.aof[_loc2_]) - 1].picken_by].team != this.mens[this.MP_myid].team)
+														  {
+															 this.ok = false;
+														  }
+													   }
+													}
+												 }
+											  }
+											  if(this.ok)
+											  {
+												 if(_loc8_ < _loc7_ || _loc7_ == -1)
+												 {
+													this.cinetic_target = _loc2_;
+													_loc7_ = _loc8_;
+												 }
+											  }
+										   }
+										}
+									 }
+								  }
+							   }
+							   _loc2_++;
+							}
+						 }
+					  }
+				   }
+				   if(this.mens[this.MP_myid].hea > 0)
+				   {
+					  if(param1.keyCode >= 48 && param1.keyCode <= 57 || param1.keyCode == 167 || param1.keyCode == 192 || param1.keyCode == 0)
+					  {
+						 if(param1.keyCode == 48 || param1.keyCode == 167 || param1.keyCode == 192 || param1.keyCode == 0)
+						 {
+							if(this.mens[this.MP_myid].curwea != -1)
+							{
+							   this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
+							   this.mens[this.MP_myid].curwea = -1;
+							   this.ChangedGun(this.MP_myid);
+							   this.UpdateCurGun();
+							}
+						 }
+						 else
+						 {
+							_loc2_ = 0;
+							while(_loc2_ < this.gunstotal)
+							{
+							   if(this.guns[_loc2_].io)
+							   {
+								  this.mc = this.guns[_loc2_];
+								  if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
+								  {
+									 if(this.mc.wep == param1.keyCode - 48)
+									 {
+										if(this.mens[this.MP_myid].curwea != _loc2_)
+										{
+										   this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
+										   this.mens[this.MP_myid].curwea = _loc2_;
+										   this.ChangedGun(this.MP_myid);
+										   this.UpdateCurGun();
+										}
+									 }
+								  }
+							   }
+							   _loc2_++;
+							}
+						 }
+					  }
+				   }
+				}
+			 }
+			 this.VarChangePreventEnd();
+		  }
+		 catch(e:*) {
+			 this.LAST_ERROR = "For some reason k_down errored. " + e.message;
+			 DropGameTimer();
+			 gotoAndStop("menu");
+		 }
+	  }
       public function onMouseWheelEvent(param1:MouseEvent) : void
       {
          this.VarChangePreventStart();
@@ -30785,8 +30796,9 @@ import flash.display.Sprite;
 			 }
 		 }
          this.VarChangePreventStart();
-         //try
-         //{
+         try
+         {
+	        this.fr_func();
             this.allow_unlag_fps = true;
             this.DebugBugCaches();
             /*if(this.MP_get_done_HAP)
@@ -30912,7 +30924,6 @@ import flash.display.Sprite;
 			   this.updateEffects();
 			   this.updateMap();
 
-			   this.fr_func();
 			   this.gt_func();
 			   this.rt_func();
 		   
@@ -34323,11 +34334,11 @@ import flash.display.Sprite;
                   i++;
                }
             }
-         //}
-         //catch(e:*)
-         //{
-          //  SpawnLevelLogicErrorIfNeeded(e,"Some level objects or logic have caused error within game loop");
-         //}
+         }
+         catch(e:*)
+         {
+            SpawnLevelLogicErrorIfNeeded(e,"Some level objects or logic have caused error within game loop");
+         }
          try
          {
             this.HandleRespawnAndLevelEnd();
