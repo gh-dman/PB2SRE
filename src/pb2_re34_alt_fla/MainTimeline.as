@@ -34823,72 +34823,82 @@ import flash.display.Sprite;
       
       public function GravitatorPlayAgain(param1:*) : void
       {
-         this.gravitatorch.removeEventListener(Event.SOUND_COMPLETE,this.GravitatorPlayAgain);
-         this.gravitatorch = this.s_gravitator.play(0,0,this.gravitatorTransform);
-         if(this.gravitatorch == null)
-         {
-            this.grav_working = false;
-         }
-         if(this.grav_working)
-         {
-            this.gravitatorch.addEventListener(Event.SOUND_COMPLETE,this.GravitatorPlayAgain);
-         }
+		 if(this.NONMUTE && this.FX_VOLUME != 0) {
+			 this.gravitatorch.removeEventListener(Event.SOUND_COMPLETE,this.GravitatorPlayAgain);
+			 this.gravitatorch = this.s_gravitator.play(0,0,this.gravitatorTransform);
+			 if(this.gravitatorch == null)
+			 {
+				this.grav_working = false;
+			 }
+			 if(this.grav_working)
+			 {
+				this.gravitatorch.addEventListener(Event.SOUND_COMPLETE,this.GravitatorPlayAgain);
+			 }
+		 }
       }
       
       public function SongPlayAgain(param1:*) : void
       {
-         this.musch.removeEventListener(Event.SOUND_COMPLETE,this.SongPlayAgain);
-         this.musch = this.s_gameplay_song.play(0,0,this.musTransform);
-         if(this.musch == null)
-         {
-            this.mus_working = false;
-         }
-         if(this.mus_working)
-         {
-            this.musch.addEventListener(Event.SOUND_COMPLETE,this.SongPlayAgain);
-         }
+		 if(this.NONMUTE && this.FX_VOLUME != 0) {
+			 this.musch.removeEventListener(Event.SOUND_COMPLETE,this.SongPlayAgain);
+			 this.musch = this.s_gameplay_song.play(0,0,this.musTransform);
+			 if(this.musch == null)
+			 {
+				this.mus_working = false;
+			 }
+			 if(this.mus_working)
+			 {
+				this.musch.addEventListener(Event.SOUND_COMPLETE,this.SongPlayAgain);
+			 }
+		 }
       }
       
       public function main_song_PlayAgain(param1:*) : void
       {
-         this.main_song_ch.removeEventListener(Event.SOUND_COMPLETE,this.main_song_PlayAgain);
-         this.main_song_ch = this.s_main_song.play(0,0,this.main_song_Transform);
-         if(this.main_song_ch == null)
-         {
-            this.main_song_working = false;
-         }
-         if(this.main_song_working)
-         {
-            this.main_song_ch.addEventListener(Event.SOUND_COMPLETE,this.main_song_PlayAgain);
-         }
+		 if(this.NONMUTE && this.FX_VOLUME != 0) {
+			 this.main_song_ch.removeEventListener(Event.SOUND_COMPLETE,this.main_song_PlayAgain);
+			 this.main_song_ch = this.s_main_song.play(0,0,this.main_song_Transform);
+			 if(this.main_song_ch == null)
+			 {
+				this.main_song_working = false;
+			 }
+			 if(this.main_song_working)
+			 {
+				this.main_song_ch.addEventListener(Event.SOUND_COMPLETE,this.main_song_PlayAgain);
+			 }
+		 }
       }
       
       public function am_base_PlayAgain(param1:*) : void
       {
-         this.am_base_ch.removeEventListener(Event.SOUND_COMPLETE,this.am_base_PlayAgain);
-         this.am_base_ch = this.s_am_base.play(0,0,this.am_base_Transform);
-         if(this.am_base_ch == null)
-         {
-            this.am_base_working = false;
-         }
-         if(this.am_base_working)
-         {
-            this.am_base_ch.addEventListener(Event.SOUND_COMPLETE,this.am_base_PlayAgain);
-         }
+		 if(this.NONMUTE && this.FX_VOLUME != 0) {
+			 this.am_base_ch.removeEventListener(Event.SOUND_COMPLETE,this.am_base_PlayAgain);
+			 this.am_base_ch = this.s_am_base.play(0,0,this.am_base_Transform);
+			 if(this.am_base_ch == null)
+			 {
+				this.am_base_working = false;
+			 }
+			 if(this.am_base_working)
+			 {
+				this.am_base_ch.addEventListener(Event.SOUND_COMPLETE,this.am_base_PlayAgain);
+			 }
+		 }
       }
       
       public function am_wind_PlayAgain(param1:*) : void
       {
-         this.am_wind_ch.removeEventListener(Event.SOUND_COMPLETE,this.am_wind_PlayAgain);
-         this.am_wind_ch = this.s_am_wind.play(0,0,this.am_wind_Transform);
-         if(this.am_wind_ch == null)
-         {
-            this.am_wind_working = false;
-         }
-         if(this.am_wind_working)
-         {
-            this.am_wind_ch.addEventListener(Event.SOUND_COMPLETE,this.am_wind_PlayAgain);
-         }
+		 if(this.NONMUTE && this.FX_VOLUME != 0) {
+			 this.am_wind_ch.removeEventListener(Event.SOUND_COMPLETE,this.am_wind_PlayAgain);
+			 this.am_wind_ch = this.s_am_wind.play(0,0,this.am_wind_Transform);
+			 if(this.am_wind_ch == null)
+			 {
+				this.am_wind_working = false;
+			 }
+			 if(this.am_wind_working)
+			 {
+				this.am_wind_ch.addEventListener(Event.SOUND_COMPLETE,this.am_wind_PlayAgain);
+			 }
+		 }
       }
       
       public function UpdateGravitatorVol() : void
