@@ -30798,6 +30798,7 @@ import flash.display.Sprite;
          this.VarChangePreventStart();
          try
          {
+			this.gt_func();
 		    this.rt_func();
 	        this.fr_func();
             this.allow_unlag_fps = true;
@@ -30924,8 +30925,6 @@ import flash.display.Sprite;
 		   
 			   this.updateEffects();
 			   this.updateMap();
-
-			   this.gt_func();
 		   
                if(this.lock_camera_intensity > 0)
                {
