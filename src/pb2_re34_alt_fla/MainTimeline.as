@@ -3764,7 +3764,7 @@
          {
             return;
          }
-         this.map_quickpick.gotoAndStop(2);
+         //this.map_quickpick.gotoAndStop(2);
          this.map_quickpick.gotoAndStop(1);
          this.map_quickpick.visible = true;
          this.map_quickpick.alpha = 0;
@@ -6401,7 +6401,7 @@ import flash.display.Sprite;
                   this.ef[this.nextef].scaleX = 0.5;
                   this.ef[this.nextef].scaleY = 0.5;
                }
-               this.ef[this.nextef].gotoAndStop(1);
+               //this.ef[this.nextef].gotoAndStop(1);
                this.ef[this.nextef].framespeed = 0.7;
             }
          }
@@ -9624,7 +9624,7 @@ import flash.display.Sprite;
                      this.NoMouse(this.mc);
                      this.mc.x = this.regions[this.regionstotal].x + Number(this.regions[this.regionstotal].w) / 2;
                      this.mc.y = this.regions[this.regionstotal].y + Number(this.regions[this.regionstotal].h) / 2;
-                     this.mc.gotoAndStop(1);
+                     //this.mc.gotoAndStop(1);
                      this.regions[this.regionstotal].mc = this.mc;
                   }
                   if(this.regions[this.regionstotal].use_on == 8)
@@ -16088,11 +16088,15 @@ import flash.display.Sprite;
             {
 			   hurt_0 = "pb".concat(this.hurt_i4);
                this._root[hurt_0].alpha += param3 * 0.015;
-               this._root[hurt_0].visible = true;
                if(this._root[hurt_0].alpha > 0.9)
                {
                   this._root[hurt_0].alpha = 0.9;
-               }
+				  this._root[hurt_0].visible = true;
+               } else if(this._root[hurt_0].alpha < 0.1) {
+				   this._root[hurt_0].visible = false;
+			   } else {
+				   this._root[hurt_0].visible = true;
+			   }
                ++this.hurt_i4;
             }
          }
@@ -16128,7 +16132,12 @@ import flash.display.Sprite;
                   if(this._root[hurt_0].alpha > 0.9)
                   {
                      this._root[hurt_0].alpha = 0.9;
-                  }
+					 this._root[hurt_0].visible = true;
+                  } else if(this._root[hurt_0].alpha < 0.1) {
+					  this._root[hurt_0].visible = false;
+				  } else {
+					  this._root[hurt_0].visible = true;
+				  }
                   ++this.hurt_i4;
                }
             }
@@ -16142,7 +16151,12 @@ import flash.display.Sprite;
                   if(this._root[hurt_0].alpha > 0.9)
                   {
                      this._root[hurt_0].alpha = 0.9;
-                  }
+					 this._root[hurt_0].visible = true;
+                  } else if(this._root[hurt_0].alpha < 0.1) {
+					  this._root[hurt_0].visible = false;
+				  } else {
+					  this._root[hurt_0].visible = true;
+				  }
                   ++this.hurt_i4;
                }
             }
@@ -32795,6 +32809,7 @@ import flash.display.Sprite;
                         }
                         else
                         {
+						   //trace(this.guns[i].floatframe + " FLOAT FRAME");
                            this.SetMCFrame(this.guns[i],Math.floor(this.guns[i].floatframe));
                         }
                         //this.MeasureStop(13);
@@ -36303,7 +36318,7 @@ import flash.display.Sprite;
 			 this.skin_model[param1] += param2;
 		 }	 
 	 
-         _loc2_.gotoAndStop(1);
+         //_loc2_.gotoAndStop(1);
          _loc3_ = this.skin_model[param1];
          _loc2_.head.gotoAndStop(_loc3_);
          if(this.skin_model[param1] >= 60 && this.skin_model[param1] <= 61)
