@@ -24,6 +24,18 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var LESS_NOISE = false;
+	   
+	  public var slots = new<MovieClip>[];
+	   
+	  public var slotstotal = 0;
+	   
+	  public var previous_channel = 0;
+	   
+	  public var game_x = 0;
+	   
+	  public var game_y = 0;
+	   
 	  public var fps_toggle_perf = false;
 	   
 	  public var bottomsurface = [];
@@ -34,6 +46,8 @@
 	   
 	  public var topsurfacebox = [];
 	   
+	  public var bgtexture = [];
+	   
 	  public var ledgebox = [];
 	   
 	  public var decorbox = [];
@@ -41,6 +55,8 @@
 	  public var gamedoor = [];
 	   
 	  public var gamebox = [];
+	  
+	  public var bgbox = [];
 	   
 	  public var ui_elements_x = [];
 	   
@@ -68,8 +84,6 @@
 	  
 	  public var gt_m = 0;
 	  
-	  public var gt_timer:Timer = new Timer(1, 0);
-	  
 	  public var rt_counter = 0;
 	  
 	  public var rt_ms_text = "";
@@ -81,8 +95,6 @@
 	  public var rt_h = 0;
 	  
 	  public var rt_m = 0;
-	  
-	  public var rt_timer:Timer = new Timer(1, 0);
 	  
 	  public var start_ms = 0;
 	  
@@ -2901,21 +2913,42 @@
 		 init3DMenu();
       }
   
-	  public function fr_func(param1:Event) {
+      public function updateMap()
+      {
+         this.game.x = this.game_x;
+		 this.game.y = this.game_y;
+	     this.graphics_3d_front.x = this.graphics_3d.x = this.game_x;
+	     this.graphics_3d_front.y = this.graphics_3d.y = this.game_y;
+      }
+  
+      public function updateEffects()
+      {
+		 var i = 0;
+		 while(i < this.maxef) {
+			 if(this.ef[i] != null) {
+				 this.ef[i].x = this.ef[i].x_;
+				 this.ef[i].y = this.ef[i].y_;
+			 }
+			 i++;
+		 }
+      }
+  
+	  public function fr_func() {
 		  if(this.LEVEL_END_FORCE == "" && this.fr_real != null) {
 			++this.frames_display;
 			if(getTimer() - this.prev_frames >= 500)
 			{
 			   this.temp_fps = this.frames_display * 1000 / (getTimer() - this.prev_frames);
-			   this.fr_real.fps.text = ((Math.round(this.temp_fps) * 10) / 10).toString() + " FPS";
+			   var fps_txt = Math.round(this.temp_fps);
+			   this.fr_real.fps.text = fps_txt.toString().concat(" FPS");
 			   this.prev_frames = getTimer();
 			   this.frames_display = 0;
 			}
 		  }
 	  }
   
-	  public function gt_func(e:TimerEvent) {
-		  if(this.ui_elements_visible[3] && this.gt_ms_text != null) 
+	  public function gt_func() {
+		  if(this.ui_elements_visible[3] && this.gt_real != null) 
 		  {
 			 if(this.system_non_stop && !this.pauze.visible) {
 				 if(this.LEVEL_END_FORCE == "") {
@@ -2938,20 +2971,20 @@
 					 }
 				
 					 if(String(this.gt_ms_text).length == 1) {
-						this.gt_ms_text = "0" + "0" + this.gt_ms_text;
+						this.gt_ms_text = "0".concat("0", this.gt_ms_text);
 					 }
 					 if(String(this.gt_ms_text).length == 2) {
-						this.gt_ms_text = "0" + this.gt_ms_text;
+						this.gt_ms_text = "0".concat(this.gt_ms_text);
 					 }
 				 
 					 if(String(this.gt_s).length == 1) {
-						 this.gt_s = "0" + this.gt_s;
+						 this.gt_s = "0".concat(this.gt_s);
 					 }
 					 if(String(this.gt_m).length == 1) {
-						 this.gt_m = "0" + this.gt_m;
+						 this.gt_m = "0".concat(this.gt_m);
 					 }
 					 if(String(this.gt_h).length == 1) {
-						 this.gt_h = "0" + this.gt_h;
+						 this.gt_h = "0".concat(this.gt_h);
 					 }
 				 
 				 	 if(String(this.gt_m).length == 0) {
@@ -2959,9 +2992,9 @@
 					 }
 				 
 					 if(this.gt_h <= 0) {
-						this.gt_real.time.text = "GT " + this.gt_m + ":" + this.gt_s + "." + this.gt_ms_text;
+						this.gt_real.time.text = "GT ".concat(this.gt_m, ":", this.gt_s, ".", this.gt_ms_text);
 					 } else {
-						this.gt_real.time.text = "GT " + this.gt_h + " " + this.gt_m + ":" + this.gt_s + "." + this.gt_ms_text;
+						this.gt_real.time.text = "GT ".concat(this.gt_h, " ", this.gt_m, ":", this.gt_s, "." , this.gt_ms_text);
 					 }
 				 }
 			 } else {
@@ -2995,8 +3028,8 @@
 	  }
   
   
-	  public function rt_func(e:TimerEvent) {
-		  if(this.ui_elements_visible[2] && this.rt_ms_text != null) 
+	  public function rt_func() {
+		  if(this.ui_elements_visible[2] && this.rt_real != null) 
 		  {
 			 if(this.LEVEL_END_FORCE != "complete") {
 				 this.end_ms = getTimer();
@@ -3019,20 +3052,20 @@
 			 
 				
 				 if(String(this.rt_ms_text).length == 1) {
-					 this.rt_ms_text = "0" + "0" + this.rt_ms_text;
+					 this.rt_ms_text = "0".concat("0", this.rt_ms_text);
 				 }
 				 if(String(this.rt_ms_text).length == 2) {
-					 this.rt_ms_text = "0" + this.rt_ms_text;
+					 this.rt_ms_text = "0".concat(this.rt_ms_text);
 				 }
 			 
 				 if(String(this.rt_s).length == 1) {
-					 this.rt_s = "0" + this.rt_s;
+					 this.rt_s = "0".concat(this.rt_s);
 				 }
 				 if(String(this.rt_m).length == 1) {
-					 this.rt_m = "0" + this.rt_m;
+					 this.rt_m = "0".concat(this.rt_m);
 				 }
 				 if(String(this.rt_h).length == 1) {
-					 this.rt_h = "0" + this.rt_h;
+					 this.rt_h = "0".concat(this.rt_h);
 				 }
 				 
 				 if(String(this.rt_m).length == 0) {
@@ -3040,9 +3073,9 @@
 				 }
 			
 				 if(this.rt_h <= 0) {
-					this.rt_real.time.text = this.rt_m + ":" + this.rt_s + "." + this.rt_ms_text;
+					this.rt_real.time.text = this.rt_m.concat(":", this.rt_s, ".", this.rt_ms_text);
 				 } else {
-					this.rt_real.time.text = this.rt_h + ":" + this.rt_m + ":" + this.rt_s + "." + this.rt_ms_text;
+					this.rt_real.time.text = this.rt_h.concat(":", this.rt_m, ":", this.rt_s, ".", this.rt_ms_text);
 				 }
 			 }
 		  }
@@ -4343,8 +4376,6 @@
       
       public function StartGameTimer() : void
       {
-		 this.last_gun_b4_psi = -1;
-		 this.mens[this.MP_myid].curwea = -1;
          addEventListener(Event.ENTER_FRAME,this.onEnterFrame);
          /*if(this.MP_mode)
          {
@@ -4358,7 +4389,14 @@
       
       public function UpdateFramerate() : void
       {
-         stage.frameRate = this.FRAMERATE == 1 ? 20 : (this.FRAMERATE == 2 ? 30 : 60);
+		 if(this.FRAMERATE == 20) {
+			 stage.frameRate = 20;
+			 trace("HELLO");
+		 } else if(this.FRAMERATE == 30) {
+			 stage.frameRate = 30;
+		 } else {
+			 stage.frameRate = 60;
+		 }
       }
       
       /*public function AskForCache(param1:MovieClip) : void
@@ -4660,7 +4698,8 @@ import flash.display.Sprite;
       
       public function RestoreLimbColor(param1:MovieClip) : void
       {
-         param1.filters = new Array(this.clrs[0]);
+         //param1.filters = new Array(this.clrs[0]);
+		  // FILTERS
       }
       
       public function UpdatePlayerColorSP(param1:MovieClip, param2:int) : void
@@ -4669,7 +4708,7 @@ import flash.display.Sprite;
          {
             if(param2 == 0 || param2 == 1)
             {
-               param1.head.filters = new Array(this.clrs[this.skin_color_head[param2]]);
+               /*param1.head.filters = new Array(this.clrs[this.skin_color_head[param2]]);
                param1.body.filters = new Array(this.clrs[this.skin_color_body[param2]]);
                param1.arm1.upper.filters = new Array(this.clrs[this.skin_color_arms[param2]]);
                param1.arm1.lower.filters = new Array(this.clrs[this.skin_color_arms[param2]]);
@@ -4681,18 +4720,20 @@ import flash.display.Sprite;
                param1.leg2.upper.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
                param1.leg2.middle.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
                param1.leg2.lower.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
-               param1.toe.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
+               param1.toe.filters = new Array(this.clrs[this.skin_color_legs[param2]]);*/
+			   // FILTER
             }
          }
       }
       
-      public function BlueHue(param1:String) : ColorMatrixFilter
+      public function BlueHue(param1:String)// : ColorMatrixFilter
       {
+		 return;
          var _loc3_:* = undefined;
          var _loc4_:* = undefined;
          var _loc5_:Number = NaN;
          var _loc6_:* = undefined;
-         var _loc2_:ColorMatrixFilter = new ColorMatrixFilter();
+         //var _loc2_:ColorMatrixFilter = new ColorMatrixFilter();
          if(param1 != "-")
          {
             if(!isNaN(parseInt(param1,10)) && this.clrs[parseInt(param1,10)] != undefined)
@@ -4705,7 +4746,7 @@ import flash.display.Sprite;
                _loc4_ = this.MPclr[param1][1];
                _loc5_ = Number(this.MPclr[param1][2]);
                _loc6_ = (_loc6_ = (_loc6_ = (_loc6_ = (_loc6_ = []).concat([_loc3_ * 0.3,_loc3_ * 0.4 + _loc4_ * 0.2,_loc3_ * 0.6 + _loc5_ * 0.2,0,0])).concat([_loc4_ * 0.3 + _loc3_ * 0.2,_loc4_ * 0.4,_loc4_ * 0.6 + _loc5_ * 0.2,0,0])).concat([_loc5_ * 0.3 + _loc3_ * 0.2,_loc5_ * 0.4 + _loc4_ * 0.2,_loc5_ * 0.6,0,0])).concat([0,0,0,1,0]);
-               _loc2_.matrix = _loc6_;
+               //_loc2_.matrix = _loc6_;
             }
          }
          return _loc2_;
@@ -4713,11 +4754,11 @@ import flash.display.Sprite;
       
       public function UpdatePlayerColorMP(param1:MovieClip, param2:Boolean = false) : void
       {
-         var _loc3_:ColorMatrixFilter = this.BlueHue(param1.palette[0]);
-         var _loc4_:ColorMatrixFilter = this.BlueHue(param1.palette[1]);
-         var _loc5_:ColorMatrixFilter = this.BlueHue(param1.palette[2]);
-         var _loc6_:ColorMatrixFilter = this.BlueHue(param1.palette[3]);
-         param1.head.filters = new Array(_loc3_);
+         //var _loc3_:ColorMatrixFilter = this.BlueHue(param1.palette[0]);
+         //var _loc4_:ColorMatrixFilter = this.BlueHue(param1.palette[1]);
+         //var _loc5_:ColorMatrixFilter = this.BlueHue(param1.palette[2]);
+         //var _loc6_:ColorMatrixFilter = this.BlueHue(param1.palette[3]);
+         /*param1.head.filters = new Array(_loc3_);
          param1.body.filters = new Array(_loc6_);
          param1.arm1.upper.filters = new Array(_loc4_);
          param1.arm1.lower.filters = new Array(_loc4_);
@@ -4729,7 +4770,8 @@ import flash.display.Sprite;
          param1.leg2.upper.filters = new Array(_loc5_);
          param1.leg2.middle.filters = new Array(_loc5_);
          param1.leg2.lower.filters = new Array(_loc5_);
-         param1.toe.filters = new Array(_loc5_);
+         param1.toe.filters = new Array(_loc5_);*/
+		  // FILTERS
       }
       
       public function LoadGame() : void
@@ -4807,6 +4849,7 @@ import flash.display.Sprite;
             this.my_so.data["fx_vol"] = 0.5;
             this.my_so.data["music_vol"] = 0.5;
             this.my_so.data["CUSTOM_MUSIC_VOLUME"] = 0.5;
+			this.my_so.data["LESS_NOISE"] = false;
             this.my_so.data["hq"] = true;
             this.my_so.data["easy_mode"] = false;
             this.my_so.data["pro_bots"] = false;
@@ -4915,6 +4958,7 @@ import flash.display.Sprite;
          this.FX_VOLUME = Number(this.my_so.data["fx_vol"]);
          this.MUSIC_VOLUME = Number(this.my_so.data["music_vol"]);
          this.CUSTOM_MUSIC_VOLUME = Number(this.my_so.data["CUSTOM_MUSIC_VOLUME"]);
+		 this.LESS_NOISE = this.my_so.data["LESS_NOISE"];
          this.HQ = Boolean(this.my_so.data["hq"]);
          this.EASY_MODE = Boolean(this.my_so.data["easy_mode"]);
          this.LOW_HPS = Boolean(this.my_so.data["LOW_HPS"]);
@@ -5159,6 +5203,7 @@ import flash.display.Sprite;
          this.my_so.data["music_vol"] = this.MUSIC_VOLUME;
          this.my_so.data["CUSTOM_MUSIC_VOLUME"] = this.CUSTOM_MUSIC_VOLUME;
          this.my_so.data["hq"] = this.HQ;
+	     this.my_so.data["LESS_NOISE"] = this.LESS_NOISE;
          this.my_so.data["mouse_wheel"] = this.MOUSE_WHEEL;
          this.my_so.data["OVERSCROLL"] = this.OVERSCROLL;
          this.my_so.data["RECONNECT_ON_LOST_CONNECTION"] = this.RECONNECT_ON_LOST_CONNECTION;
@@ -5209,6 +5254,17 @@ import flash.display.Sprite;
       {
          return Math.sqrt(param1 * param1 + param2 * param2 + param3 * param3);
       }
+  
+	  /*public function FinishSound(e) {
+		 var i = 0;
+		 while(i < this.last_channel) {
+			   if(this.s_channel[i] == e.currentTarget) {
+				   this.s_channel[i] = null;
+				   break;
+			   }
+			   i++;
+		 }
+	  }*/
       
       public function PlaySound(param1:*, param2:Number, param3:Number, param4:MovieClip = null) : void
       {
@@ -5218,53 +5274,38 @@ import flash.display.Sprite;
          var x:Number = param2;
          var y:Number = param3;
          var attached_mc:MovieClip = param4;
-         if(this.NONMUTE && this.FX_VOLUME != 0)
-         {
-            if(this.game.visible)
-            {
-               if(this.s_channel[this.last_channel] != null)
-               {
-                  this.s_channel[this.last_channel].stop();
-               }
-               this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game.x - 400 - 300,y * this.game_scale + this.game.y - 200,this.dist_to_face);
-               this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game.x - 400 + 300,y * this.game_scale + this.game.y - 200,this.dist_to_face);
-               this.vol3d[this.last_channel].volume = this.vol.volume;
-               if(src.custom_volume == undefined)
-               {
-                  src.custom_volume = 1;
-               }
-               else
-               {
-                  this.vol3d[this.last_channel].volume *= src.custom_volume;
-               }
-               this.vol3d[this.last_channel].leftToLeft = this.smod2;
-               this.vol3d[this.last_channel].leftToRight = 0;
-               this.vol3d[this.last_channel].rightToRight = this.smod;
-               this.vol3d[this.last_channel].rightToLeft = 0;
-               this.s_channel[this.last_channel] = src.play(0,0,this.vol3d[this.last_channel]);
-               if(attached_mc != null)
-               {
-                  callb = function():void
-                  {
-                     attached_mc.attached_sound.removeEventListener(Event.SOUND_COMPLETE,callb);
-                     attached_mc2.attached_sound = null;
-                  };
-                  attached_mc2 = attached_mc;
-                  if(attached_mc.attached_sound != undefined && attached_mc.attached_sound != null)
-                  {
-                     attached_mc.attached_sound.removeEventListener(Event.SOUND_COMPLETE,callb);
-                     attached_mc.attached_sound.stop();
-                  }
-                  attached_mc.attached_sound = this.s_channel[this.last_channel];
-                  attached_mc.attached_sound.addEventListener(Event.SOUND_COMPLETE,callb);
-               }
-               ++this.last_channel;
-               if(this.last_channel >= this.max_channels)
+		 if(this.NONMUTE && this.FX_VOLUME != 0)
+		 {
+			if(this.game.visible)
+			{
+			   if(this.s_channel[this.last_channel] != null)
+			   {
+				  this.s_channel[this.last_channel].stop();
+			   }			   
+			   this.smod = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 - 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
+			   this.smod2 = this.dist_to_face / this.Dist3Dm(x * this.game_scale + this.game_x - 400 + 300,y * this.game_scale + this.game_y - 200,this.dist_to_face);
+			   this.vol3d[this.last_channel].volume = this.vol.volume;
+			   if(src.custom_volume == undefined)
+			   {
+				  src.custom_volume = 1;
+			   }
+			   else
+			   {
+				  this.vol3d[this.last_channel].volume *= src.custom_volume;
+			   }
+			   this.vol3d[this.last_channel].leftToLeft = this.smod2;
+			   this.vol3d[this.last_channel].leftToRight = 0;
+			   this.vol3d[this.last_channel].rightToRight = this.smod;
+			   this.vol3d[this.last_channel].rightToLeft = 0;
+			   this.s_channel[this.last_channel] = src.play(0,0,this.vol3d[this.last_channel]);
+			   ++this.last_channel;
+			   if(this.last_channel >= this.max_channels)
                {
                   this.last_channel = 0;
                }
-            }
-         }
+
+			}
+		 }
       }
       
       public function PlaySound_full(param1:*) : void
@@ -5277,6 +5318,7 @@ import flash.display.Sprite;
                {
                   this.s_channel[this.last_channel].stop();
                }
+
                this.vol3d[this.last_channel].volume = this.vol.volume;
                if(param1.custom_volume == undefined)
                {
@@ -5486,11 +5528,11 @@ import flash.display.Sprite;
       public function UpdateWeps() : void
       {
          this.upd_weps_i = 0;
-         while(this.upd_weps_i < 10)
+         while(this.upd_weps_i <= 9)
          {
-            this.weps["gi" + this.upd_weps_i].visible = false;
+            this.slots[this.upd_weps_i].visible = false;
             this.upd_weps_i2 = 0;
-            while(this.upd_weps_i2 < this.gunstotal && !this.weps["gi" + this.upd_weps_i].visible)
+            while(this.upd_weps_i2 < this.gunstotal && !this.slots[this.upd_weps_i].visible)
             {
                if(this.guns[this.upd_weps_i2].io)
                {
@@ -5498,18 +5540,15 @@ import flash.display.Sprite;
                   {
                      if(this.guns[this.upd_weps_i2].wep == this.upd_weps_i)
                      {
-                        this.weps["gi" + this.upd_weps_i].visible = true;
+                        this.slots[this.upd_weps_i].visible = true;
                         if(this.mens[this.MP_myid].curwea == this.upd_weps_i2)
                         {
-                           this.weps["gi" + this.upd_weps_i].alpha = 1;
-                           if(this.weps["gi" + this.upd_weps_i].currentFrame != 1)
-                           {
-                              this.weps["gi" + this.upd_weps_i].gotoAndStop(1);
-                           }
+                           this.slots[this.upd_weps_i].alpha = 1;
+                           this.slots[this.upd_weps_i].gotoAndStop(1);
                         }
                         else
                         {
-                           this.weps["gi" + this.upd_weps_i].alpha = 0.4;
+                           this.slots[this.upd_weps_i].alpha = 0.4;
                         }
                      }
                   }
@@ -5518,43 +5557,39 @@ import flash.display.Sprite;
             }
             if(this.upd_weps_i == 0)
             {
-               this.weps["gi" + this.upd_weps_i].visible = true;
+               this.slots[this.upd_weps_i].visible = true;
                if(this.mens[this.MP_myid].curwea == -1)
                {
-                  this.weps["gi" + this.upd_weps_i].alpha = 1;
-                  if(this.weps["gi" + this.upd_weps_i].currentFrame != 1)
-                  {
-                     this.weps["gi" + this.upd_weps_i].gotoAndStop(1);
-                  }
+                  this.slots[this.upd_weps_i].alpha = 1;
+                  this.slots[this.upd_weps_i].gotoAndStop(1);
                }
                else
                {
-                  this.weps["gi" + this.upd_weps_i].alpha = 0.4;
+                  this.slots[this.upd_weps_i].alpha = 0.4;
                }
             }
-            if(this.weps["gi" + this.upd_weps_i].visible)
+            if(this.slots[this.upd_weps_i].visible)
             {
-               this.weps["gi" + this.upd_weps_i].txt.text = this.upd_weps_i;
+               this.slots[this.upd_weps_i].txt.text = this.upd_weps_i;
             }
-            if(this.weps["gi" + this.upd_weps_i].currentFrame == 2)
+            if(this.slots[this.upd_weps_i].currentFrame == 2)
             {
-               this.weps["gi" + this.upd_weps_i].alpha = 0.7;
+               this.slots[this.upd_weps_i].alpha = 0.7;
             }
             ++this.upd_weps_i;
          }
-         this.upd_weps_i = 0;
+         this.upd_weps_i = 10;
          if(this.PLAZMA_GAME)
          {
             if(!this.MP_mode)
             {
-               this.upd_weps_i = 0;
-               while(this.upd_weps_i < 6)
+               this.upd_weps_i = 16;
+               while(this.upd_weps_i <= 27)
                {
-                  this.weps["te" + this.upd_weps_i].visible = false;
-                  this.weps["sh" + this.upd_weps_i].visible = false;
+                  this.slots[this.upd_weps_i].visible = false;
                   ++this.upd_weps_i;
                }
-               this.upd_weps_i = 0;
+               this.upd_weps_i = 10;
                this.upd_weps_i2 = 0;
                while(this.upd_weps_i2 < this.gunstotal)
                {
@@ -5564,9 +5599,9 @@ import flash.display.Sprite;
                      {
                         if(this.guns[this.upd_weps_i2].picken_by == this.MP_myid && !this.guns[this.upd_weps_i2].forcars)
                         {
-                           if(this.upd_weps_i < 6)
+                           if(this.upd_weps_i <= 15)
                            {
-                              this.weps["gr" + this.upd_weps_i].gotoAndStop(1);
+                              this.slots[this.upd_weps_i].gotoAndStop(1);
                               ++this.upd_weps_i;
                            }
                         }
@@ -5574,13 +5609,13 @@ import flash.display.Sprite;
                   }
                   ++this.upd_weps_i2;
                }
-               this.grenades_total = this.upd_weps_i;
+               this.grenades_total = this.upd_weps_i - 10;
             }
             else
             {
-               while(this.upd_weps_i < 6 && this.upd_weps_i < this.grenades_total)
+               while(this.upd_weps_i <= 15 && this.upd_weps_i - 10 < this.grenades_total)
                {
-                  this.weps["gr" + this.upd_weps_i].gotoAndStop(1);
+                  this.slots[this.upd_weps_i].gotoAndStop(1);
                   ++this.upd_weps_i;
                }
                if(!this.MP_spectator)
@@ -5610,47 +5645,45 @@ import flash.display.Sprite;
                }
             }
             this.upd_weps_i;
-            while(this.upd_weps_i < 6)
+            while(this.upd_weps_i <= 15)
             {
-               this.weps["gr" + this.upd_weps_i].gotoAndStop(2);
+               this.slots[this.upd_weps_i].gotoAndStop(2);
                ++this.upd_weps_i;
             }
             if(this.MP_mode)
             {
-               this.upd_weps_i = 0;
-               while(this.upd_weps_i < 6 && this.upd_weps_i < this.grenades_port_total)
+               this.upd_weps_i = 16;
+               while(this.upd_weps_i <= 21 && this.upd_weps_i - 16 < this.grenades_port_total)
                {
-                  this.weps["te" + this.upd_weps_i].gotoAndStop(1);
+                  this.slots[this.upd_weps_i].gotoAndStop(1);
                   ++this.upd_weps_i;
                }
-               this.upd_weps_i;
-               while(this.upd_weps_i < 6)
+               this.upd_weps_i = 16;
+               while(this.upd_weps_i <= 21)
                {
-                  this.weps["te" + this.upd_weps_i].gotoAndStop(2);
+                  this.slots[this.upd_weps_i].gotoAndStop(2);
                   ++this.upd_weps_i;
                }
-               this.upd_weps_i = 0;
-               while(this.upd_weps_i < 6 && this.upd_weps_i < this.grenades_sh_total)
+               this.upd_weps_i = 22;
+               while(this.upd_weps_i <= 27 && this.upd_weps_i - 22 < this.grenades_sh_total)
                {
-                  this.weps["sh" + this.upd_weps_i].gotoAndStop(1);
+                  this.slots[this.upd_weps_i].gotoAndStop(1);
                   ++this.upd_weps_i;
                }
-               this.upd_weps_i;
-               while(this.upd_weps_i < 6)
+               this.upd_weps_i = 22;
+               while(this.upd_weps_i <= 27)
                {
-                  this.weps["sh" + this.upd_weps_i].gotoAndStop(2);
+                  this.slots[this.upd_weps_i].gotoAndStop(2);
                   ++this.upd_weps_i;
                }
             }
          }
          else
          {
-            this.upd_weps_i = 0;
-            while(this.upd_weps_i < 6)
+            this.upd_weps_i = 10;
+            while(this.upd_weps_i <= 27)
             {
-               this.weps["gr" + this.upd_weps_i].visible = false;
-               this.weps["te" + this.upd_weps_i].visible = false;
-               this.weps["sh" + this.upd_weps_i].visible = false;
+               this.slots[this.upd_weps_i].visible = false;
                ++this.upd_weps_i;
             }
          }
@@ -6180,8 +6213,8 @@ import flash.display.Sprite;
                {
                   this.flakes[this.i] = this.graphics_3d.addChildAt(new flake(),0) as MovieClip;
                }
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                this.flakes[this.i]._z = _loc1_;
                _loc2_ = Math.random() * Math.PI * 2;
                _loc3_ = Math.random() * 30 - 10;
@@ -6227,10 +6260,10 @@ import flash.display.Sprite;
          this.i = 0;
          while(this.i < this.flakes_total)
          {
-            if(this.flakes[this.i]._x > this.screenX - this.game.x + this.flakes_spreadout)
+            if(this.flakes[this.i]._x > this.screenX - this.game_x + this.flakes_spreadout)
             {
                this.flakes[this.i]._x -= this.screenX + this.flakes_spreadout * 2;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6242,10 +6275,10 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._x < -this.game.x - this.flakes_spreadout)
+            if(this.flakes[this.i]._x < -this.game_x - this.flakes_spreadout)
             {
                this.flakes[this.i]._x += this.screenX + this.flakes_spreadout * 2;
-               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game.y - this.flakes_spreadout;
+               this.flakes[this.i]._y = Math.random() * (this.screenY + this.flakes_spreadout * 2) - this.game_y - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6257,11 +6290,11 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._y > this.screenY - this.game.y + this.flakes_spreadout)
+            if(this.flakes[this.i]._y > this.screenY - this.game_y + this.flakes_spreadout)
             {
                this.flakes[this.i]._y -= this.screenY + this.flakes_spreadout * 2;
                this.flakes[this.i].rotation = Math.random() * 360;
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6273,10 +6306,10 @@ import flash.display.Sprite;
                   this.flakes[this.i].visible = true;
                }
             }
-            if(this.flakes[this.i]._y < -this.game.y - this.flakes_spreadout)
+            if(this.flakes[this.i]._y < -this.game_y - this.flakes_spreadout)
             {
                this.flakes[this.i]._y += this.screenY + this.flakes_spreadout * 2;
-               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game.x - this.flakes_spreadout;
+               this.flakes[this.i]._x = Math.random() * (this.screenX + this.flakes_spreadout * 2) - this.game_x - this.flakes_spreadout;
                if(!this.VerticalTrace(this.flakes[this.i]._x,this.flakes[this.i]._y))
                {
                   this.flakes[this.i].hit = true;
@@ -6290,8 +6323,8 @@ import flash.display.Sprite;
             }
             this.flakes[this.i]._x += Number(this.flakes[this.i].tox) * this.GSPEED;
             this.flakes[this.i]._y += Number(this.flakes[this.i].toy) * this.GSPEED;
-            this.flakes[this.i].x = Number(this.flakes[this.i]._x) - (Number(this.flakes[this.i]._x) - this.hscreenX + this.game.x) * Number(this.flakes[this.i]._z);
-            this.flakes[this.i].y = Number(this.flakes[this.i]._y) - (Number(this.flakes[this.i]._y) - this.hscreenY + this.game.y) * Number(this.flakes[this.i]._z);
+            this.flakes[this.i].x = Number(this.flakes[this.i]._x) - (Number(this.flakes[this.i]._x) - this.hscreenX + this.game_x) * Number(this.flakes[this.i]._z);
+            this.flakes[this.i].y = Number(this.flakes[this.i]._y) - (Number(this.flakes[this.i]._y) - this.hscreenY + this.game_y) * Number(this.flakes[this.i]._z);
             this.flakes[this.i].scaleX = this.flakes[this.i].scaleY = Number(this.flakes[this.i]._scale) * (1 - Number(this.flakes[this.i]._z));
             this.flakes[this.i].toy += this.gravity * 0.5 * this.GSPEED;
             this.flakes[this.i].tox *= Math.pow(0.8,this.GSPEED);
@@ -6326,7 +6359,7 @@ import flash.display.Sprite;
       public function Effect(param1:Number, param2:Number, param3:int, param4:Number, param5:Number) : void
       {
          this.ok2 = false;
-         if(param1 > -this.game.x / this.game_scale - 150 && param1 < -this.game.x / this.game_scale + this.screenX / this.game_scale + 150 && param2 > -this.game.y / this.game_scale - 150 && param2 < -this.game.y / this.game_scale + this.screenY / this.game_scale + 150)
+         if(param1 > -this.game_x / this.game_scale - 150 && param1 < -this.game_x / this.game_scale + this.screenX / this.game_scale + 150 && param2 > -this.game_y / this.game_scale - 150 && param2 < -this.game_y / this.game_scale + this.screenY / this.game_scale + 150)
          {
             this.ok2 = true;
          }
@@ -6494,7 +6527,7 @@ import flash.display.Sprite;
                   this.NoMouse(this.ef[this.nextef]);
                   this.ef[this.nextef].typ = 5;
                   this.ef[this.nextef].rotation = Math.random() * 360;
-                  this.ef[this.nextef].gotoAndStop(1);
+                  //this.ef[this.nextef].gotoAndStop(1);
                   this.ef[this.nextef].float_frame = 1;
                   this.ef[this.nextef].framespeed = 0.7;
                   if(this.effcolor >= 0)
@@ -6688,8 +6721,8 @@ import flash.display.Sprite;
          if(this.ok2)
          {
             this.ef[this.nextef].life = 0;
-            this.ef[this.nextef].x = param1;
-            this.ef[this.nextef].y = param2;
+            this.ef[this.nextef].x_ = param1;
+            this.ef[this.nextef].y_ = param2;
             if(this.ef[this.nextef].typ == 3)
             {
                this.ef[this.nextef].tox = param4;
@@ -6780,7 +6813,7 @@ import flash.display.Sprite;
       
       public function nextpul() : void
       {
-		 this.ForceRasterize(this.puls[this.pulscur]);
+		 //this.ForceRasterize(this.puls[this.pulscur]);
          ++this.pulscur;
          if(this.pulscur > this.pulsmax)
          {
@@ -6846,30 +6879,32 @@ import flash.display.Sprite;
       {
          var _loc5_:* = undefined;
          var _loc4_:* = getTimer();
-         if(param3 || _loc4_ > (param1.last_say_sound || 0) + 500)
-         {
-            param1.last_say_sound = _loc4_;
-            if(param1.voice_channel != null)
-            {
-               param1.voice_channel.stop();
-            }
-            param1.voice_channel = param2.play();
-            if(param1.voice_channel != null)
-            {
-               this.smod = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game.x - 400 - 300,param1.y * this.game_scale + this.game.y - 200,this.dist_to_face);
-               this.smod2 = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game.x - 400 + 300,param1.y * this.game_scale + this.game.y - 200,this.dist_to_face);
-               if(param2.custom_volume == undefined)
-               {
-                  param2.custom_volume = 1;
-               }
-               (_loc5_ = new SoundTransform(this.FX_VOLUME * Number(param2.custom_volume))).leftToLeft = this.smod2;
-               _loc5_.leftToRight = 0;
-               _loc5_.rightToRight = this.smod;
-               _loc5_.rightToLeft = 0;
-               param1.voice_channel.soundTransform = _loc5_;
-            }
-            return;
-         }
+		 if(this.NONMUTE && this.FX_VOLUME != 0 && !this.LESS_NOISE) {
+			 if(param3 || _loc4_ > (param1.last_say_sound || 0) + 500)
+			 {
+				param1.last_say_sound = _loc4_;
+				if(param1.voice_channel != null)
+				{
+				   param1.voice_channel.stop();
+				}
+				param1.voice_channel = param2.play();
+				if(param1.voice_channel != null)
+				{
+				   this.smod = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 - 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
+				   this.smod2 = this.dist_to_face / this.Dist3Dm(param1.x * this.game_scale + this.game_x - 400 + 300,param1.y * this.game_scale + this.game_y - 200,this.dist_to_face);
+				   if(param2.custom_volume == undefined)
+				   {
+					  param2.custom_volume = 1;
+				   }
+				   (_loc5_ = new SoundTransform(this.FX_VOLUME * Number(param2.custom_volume))).leftToLeft = this.smod2;
+				   _loc5_.leftToRight = 0;
+				   _loc5_.rightToRight = this.smod;
+				   _loc5_.rightToLeft = 0;
+				   param1.voice_channel.soundTransform = _loc5_;
+				}
+				return;
+			 }
+		 }
       }
       
       public function SimHitSound(param1:MovieClip, param2:Number, param3:Number, param4:int) : void
@@ -7128,6 +7163,12 @@ import flash.display.Sprite;
          this.arad[param1.b_head_end] *= _loc3_;
          this.RedrawPsi(param1.idd);
       }
+  
+	  public function create_slots(param1:MovieClip,param2) : void
+	  {
+		 this.slots[param2] = param1;
+		  
+	  }
       
       public function create_player(param1:MovieClip, param2:Number, param3:Number) : void
       {
@@ -7306,7 +7347,7 @@ import flash.display.Sprite;
          param1.ch_body_ang4 = new int(this.Connect(param1.b_leg1,param1.b_leg2,2,30,-1));
          param1.ch_body_ang4b = new int(this.Connect(param1.b_leg1,param1.b_leg2,2,30,0.4));
          param1.ch_body_ang5 = new int(this.Connect(param1.b_toe,param1.b_head_end,1,36,-1));
-         param1.gotoAndStop(2);
+		 //param1.gotoAndStop(1);
          param1.toe.bloddy.visible = false;
          param1.mdl_leg1_upper = new int(1);
          param1.mdl_leg1_middle = new int(1);
@@ -9291,13 +9332,13 @@ import flash.display.Sprite;
                if(a == "bg")
                {
                   foreground = b["#f"] == "1" || b["#f"] == "true";
-                  sprite_to_draw_at = foreground ? mShape_front : this.mShape;
+                  //this.bgbox[this.bgstotal] = foreground ? mShape_front : this.mShape;
+				  this.bgtexture[this.bgstotal] = new Sprite();
                   if(b["#a"] != "-1" && b["#a"] != "" && b["#a"] != undefined)
                   {
-                     sprite_to_draw_at = new Sprite();
                      this.attachments.push({
                         "parent":b["#a"],
-                        "child":sprite_to_draw_at,
+                        "child":this.bgtexture[this.bgstotal],
                         "type":1,
                         "foreground":foreground
                      });
@@ -9441,12 +9482,12 @@ import flash.display.Sprite;
                            bitmap_data.colorTransform(bitmap_data.rect,new ColorTransform((dec >> 16 & 255) / 255 * 2,(dec >> 8 & 255) / 255 * 2,(dec & 255) / 255 * 2));
                         }
                      }
-                     sprite_to_draw_at.graphics.beginBitmapFill(bitmap_data,matr,true,true);
-                     sprite_to_draw_at.graphics.moveTo(Number(b["#x"]),Number(b["#y"]));
-                     sprite_to_draw_at.graphics.lineTo(Number(b["#x"]) + Number(b["#w"]),Number(b["#y"]));
-                     sprite_to_draw_at.graphics.lineTo(Number(b["#x"]) + Number(b["#w"]),Number(b["#y"]) + Number(b["#h"]));
-                     sprite_to_draw_at.graphics.lineTo(Number(b["#x"]),Number(b["#y"]) + Number(b["#h"]));
-                     sprite_to_draw_at.graphics.endFill();
+                     this.bgtexture[this.bgstotal].graphics.beginBitmapFill(bitmap_data,matr,true,true);
+                     this.bgtexture[this.bgstotal].graphics.moveTo(Number(b["#x"]),Number(b["#y"]));
+                     this.bgtexture[this.bgstotal].graphics.lineTo(Number(b["#x"]) + Number(b["#w"]),Number(b["#y"]));
+                     this.bgtexture[this.bgstotal].graphics.lineTo(Number(b["#x"]) + Number(b["#w"]),Number(b["#y"]) + Number(b["#h"]));
+                     this.bgtexture[this.bgstotal].graphics.lineTo(Number(b["#x"]),Number(b["#y"]) + Number(b["#h"]));
+                     this.bgtexture[this.bgstotal].graphics.endFill();
                   }
                   if(this.spec_debug)
                   {
@@ -10478,8 +10519,8 @@ import flash.display.Sprite;
                   {
                      if(this.MP_myid == this.mc.idd)
                      {
-                        this.game.x = -this.mc.x + this.hscreenX;
-                        this.game.y = -this.mc.y + this.hscreenY;
+                        this.game_x = -this.mc.x + this.hscreenX;
+                        this.game_y = -this.mc.y + this.hscreenY;
                      }
                      this.mc.isplayer = new Boolean(true);
                      ++this.MP_playerstotal;
@@ -10881,6 +10922,15 @@ import flash.display.Sprite;
 			   }
                i++;
             }
+		
+			i = 0;
+			while(i < this.bgstotal) {
+				if(this.bgtexture[i] != undefined) {
+					this.bgbox[i] = this.mShape.addChildAt(this.bgtexture[i],this.mShape.numChildren);
+				}
+				i++;
+			}		
+		
             this.cx = (this.g_maxx - this.g_minx) / 20;
             this.cy = (this.g_maxy - this.g_miny) / 20;
             this.temp = this.graphics_3d.addChildAt(this.mShape,this.graphics_3d.numChildren);
@@ -11661,7 +11711,7 @@ import flash.display.Sprite;
                   ++this.i2;
                }
                i++;
-            }
+            }		
             this.temp = this.graphics_3d.addChildAt(this.mShape,this.graphics_3d.numChildren);
 			i = 0;
 			while(i < this.boxestotal) {
@@ -11673,6 +11723,7 @@ import flash.display.Sprite;
 				}
 				i++;
 			}
+		
             loadmap_stage = "13";
             traces_start = Number(getTimer());
             if(this.HQ)
@@ -11905,7 +11956,8 @@ import flash.display.Sprite;
                   }
                   loadmap_stage = "1331";
                   g.graphics.endFill();
-                  g.filters = [new BlurFilter(1.1,1.1,3)];
+                  //g.filters = [new BlurFilter(1.1,1.1,3)];
+				  // FILTER
                   loadmap_stage = "1332";
                   this.lamps_sprites[this.i4] = g;
                   loadmap_stage = "1333";
@@ -12181,7 +12233,7 @@ import flash.display.Sprite;
          var id:Number = NaN;
          var custom_image:Object = null;
          var sf:* = undefined;
-         var clrs_mov:ColorMatrixFilter = null;
+         //var clrs_mov:ColorMatrixFilter = null;
          var matrix:* = undefined;
          var loader:* = undefined;
          var request:URLRequest = null;
@@ -12448,11 +12500,6 @@ import flash.display.Sprite;
 						 this.SaveGame();
 						 ++this.CMPG_THIS_LEVEL;
 						 this.LEVEL_END_FORCE = "complete";
-						
-						 this.gt_timer.stop();
-						 this.rt_timer.stop();
-						 this.gt_timer.removeEventListener(TimerEvent.TIMER, this.gt_func);
-						 this.rt_timer.removeEventListener(TimerEvent.TIMER, this.rt_func);
 					 
 						 this.MP_fps = 1;
 						 this.darkness.alpha = 0;
@@ -12608,8 +12655,8 @@ import flash.display.Sprite;
                               this.mcc.y = this.regions[this.triggers[a].actions_targetB[tr]].y + Number(this.regions[this.triggers[a].actions_targetB[tr]].h) / 2;
                               if(this.triggers[a].actions_targetA[tr] == this.MP_myid)
                               {
-                                 this.game.x += u;
-                                 this.game.y += this.v;
+                                 this.game_x += u;
+                                 this.game_y += this.v;
                               }
                               this.i4 = 0;
                               while(this.i4 < this.atotal)
@@ -12984,8 +13031,8 @@ import flash.display.Sprite;
                                              }
                                              if(this.tr2 == this.MP_myid)
                                              {
-                                                this.game.x += u;
-                                                this.game.y += this.v;
+                                                this.game_x += u;
+                                                this.game_y += this.v;
                                              }
                                              this.i4 = 0;
                                              while(this.i4 < this.atotal)
@@ -13057,8 +13104,8 @@ import flash.display.Sprite;
                                              this.v = this.ay[this.mcc.b_toe] - (this.regions[this.triggers[a].actions_targetB[tr]].y + Number(this.regions[this.triggers[a].actions_targetB[tr]].h) / 2);
                                              if(this.tr2 == this.MP_myid)
                                              {
-                                                this.game.x += u;
-                                                this.game.y += this.v;
+                                                this.game_x += u;
+                                                this.game_y += this.v;
                                              }
                                              this.i4 = 0;
                                              while(this.i4 < this.atotal)
@@ -13679,8 +13726,8 @@ import flash.display.Sprite;
                               }
                               if(this.tr2 == this.MP_myid)
                               {
-                                 this.game.x += u;
-                                 this.game.y += this.v;
+                                 this.game_x += u;
+                                 this.game_y += this.v;
                               }
                               this.i4 = 0;
                               while(this.i4 < this.atotal)
@@ -13749,14 +13796,15 @@ import flash.display.Sprite;
                            red = (hex & 16711680) >> 16;
                            green = (hex & 65280) >> 8;
                            blue = hex & 255;
-                           clrs_mov = new ColorMatrixFilter();
+                           //clrs_mov = new ColorMatrixFilter();
                            matrix = [];
                            matrix = matrix.concat([1,0,0,0,red]);
                            matrix = matrix.concat([0,1,0,0,green]);
                            matrix = matrix.concat([0,0,1,0,blue]);
                            matrix = matrix.concat([0,0,0,1,0]);
-                           clrs_mov.matrix = matrix;
-                           block.filters = new Array(clrs_mov);
+                           //clrs_mov.matrix = matrix;
+                           //block.filters = new Array(clrs_mov);
+						   // FILTERS
                         }
                         break;
                      case 72:
@@ -16013,6 +16061,7 @@ import flash.display.Sprite;
       
       public function HurtMyPlayer(param1:Number, param2:Number, param3:Number) : void
       {
+		 var hurt_0;
          if(this.PSYCHOBLOOD_MODE == 1)
          {
             if(this.Math_abs(param1) > this.Math_abs(param2))
@@ -16037,11 +16086,12 @@ import flash.display.Sprite;
             this.hurt_i4 = 0;
             while(this.hurt_i4 < 4)
             {
-               this._root["pb" + this.hurt_i4].alpha += param3 * 0.015;
-               this._root["pb" + this.hurt_i4].visible = true;
-               if(this._root["pb" + this.hurt_i4].alpha > 0.9)
+			   hurt_0 = "pb".concat(this.hurt_i4);
+               this._root[hurt_0].alpha += param3 * 0.015;
+               this._root[hurt_0].visible = true;
+               if(this._root[hurt_0].alpha > 0.9)
                {
-                  this._root["pb" + this.hurt_i4].alpha = 0.9;
+                  this._root[hurt_0].alpha = 0.9;
                }
                ++this.hurt_i4;
             }
@@ -16073,10 +16123,11 @@ import flash.display.Sprite;
                this.hurt_i4 = 0;
                while(this.hurt_i4 < 5)
                {
+				  hurt_0 = "pb" + this.hurt_i4;
                   this.pb4.visible = true;
-                  if(this._root["pb" + this.hurt_i4].alpha > 0.9)
+                  if(this._root[hurt_0].alpha > 0.9)
                   {
-                     this._root["pb" + this.hurt_i4].alpha = 0.9;
+                     this._root[hurt_0].alpha = 0.9;
                   }
                   ++this.hurt_i4;
                }
@@ -16086,10 +16137,11 @@ import flash.display.Sprite;
                this.hurt_i4 = 0;
                while(this.hurt_i4 < 4)
                {
+				  hurt_0 = "pb" + this.hurt_i4;
                   this.pb4.visible = true;
-                  if(this._root["pb" + this.hurt_i4].alpha > 0.9)
+                  if(this._root[hurt_0].alpha > 0.9)
                   {
-                     this._root["pb" + this.hurt_i4].alpha = 0.9;
+                     this._root[hurt_0].alpha = 0.9;
                   }
                   ++this.hurt_i4;
                }
@@ -16586,7 +16638,7 @@ import flash.display.Sprite;
          {
             if(param7)
             {
-               this.SHAKEAMMOUT += this.dist_to_face / this.Dist3Dm((param1 + this.game.x - 400) * this.game_scale,(param2 + this.game.y - 200) * this.game_scale,this.dist_to_face) * Math.max(param3 / 50 * 3,param4) * 0.2;
+               this.SHAKEAMMOUT += this.dist_to_face / this.Dist3Dm((param1 + this.game_x - 400) * this.game_scale,(param2 + this.game_y - 200) * this.game_scale,this.dist_to_face) * Math.max(param3 / 50 * 3,param4) * 0.2;
             }
          }
          this.i6 = 0;
@@ -17276,18 +17328,37 @@ import flash.display.Sprite;
          this.pb2Bullet.csolver_miny = Math.min(this.puls[param1].ly,this.puls[param1].ny);
          if(this.pb2Bullet.csolver_maxx + 0 < Math.min(Number(_loc3_.x) - Number(this.arad[param2]),Number(_loc3_.lx) - Number(this.arad[param2])))
          {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
+			 
             return false;
          }
          if(Number(this.pb2Bullet.csolver_minx) - 0 > Math.max(_loc3_.x + this.arad[param2],_loc3_.lx + this.arad[param2]))
          {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
             return false;
          }
          if(this.pb2Bullet.csolver_maxy + 0 < Math.min(Number(_loc3_.y) - Number(this.arad[param2]),Number(_loc3_.ly) - Number(this.arad[param2])))
          {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
+			 
             return false;
          }
          if(Number(this.pb2Bullet.csolver_miny) - 0 > Math.max(_loc3_.y + this.arad[param2],_loc3_.ly + this.arad[param2]))
          {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
+			 
             return false;
          }
          return this.pb2Bullet._MovingSphereIntersection(_loc3_.x,_loc3_.y,_loc3_.lx,_loc3_.ly,this.arad[param2]);
@@ -18369,6 +18440,7 @@ import flash.display.Sprite;
       
       public function ChatNewMsg(param1:String) : void
       {
+		 // CHATNEWMSG FIX THIS SOON
          if(param1.toLowerCase().indexOf("<img ") != -1 || param1.toLowerCase().indexOf("<a ") != -1)
          {
             param1 = "&lt; Unsupported tag in message &gt;";
@@ -19271,8 +19343,8 @@ import flash.display.Sprite;
       {
          if(param1.notspawned)
          {
-            param1.gotoAndStop(3);
-            param1.gotoAndStop(2);
+            //param1.gotoAndStop(3);
+            //param1.gotoAndStop(2);
          }
          if(param1.info == undefined || this.SHOW_EXP_BAR == 1)
          {
@@ -19970,7 +20042,7 @@ import flash.display.Sprite;
          }
       }
       
-      public function MeasureStart(param1:uint) : void
+      /*public function MeasureStart(param1:uint) : void
       {
       }
       
@@ -19985,7 +20057,7 @@ import flash.display.Sprite;
       public function MeasuresMaybePrint() : void
       {
          var _loc1_:uint = 0;
-      }
+      }*/
       
       public function Physics() : void
       {
@@ -20013,7 +20085,7 @@ import flash.display.Sprite;
          {
             if(this.GET_LITE_PHYS() && Math.ceil(Number(this.aof[this.i]) / 2 - Math.floor(Number(this.aof[this.i]) / 2)) == this.LITE_PHYS_from)
             {
-               this.MeasureStart(0);
+               //this.MeasureStop(0);
                if(this.aio[this.i] == true)
                {
                   if(!this.MP_mode || this.TraceLineF_nopushers(this.ax[this.i],this.ay[this.i],this.lax[this.i] + this.atox[this.i],this.lay[this.i] + this.atoy[this.i]))
@@ -20022,11 +20094,11 @@ import flash.display.Sprite;
                      this.ay[this.i] = this.lay[this.i] + Number(this.atoy[this.i]) * this.GSPEED;
                   }
                }
-               this.MeasureStop(0);
+               //this.MeasureStop(0);
             }
             else if(this.aio[this.i] != -1)
             {
-               this.MeasureStart(1);
+               //this.MeasureStop(1);
                if(this.aof[this.i] == this.MP_myid)
                {
                   this.thispulspeed = this.GSPEED2;
@@ -20043,7 +20115,7 @@ import flash.display.Sprite;
                }
                if(this.aactive[this.i] == 1000 || Boolean(this.aactive[this.aof[this.i]]))
                {
-                  this.MeasureStart(4);
+                  //this.MeasureStop(4);
                   if(this.RAGDOLL_COLLIDE && (this.MP_gamestate != 2 || !this.MP_mode))
                   {
                      if(this.arad[this.i] > 1)
@@ -20055,7 +20127,7 @@ import flash.display.Sprite;
                               this.i2 = this.i + 1;
                               while(this.i2 < this.atotal)
                               {
-                                 this.MeasureStart(2);
+                                 //this.MeasureStop(2);
                                  _loc1_ = this.arad[this.i] + this.arad[this.i2];
                                  if(this.ax[this.i] > Number(this.ax[this.i2]) - _loc1_)
                                  {
@@ -20081,13 +20153,13 @@ import flash.display.Sprite;
                                                                {
                                                                   if(this.aof[this.i2] < 0 || this.mens[this.aof[this.i2]].incar == -1)
                                                                   {
-                                                                     this.MeasureStop(2);
+                                                                     //this.MeasureStop(2);
                                                                      this.xx = this.Dist2D(this.ax[this.i],this.ay[this.i],this.ax[this.i2],this.ay[this.i2]);
                                                                      if(this.xx > 1)
                                                                      {
                                                                         if(this.xx < _loc1_)
                                                                         {
-                                                                           this.MeasureStart(3);
+                                                                           //this.MeasureStop(3);
                                                                            this.cx = (this.ax[this.i] + this.ax[this.i2]) * 0.5;
                                                                            this.cy = (this.ay[this.i] + this.ay[this.i2]) * 0.5;
                                                                            this.offset_balance = this.arad[this.i2] / (this.arad[this.i] + this.arad[this.i2]);
@@ -20131,7 +20203,7 @@ import flash.display.Sprite;
                                                                               this.ForceAtomSleep(this.i2);
                                                                               this.ForceAtomSleep(this.i);
                                                                            }
-                                                                           this.MeasureStop(3);
+                                                                           //this.MeasureStop(3);
                                                                         }
                                                                      }
                                                                   }
@@ -20152,10 +20224,10 @@ import flash.display.Sprite;
                         }
                      }
                   }
-                  this.MeasureStop(4);
+                  //this.MeasureStop(4);
                   if(this.aio[this.i] == true)
                   {
-                     this.MeasureStart(5);
+                     //this.MeasureStop(5);
                      this.ax[this.i] += Number(this.atox[this.i]) * this.thispulspeed;
                      this.ay[this.i] += Number(this.atoy[this.i]) * this.thispulspeed;
                      this.i2 = 0;
@@ -20329,8 +20401,8 @@ import flash.display.Sprite;
                      this.near_atom = this.GetNearBoxBSP_at(this.ax[this.i],this.ay[this.i]);
                      this.f_ok = true;
                      this.f_min = this.gravity * this.thispulspeed;
-                     this.MeasureStop(5);
-                     this.MeasureStart(6);
+                     //this.MeasureStop(5);
+                     //this.MeasureStop(6);
                      for each(this.i2 in this.near_atom)
                      {
                         if(this.ax[this.i] >= this.boxx[this.i2] && this.ax[this.i] <= this.boxx[this.i2] + this.boxw[this.i2] && this.ay[this.i] + this.arad[this.i] + this.thispulspeed >= this.boxy[this.i2] && this.ay[this.i] <= this.boxy[this.i2] + this.boxh[this.i2])
@@ -20344,8 +20416,8 @@ import flash.display.Sprite;
                      {
                         this.atoy[this.i] += this.f_min;
                      }
-                     this.MeasureStop(6);
-                     this.MeasureStart(7);
+                     //this.MeasureStop(6);
+                     //this.MeasureStop(7);
                      _loc2_ = this.GetAtomOriginalPosition(this.i);
                      if(this.amat[this.i] != 1 && this.amat[this.i] != 0 || (this.amat[this.i] == 1 || this.amat[this.i] == 0) && this.mens[this.aof[this.i]].incar == -1)
                      {
@@ -20360,8 +20432,8 @@ import flash.display.Sprite;
                            ++this.i2;
                         }
                      }
-                     this.MeasureStop(7);
-                     this.MeasureStart(8);
+                     //this.MeasureStop(7);
+                     //this.MeasureStop(8);
                      if(this.pres_ok)
                      {
                         if(this.aof[this.i] >= 0 && this.aof[this.i] < 100)
@@ -20428,7 +20500,7 @@ import flash.display.Sprite;
                            }
                         }
                      }
-                     this.MeasureStop(8);
+                     //this.MeasureStop(8);
                   }
                   else if(this.aio[this.i] == false)
                   {
@@ -20445,11 +20517,11 @@ import flash.display.Sprite;
                {
                   this.ForceAtomSleep(this.i);
                }
-               this.MeasureStop(1);
+               //this.MeasureStop(1);
             }
             ++this.i;
          }
-         this.MeasuresMaybePrint();
+         //this.MeasuresMaybePrint();
          this.Physics2();
       }
       
@@ -20699,1186 +20771,1192 @@ import flash.display.Sprite;
          var _loc6_:String = null;
          var _loc7_:Number = NaN;
          var _loc8_:Number = NaN;
-		 if (param1.keyCode == 13) trace("uh oh");
-         this.VarChangePreventStart();
-         if(this.last_key_code != param1.keyCode)
-         {
-            this.last_key_code = param1.keyCode;
-            this.keys_are_being_pressed = true;
-         }
-         if(param1.keyCode == Keyboard.CONTROL)
-         {
-            this.key_ctrl = true;
-         }
-         if(currentLabel == "intro")
-         {
-            if(param1.keyCode == 27)
-            {
-               // intr.removeChild(vidobj);
-               // nc.close();
-               // ns.close();
-               gotoAndStop("ads");
-            }
-         }
-         /*if(currentLabel == "loginform")
-         {
-            if(param1.keyCode == 13 || param1.keyCode == 32 && stage.focus != this.flogin && stage.focus != this.fpassword)
-            {
-               this.proceed();
-            }
-         }*/
-         if(currentLabel == "gaming")
-         {
-            if(param1.keyCode == 112)
-            {
-               this.TakeScreenShot(0,0.75);
-            }
-            else if(!this.MP_mode)
-            {
-               if(param1.keyCode == 113)
-               {
-                  this.TakeScreenShot(0,0.5);
-               }
-               else if(param1.keyCode == 114)
-               {
-                  this.TakeScreenShot(0,0.25);
-               }
-               else if(param1.keyCode == 115)
-               {
-                  this.TakeScreenShot(0,0.1);
-               }
-            }
-			if(param1.keyCode == 82 && !this.MP_mode) {
-               GotoMap(CUR_LOADING);
-			}
-            if(param1.keyCode == 27)
-            {
-               if(!this.gamemenu.visible)
-               {
-                  if(!this.MP_mode)
-                  {
-                     this.system_non_stop = false;
-                     if(this.MP_myid < this.playerstotal && !this.mens[this.MP_myid].dead)
-                     {
-                        this.pauze.visible = true;
-                     }
-                     this.stoped_by_focus = false;
-                  }
-                  this.gamemenu.visible = true;
-                  this.myCursor.alpha = 1;
-               }
-               else if(this.conmenu_set.visible)
-               {
-                  this.conmenu_set.visible = false;
-               }
-               else if(this.conmenu.visible)
-               {
-                  this.conmenu.visible = false;
-               }
-               else
-               {
-                  if(!this.MP_mode)
-                  {
-                     this.system_non_stop = true;
-                     if(this.MP_myid < this.playerstotal && !this.mens[this.MP_myid].dead)
-                     {
-                        this.pauze.visible = false;
-                     }
-                  }
-                  this.gamemenu.visible = false;
-               }
-            }
-            if(this.trigger_to_key_binds_down[param1.keyCode] != undefined)
-            {
-               this.EXEC_TRIGGER(this.trigger_to_key_binds_down[param1.keyCode]);
-            }
-            if(param1.keyCode == 9 || param1.keyCode == 35)
-            {
-               if(this.MP_mode)
-               {
-                  if(!this.herolist.visible)
-                  {
-                     _loc2_ = 0;
-                     while(_loc2_ < this.MP_playerstotal)
-                     {
-                        this.UpdateHeroList(_loc2_);
-                        _loc2_++;
-                     }
-                     this.herolist.visible = true;
-                  }
-               }
-               else if(this.CASUAL_MODE)
-               {
-                  this.ok = true;
-                  _loc2_ = this.MP_myid;
-                  this.i4 = _loc2_ + 1;
-                  while(this.i4 != _loc2_ && this.ok)
-                  {
-                     if(this.i4 >= this.playerstotal)
-                     {
-                        this.i4 = 0;
-                     }
-                     else
-                     {
-                        if(this.mens[this.i4].io)
-                        {
-                           if(this.mens[this.i4].team == this.mens[this.MP_myid].team)
-                           {
-                              if(this.mens[this.i4].hea > 0)
-                              {
-                                 if(!this.mens[this.i4].dying)
-                                 {
-                                    this.ok = false;
-                                    this.MP_myid = this.i4;
-                                    this.GSPEED = 0.01;
-                                    this.new_active.visible = true;
-                                    this.new_active.gotoAndPlay(1);
-                                    this.PlaySound_full(this.s_team_switch);
-                                    this.mens[this.i4].isplayer = true;
-                                    this.mens[_loc2_].isplayer = false;
-                                    this.UpdateWeps();
-                                 }
-                              }
-                           }
-                        }
-                        ++this.i4;
-                     }
-                  }
-               }
-            }
-            if(this.MP_spectator)
-            {
-               this.VarChangePreventEnd();
-               return;
-            }
-            if(param1.keyCode == 13 || this.MP_mode && param1.keyCode == 84 && !this.MP_chat_input)
-            {
-               if(this.MP_chat_input && param1.keyCode == 13)
-               {
-                  this.MP_chat_input = false;
-                  this.chat_win.gamechat_input.text = "";
-                  if(!this.MP_mode || this.gamechat_input_text == "bot 1" || this.gamechat_input_text == "bot 0")
-                  {
-                     if(this.gamechat_input_text.length > 0)
-                     {
-                        if(false/*this.FORCE_CUSTOM_MAP*/)
-                        {
-                           this.ChatNewMsg("<font color=\"#78DBE2\">" + this.mens[this.MP_myid].nick + "</font><font color=\"#FFFFFF\">: " + this.gamechat_input_text + "</font>");
-                           this.PlaySound_full(this.s_chat);
-                           this.UserSays(this.MP_myid,this.gamechat_input_text);
-                        }
-                        else
-                        {
-                           this.ChatNewMsg(this.new_nick2 + this.gamechat_input_text);
-                           this.ok = true;
-                           if(this.gamechat_input_text == "god 1" || this.gamechat_input_text == "god")
-                           {
-                              this.mens[this.MP_myid].hmax *= 100000;
-                              this.mens[this.MP_myid].hea = this.mens[this.MP_myid].hmax;
-                              if(this.mens[this.MP_myid].dead)
-                              {
-                                 this.mens[this.MP_myid].dead = false;
-                              }
-                              if(this.mens[this.MP_myid].dying)
-                              {
-                                 this.mens[this.MP_myid].dying = false;
-                              }
-                              this.Hurt_nopain(this.MP_myid);
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "gm")
-                           {
-                              this.ARCADE_GAME_MODE = !this.ARCADE_GAME_MODE;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "grow")
-                           {
-                              this.SetPlayerScale(this.mens[this.MP_myid],Number(this.mens[this.MP_myid].scale) * 1.25);
-                              this.mens[this.MP_myid].hmax *= 1.25 * 1.25;
-                              this.mens[this.MP_myid].hea *= 1.25 * 1.25;
-                              this.game_scale /= 1.25;
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "shrink")
-                           {
-                              this.SetPlayerScale(this.mens[this.MP_myid],Number(this.mens[this.MP_myid].scale) / 1.25);
-                              this.mens[this.MP_myid].hmax /= 1.25 * 1.25;
-                              this.mens[this.MP_myid].hea /= 1.25 * 1.25;
-                              this.game_scale *= 1.25;
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "grow enemies")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(_loc2_ != this.MP_myid)
-                                 {
-                                    this.SetPlayerScale(this.mens[_loc2_],Number(this.mens[_loc2_].scale) * 1.25);
-                                    this.mens[_loc2_].hmax *= 1.25 * 1.25;
-                                    this.mens[_loc2_].hea *= 1.25 * 1.25;
-                                 }
-                                 _loc2_++;
-                              }
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "shrink enemies")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(_loc2_ != this.MP_myid)
-                                 {
-                                    this.SetPlayerScale(this.mens[_loc2_],Number(this.mens[_loc2_].scale) / 1.25);
-                                    this.mens[_loc2_].hmax /= 1.25 * 1.25;
-                                    this.mens[_loc2_].hea /= 1.25 * 1.25;
-                                 }
-                                 _loc2_++;
-                              }
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text.indexOf("give ") == 0)
-                           {
-                              _loc3_ = this.gamechat_input_text.substr(5);
-                              this.mc = this.MakeGunByClass(_loc3_,{
-                                 "x":this.mens[this.MP_myid].x,
-                                 "y":this.mens[this.MP_myid].y,
-                                 "upg":3,
-                                 "command":-1
-                              });
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text.indexOf("skin enemies ") == 0)
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(_loc2_ != this.MP_myid)
-                                 {
-                                    _loc4_ = int(this.gamechat_input_text.substr(13));
-                                    this.mc = this.mens[_loc2_];
-                                    this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "-";
-                                    this.mc.char = _loc4_;
-                                    this.mc.mdl_head = this.mc.char;
-                                    this.mc.mdl_leg1_upper = this.mc.char;
-                                    this.mc.mdl_leg1_middle = this.mc.char;
-                                    this.mc.mdl_leg1_lower = this.mc.char;
-                                    this.mc.mdl_leg2_upper = this.mc.char;
-                                    this.mc.mdl_leg2_middle = this.mc.char;
-                                    this.mc.mdl_leg2_lower = this.mc.char;
-                                    this.mc.mdl_arm1_upper = this.mc.char;
-                                    this.mc.mdl_arm1_lower = this.mc.char;
-                                    this.mc.mdl_arm2_upper = this.mc.char;
-                                    this.mc.mdl_arm2_lower = this.mc.char;
-                                    this.mc.mdl_toe = this.mc.char;
-                                    this.mc.mdl_body = this.mc.char;
-                                    this.mc.alpha = 1;
-                                    this.UpdateCharProps(this.mc);
-                                    this.SpawnPlayerImmediately(this.mc);
-                                 }
-                                 _loc2_++;
-                              }
-                           }
-                           else if(this.gamechat_input_text.indexOf("skin ") == 0)
-                           {
-                              _loc2_ = this.MP_myid;
-                              _loc4_ = int(this.gamechat_input_text.substr(5));
-                              this.mc = this.mens[_loc2_];
-                              this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "-";
-                              this.mc.char = _loc4_;
-                              this.mc.mdl_head = this.mc.char;
-                              this.mc.mdl_leg1_upper = this.mc.char;
-                              this.mc.mdl_leg1_middle = this.mc.char;
-                              this.mc.mdl_leg1_lower = this.mc.char;
-                              this.mc.mdl_leg2_upper = this.mc.char;
-                              this.mc.mdl_leg2_middle = this.mc.char;
-                              this.mc.mdl_leg2_lower = this.mc.char;
-                              this.mc.mdl_arm1_upper = this.mc.char;
-                              this.mc.mdl_arm1_lower = this.mc.char;
-                              this.mc.mdl_arm2_upper = this.mc.char;
-                              this.mc.mdl_arm2_lower = this.mc.char;
-                              this.mc.mdl_toe = this.mc.char;
-                              this.mc.mdl_body = this.mc.char;
-                              this.mc.alpha = 1;
-                              this.UpdateCharProps(this.mc);
-                              this.SpawnPlayerImmediately(this.mc);
-                           }
-                           if(this.gamechat_input_text == "quick start")
-                           {
-                              this.CMPG_money = 999999;
-                              if(this.LEVELS_PASSED < this.LEVELS_TOTAL)
-                              {
-                                 this.LEVELS_PASSED = this.LEVELS_TOTAL;
-                              }
-                              this.IM_A_CHEATER = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text.indexOf("hero1skin ") != -1)
-                           {
-                              this.skin_model[0] = int(this.gamechat_input_text.split(" ")[1]);
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text.indexOf("hero2skin ") != -1)
-                           {
-                              this.skin_model[1] = int(this.gamechat_input_text.split(" ")[1]);
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no players")
-                           {
-                              this.playerstotal = 1;
-                              this.MP_myid = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no barrels")
-                           {
-                              this.barrelstotal = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no vehicles")
-                           {
-                              this.vehiclestotal = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no lights" || this.gamechat_input_text == "no lamps")
-                           {
-                              this.lampstotal = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "no guns")
-                           {
-                              this.gunstotal = 0;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "debug" || this.gamechat_input_text == "debug 1")
-                           {
-                              this.DEBUG_MODE = true;
-                              this.debug_screen.visible = true;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "debug 0")
-                           {
-                              this.DEBUG_MODE = false;
-                              this.debug_screen.graphics.clear();
-                              this.debug_screen.visible = false;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "god 0")
-                           {
-                              this.mens[this.MP_myid].hea /= 100000;
-                              this.mens[this.MP_myid].hmax /= 100000;
-                              this.Hurt_nopain(this.MP_myid);
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "headshot")
-                           {
-                              this.xx = this.mens[this.MP_myid].hea;
-                              this.mens[this.MP_myid].hp_head = 0;
-                              this.Hurt(this.MP_myid);
-                              this.mens[this.MP_myid].hea = this.xx;
-                              this.mens[this.MP_myid].dead = false;
-                              this.mens[this.MP_myid].dying = false;
-                              this.mens[this.MP_myid].stability = -2;
-                              this.atoy[this.mens[this.MP_myid].b_head_end] -= 10;
-                              this.atox[this.mens[this.MP_myid].b_head_end] -= Number(this.mens[this.MP_myid].side) * 5;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "friends")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(this.mens[_loc2_].io)
-                                 {
-                                    this.mens[_loc2_].team = 0;
-                                 }
-                                 _loc2_++;
-                              }
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "dm")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(this.mens[_loc2_].io)
-                                 {
-                                    this.mens[_loc2_].team = _loc2_;
-                                 }
-                                 _loc2_++;
-                              }
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "kill enemies")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 if(this.mens[_loc2_].io)
-                                 {
-                                    if(this.mens[_loc2_].team != this.mens[this.MP_myid].team)
-                                    {
-                                       this.mens[_loc2_].hea = 0;
-                                       this.Hurt_nopain(_loc2_);
-                                    }
-                                 }
-                                 _loc2_++;
-                              }
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "hyper jump")
-                           {
-                              this.mens[this.MP_myid].toy = -25;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "over fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 5;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "uber fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 4;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "extra fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 3;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "very fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 2;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "faster")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 1.5;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "fast")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 1.25;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "normal")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = false;
-                           }
-                           if(this.gamechat_input_text == "slow")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 0.75;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "slower")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 0.5;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "very slow")
-                           {
-                              this.MP_fps = this.DEFAULT_FPS * 0.25;
-                              this.ok = false;
-                              this.SP_unlimit_framerate = true;
-                           }
-                           if(this.gamechat_input_text == "zoom 100")
-                           {
-                              this.game_scale = 1;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "zoom 200")
-                           {
-                              this.game_scale = 2;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "zoom 50")
-                           {
-                              this.game_scale = 0.5;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "zoom 25")
-                           {
-                              this.game_scale = 0.25;
-                              this.ok = false;
-                           }
-                           if(this.gamechat_input_text == "give all")
-                           {
-                              _loc2_ = 0;
-                              while(_loc2_ < this.inventoryC.length)
-                              {
-                                 this.mc = this.MakeGunByClass(this.inventoryC[_loc2_].mdl,{
-                                    "x":this.mens[this.MP_myid].x,
-                                    "y":this.mens[this.MP_myid].y,
-                                    "upg":this.inventoryC[_loc2_].upg,
-                                    "command":-1
-                                 });
-                                 _loc2_++;
-                              }
-                              if(!this.FORCE_CUSTOM_MAP)
-                              {
-                                 this.IM_A_CHEATER = true;
-                              }
-                              this.ok = false;
-                           }
-                           if(this.ok)
-                           {
-                              this.ChatNewMsg("bash: " + this.gamechat_input_text + ": command not found");
-                              this.PlaySound_full(this.s_chat);
-                           }
-                           else
-                           {
-                              this.BADGES_ENABLED = false;
-                           }
-                           if(this.IM_A_CHEATER)
-                           {
-							   this.IM_A_CHEATER = false;
-                              // this.ShowNoAch();
-                              // this.SaveGame();
-                           }
-                           this.UserSays(this.MP_myid,this.gamechat_input_text);
-                        }
-                     }
-                     if(this.gamechat_input_text == "render 0")
-                     {
-                        this.game.visible = false;
-                        this.graphics_3d_front.visible = false;
-                        this.graphics_3d.visible = false;
-                        this.sky.visible = false;
-                     }
-                     if(this.gamechat_input_text == "render 1")
-                     {
-                        this.game.visible = true;
-                        this.graphics_3d_front.visible = true;
-                        this.graphics_3d.visible = true;
-                        this.sky.visible = true;
-                     }
-                     if(this.gamechat_input_text == "bot 1")
-                     {
-                        this.MP_half_bot = true;
-                        if(this.MP_mode)
-                        {
-                           this.EASY_MODE = true;
-                           this.PRO_BOTS = false;
-                           this.LOW_HPS = false;
-                        }
-                     }
-                     if(this.gamechat_input_text == "bot 0")
-                     {
-                        this.MP_half_bot = false;
-                     }
-                     if(this.gamechat_input_text == "kill")
-                     {
-                        this.mens[this.MP_myid].hp_head = 0;
-                        this.Hurt(this.MP_myid);
-                        this.mens[this.MP_myid].hea = 0;
-                     }
-                  }
-                  else
-                  {
-                     this.ok = true;
-                     if(this.gamechat_input_text == "-kill")
-                     {
-                        this.mens[this.MP_myid].hp_head = 0;
-                        this.Hurt(this.MP_myid);
-                        this.mens[this.MP_myid].hea = 0;
-                        this.ok = false;
-                     }
-                     if(this.gamechat_input_text.substr(0,5) == "-ping")
-                     {
-                        if(Number(getTimer()) - this.LAST_VOTE > 60000)
-                        {
-                           _loc5_ = Number(this.gamechat_input_text.substr(6,this.gamechat_input_text.length));
-                           if(Boolean(isNaN(_loc5_)) || !isNaN(_loc5_) && (_loc5_ < 10 || _loc5_ > 1000))
-                           {
-                              this.DialogSay("\'\'" + this.gamechat_input_text.substr(6,this.gamechat_input_text.length) + "\'\' is not a correct ping value.","#FFFF00");
-                              if(!isNaN(_loc5_) && (_loc5_ < 10 || _loc5_ > 1000))
-                              {
-                                 this.LAST_VOTE = getTimer();
-                              }
-                           }
-                           else
-                           {
-                              this.MP_custom_events += ";voteping|" + this.gamechat_input_text.substr(6,this.gamechat_input_text.length);
-                              this.LAST_VOTE = getTimer();
-                           }
-                        }
-                        else
-                        {
-                           this.DialogSay("You will be allowed to vote again in " + Math.ceil((60000 - (Number(getTimer()) - this.LAST_VOTE)) / 1000) + " seconds.","#FFFF00");
-                        }
-                     }
-                     if(this.MP_type == 3)
-                     {
-                        if(this.gamechat_input_text == "-blue")
-                        {
-                           this.mc = this.mens[this.MP_myid];
-                           if(Number(getTimer()) - Number(this.mc.whenlastshot) > 7000)
-                           {
-                              this.mc.lastshotby = -1;
-                           }
-                           if(this.mc.dead || this.mc.lastshotby == -1 || this.mc.lastshotby == this.MP_myid)
-                           {
-                              this.mc.team = 13;
-                              this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "B";
-                              this.spawn = false;
-                              this.mc.hea = 0;
-                              this.mc.mdl_head = this.mc.char;
-                              this.mc.mdl_leg1_upper = this.mc.char;
-                              this.mc.mdl_leg1_middle = this.mc.char;
-                              this.mc.mdl_leg1_lower = this.mc.char;
-                              this.mc.mdl_leg2_upper = this.mc.char;
-                              this.mc.mdl_leg2_middle = this.mc.char;
-                              this.mc.mdl_leg2_lower = this.mc.char;
-                              this.mc.mdl_arm1_upper = this.mc.char;
-                              this.mc.mdl_arm1_lower = this.mc.char;
-                              this.mc.mdl_arm2_upper = this.mc.char;
-                              this.mc.mdl_arm2_lower = this.mc.char;
-                              this.mc.mdl_toe = this.mc.char;
-                              this.mc.mdl_body = this.mc.char;
-                              this.UpdateCharProps(this.mc);
-                              this.ok = false;
-                              this.UpdateTeamTable();
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 this.UpdateTeamColor(this.mens[_loc2_]);
-                                 _loc2_++;
-                              }
-                           }
-                           else
-                           {
-                              this.DialogSay("Can\'t change team during fight.","#FFFF00");
-                           }
-                        }
-                        if(this.gamechat_input_text == "-red")
-                        {
-                           this.mc = this.mens[this.MP_myid];
-                           if(Number(getTimer()) - Number(this.mc.whenlastshot) > 7000)
-                           {
-                              this.mc.lastshotby = -1;
-                           }
-                           if(this.mc.dead || this.mc.lastshotby == -1 || this.mc.lastshotby == this.MP_myid)
-                           {
-                              this.mc.team = 12;
-                              this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "R";
-                              this.spawn = false;
-                              this.mc.hea = 0;
-                              this.mc.mdl_head = this.mc.char;
-                              this.mc.mdl_leg1_upper = this.mc.char;
-                              this.mc.mdl_leg1_middle = this.mc.char;
-                              this.mc.mdl_leg1_lower = this.mc.char;
-                              this.mc.mdl_leg2_upper = this.mc.char;
-                              this.mc.mdl_leg2_middle = this.mc.char;
-                              this.mc.mdl_leg2_lower = this.mc.char;
-                              this.mc.mdl_arm1_upper = this.mc.char;
-                              this.mc.mdl_arm1_lower = this.mc.char;
-                              this.mc.mdl_arm2_upper = this.mc.char;
-                              this.mc.mdl_arm2_lower = this.mc.char;
-                              this.mc.mdl_toe = this.mc.char;
-                              this.mc.mdl_body = this.mc.char;
-                              this.UpdateCharProps(this.mc);
-                              this.ok = false;
-                              this.UpdateTeamTable();
-                              _loc2_ = 0;
-                              while(_loc2_ < this.playerstotal)
-                              {
-                                 this.UpdateTeamColor(this.mens[_loc2_]);
-                                 _loc2_++;
-                              }
-                           }
-                           else
-                           {
-                              this.DialogSay("Can\'t change team during fight.","#FFFF00");
-                           }
-                        }
-                     }
-                     if(this.ok)
-                     {
-                        if(this.gamechat_input_text.length > 0)
-                        {
-                           this.MP_last_message_patience -= (Number(getTimer()) - this.MP_last_message) / 550;
-                           if(this.MP_last_message_patience < 0)
-                           {
-                              this.MP_last_message_patience = 0;
-                           }
-                           this.MP_last_message_patience += 20000 / Math.max(300,Number(getTimer()) - this.MP_last_message);
-                           this.MP_last_message = getTimer();
-                           if(this.MP_pass == "")
-                           {
-                              if(this.MP_last_message_patience > 110)
-                              {
-                                 if(this.mens[this.MP_myid].dead || this.mens[this.MP_myid].lastshotby == -1 || Number(getTimer()) - Number(this.mens[this.MP_myid].whenlastshot) > 7000)
-                                 {
-                                    this.DialogSay("Disconnected. You didn\'t stopped it, so we are sorry","#FF0000");
-                                    this.MP_force_disconnect = true;
-                                 }
-                              }
-                              else if(this.MP_last_message_patience > 90)
-                              {
-                                 this.DialogSay("Please don\'t send messages so quickly. You will be disconnected if you will continue","#FFFF00");
-                              }
-                              else if(this.MP_last_message_patience > 80)
-                              {
-                                 this.DialogSay("Please don\'t send messages so quickly. It is not allowed","#FFFF00");
-                              }
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("=","[eq]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("=","[eq]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("|","[i]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("|","[i]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace(";","[dc]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace(";","[dc]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("<","[lt]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("<","[lt]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace(">","[gt]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace(">","[gt]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("\"","[2q]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("\"","[2q]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("/","[sl]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("/","[sl]");
-                           }
-                           while(this.gamechat_input_text != this.gamechat_input_text.replace("\\","[rsl]"))
-                           {
-                              this.gamechat_input_text = this.gamechat_input_text.replace("\\","[rsl]");
-                           }
-                           if(this.MP_chat_input_for == "all")
-                           {
-                              this.MP_custom_events += ";chat|" + this.gamechat_input_text;
-                           }
-                           else if(this.MP_chat_input_for == "team")
-                           {
-                              this.MP_custom_events += ";tchat|" + this.gamechat_input_text;
-                           }
-                           if(this.DISPLAY_CHAT < 1)
-                           {
-                              if(this.MP_mode)
-                              {
-                                 this.DialogSay("Note: You\'ve said something, but you have \'\'DISPLAY CHAT\'\' set to \'\'NO\'\' in your Graphics & Gameplay settings.","#FFFF00");
-                              }
-                           }
-                        }
-                     }
-                  }
-                  this.chat_win.visible = false;
-               }
-               else if(true || this.LEVELS_PASSED >= this.LEVELS_TOTAL || this.MP_mode || this.FORCE_CUSTOM_MAP)
-               {
-                  this.MP_chat_input = true;
-                  if(this.MP_mode && param1.keyCode == 84)
-                  {
-                     this.MP_chat_input_for = "team";
-                  }
-                  else
-                  {
-                     this.MP_chat_input_for = "all";
-                  }
-                  this.chat_win.gamechat_input.text = "";
-                  this.gamechat_input_text = "";
-                  this.chat_win.chatmode.gotoAndStop(this.MP_chat_input_for);
-                  this.chat_win.visible = true;
-               }
-               else
-               {
-                  this.ChatNewMsg("E: Access denied; complete all campaign levels first");
-               }
-            }
-            else if(this.MP_chat_input)
-            {
-               if(param1.keyCode == 8)
-               {
-                  this.gamechat_input_text = this.gamechat_input_text.slice(0,this.gamechat_input_text.length - 1);
-                  this.chat_win.gamechat_input.htmlText = "<b>" + this.gamechat_input_text + "</b>";
-               }
-               else
-               {
-                  _loc6_ = String.fromCharCode(param1.charCode);
-                  if(this.allowedText.indexOf(_loc6_) != -1)
-                  {
-                     this.gamechat_input_text += _loc6_;
-                     this.chat_win.gamechat_input.htmlText = "<b>" + this.gamechat_input_text.split("<").join("&lt;").split(">").join("&gt;") + "</b>";
-                  }
-               }
-            }
-            else
-            {
-               if(param1.keyCode == 65 || param1.keyCode == 37)
-               {
-                  this.key_left = true;
-               }
-               if(param1.keyCode == 68 || param1.keyCode == 39)
-               {
-                  this.key_right = true;
-               }
-               if(param1.keyCode == 32 || param1.keyCode == 82)
-               {
-                  if(this.LEVEL_END_FORCE != "" && this.LEVEL_END_FORCE != "complete" && this.LEVEL_END_FORCE != "credits")
-                  {
-                     if(!this.MP_mode)
-                     {
-                        if(this.darkness.alpha > 0.02)
-                        {
-                           this.darkness.visible = true;
-                           this.darkness.alpha = 1;
-                           if(this.LEVEL_END_FORCE == "failed")
-                           {
-                              this.LEVEL_END_FORCE = "restart";
-                           }
-                        }
-                     }
-                  }
-               }
-               if(param1.keyCode == 87 || param1.keyCode == 38 || param1.keyCode == 32)
-               {
-                  this.key_up = true;
-               }
-               if(param1.keyCode == 71 || param1.keyCode == 96)
-               {
-                  if(!this.MP_mode)
-                  {
-                     this.StartMiniScenario(0);
-                  }
-                  else if(this.MP_type != 2 || this.MP_gamestate == 0)
-                  {
-                     if(this.grenades_total > 0)
-                     {
-                        if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
-                        {
-                           this.MP_myspecials[this.MP_myspecials_total] = new Object();
-                           this.MP_myspecials[this.MP_myspecials_total].stat = 1;
-                           this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
-                           this.MP_myspecials[this.MP_myspecials_total].nadekind = 1;
-                           this.MP_custom_events += ";gren|1#" + this.MP_myspecials_total;
-                           ++this.MP_myspecials_total;
-                        }
-                     }
-                  }
-               }
-               if(this.MP_mode)
-               {
-                  if(this.MP_type != 2 || this.MP_gamestate == 0)
-                  {
-                     if(param1.keyCode == 67)
-                     {
-                        if(this.grenades_port_total > 0)
-                        {
-                           if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
-                           {
-                              this.MP_myspecials[this.MP_myspecials_total] = new Object();
-                              this.MP_myspecials[this.MP_myspecials_total].stat = 1;
-                              this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
-                              this.MP_myspecials[this.MP_myspecials_total].nadekind = 2;
-                              this.MP_custom_events += ";gren|2#" + this.MP_myspecials_total;
-                              ++this.MP_myspecials_total;
-                           }
-                        }
-                     }
-                     if(param1.keyCode == 90)
-                     {
-                        if(this.grenades_sh_total > 0)
-                        {
-                           if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
-                           {
-                              this.MP_myspecials[this.MP_myspecials_total] = new Object();
-                              this.MP_myspecials[this.MP_myspecials_total].stat = 1;
-                              this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
-                              this.MP_myspecials[this.MP_myspecials_total].nadekind = 3;
-                              this.MP_custom_events += ";gren|3#" + this.MP_myspecials_total;
-                              ++this.MP_myspecials_total;
-                           }
-                        }
-                     }
-                  }
-               }
-               if(param1.keyCode == 86 || param1.keyCode == 8)
-               {
-                  this.key_grab = true;
-               }
-               if(param1.keyCode == 81)
-               {
-                  if(this.last_gun_b4_psi != -1)
-                  {
-                     if(this.last_gun_b4_psi < this.gunstotal)
-                     {
-                        this.mc = this.guns[this.last_gun_b4_psi];
-                        if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
-                        {
-                           if(this.mc.model != "item_grenade" || this.mc.wep >= 0)
-                           {
-                              this.i4 = this.mens[this.MP_myid].curwea;
-                              this.mens[this.MP_myid].curwea = this.last_gun_b4_psi;
-                              this.last_gun_b4_psi = this.i4;
-                              this.ChangedGun(this.MP_myid);
-                           }
-                        }
-                     }
-                  }
-                  else
-                  {
-                     this.i4 = this.mens[this.MP_myid].curwea;
-                     this.mens[this.MP_myid].curwea = this.last_gun_b4_psi;
-                     this.last_gun_b4_psi = this.i4;
-                     this.ChangedGun(this.MP_myid);
-                  }
-               }
-               if(param1.keyCode == 70)
-               {
-               }
-               if(!this.MP_mode)
-               {
-                  if(param1.keyCode == 80)
-                  {
-                     if(this.system_non_stop)
-                     {
-                        this.system_non_stop = false;
-                        if(!this.mens[this.MP_myid].dead)
-                        {
-                           this.pauze.visible = true;
-                        }
-                     }
-                     else
-                     {
-                        this.system_non_stop = true;
-                        if(!this.mens[this.MP_myid].dead)
-                        {
-                           this.pauze.visible = false;
-                        }
-                     }
-                     this.stoped_by_focus = false;
-                  }
-               }
-               if(param1.keyCode == 83 || param1.keyCode == 40 || param1.keyCode == 17)
-               {
-                  this.key_down = true;
-               }
-               if(param1.keyCode == 71 || param1.keyCode == 96 || param1.keyCode == 13)
-               {
-                  this.key_grenade = true;
-               }
-               if(param1.keyCode == 69 || param1.keyCode == 45)
-               {
-                  this.key_pick = true;
-               }
-               if(param1.keyCode == 88)
-               {
-                  this.key_fall = true;
-               }
-               if(param1.keyCode == 90)
-               {
-                  if(!this.key_alt)
-                  {
-                     if(!this.MP_mode)
-                     {
-                        this.key_alt = true;
-                        if(this.timeshift > 0)
-                        {
-                           this.timeshift = 0;
-                           this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
-                           if(this.SCREEN_EFFECTS)
-                           {
-                              this.whitness.alpha += 1;
-                              this.whitness.visible = true;
-                           }
-                        }
-                        else if(this.ALLOW_TIMESHIFT)
-                        {
-                           if(this.energy > 10)
-                           {
-                              if(!this.mens[this.MP_myid].dead)
-                              {
-                                 this.energy -= 10;
-                                 this.timeshift = 1;
-                                 this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
-                                 if(this.SCREEN_EFFECTS)
-                                 {
-                                    this.whitness.alpha += 1;
-                                    this.whitness.visible = true;
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-               if(param1.keyCode == 34)
-               {
-                  if(!this.key_alt)
-                  {
-                     if(!this.MP_mode)
-                     {
-                        this.key_alt = true;
-                        if(this.timeshift > 0)
-                        {
-                           this.timeshift = 0;
-                           this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
-                           if(this.SCREEN_EFFECTS)
-                           {
-                              this.whitness.alpha += 1;
-                              this.whitness.visible = true;
-                           }
-                        }
-                     }
-                  }
-               }
-               if(param1.keyCode == 33)
-               {
-                  if(!this.key_alt)
-                  {
-                     if(!this.MP_mode)
-                     {
-                        this.key_alt = true;
-                        if(this.timeshift <= 0)
-                        {
-                           if(this.ALLOW_TIMESHIFT)
-                           {
-                              if(this.energy > 10)
-                              {
-                                 if(!this.mens[this.MP_myid].dead)
-                                 {
-                                    this.energy -= 10;
-                                    this.timeshift = 1;
-                                    this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
-                                    if(this.SCREEN_EFFECTS)
-                                    {
-                                       this.whitness.alpha += 1;
-                                       this.whitness.visible = true;
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-               if(this.KINETIC_MODULE_ENABLED)
-               {
-                  if(param1.keyCode == 67)
-                  {
-                     if(!this.key_kinetic)
-                     {
-                        this.key_kinetic = true;
-                        this.cinetic_target = -1;
-                        _loc7_ = -1;
-                        _loc2_ = 0;
-                        while(_loc2_ < this.atotal)
-                        {
-                           if(this.aio[_loc2_] == true || this.aio[_loc2_] == false)
-                           {
-                              if(this.aof[_loc2_] >= 0 && this.aof[_loc2_] < 100 && this.mens[this.aof[_loc2_]].incar == -1 && this.aof[_loc2_] != this.MP_myid || this.aof[_loc2_] >= 100 || this.aof[_loc2_] > -200 && this.aof[_loc2_] <= -100 || this.aof[_loc2_] < 0 && this.aof[_loc2_] > -100 && !this.guns[-Number(this.aof[_loc2_]) - 1].forcars && this.guns[-Number(this.aof[_loc2_]) - 1].alpha > 0)
-                              {
-                                 if(this.arad[_loc2_] < 16)
-                                 {
-                                    if(this.arad[_loc2_] > 0)
-                                    {
-                                       if((_loc8_ = this.Dist2D(this.ax[_loc2_],this.ay[_loc2_],this.mens[this.MP_myid].tarx,this.mens[this.MP_myid].tary)) < this.arad[_loc2_] + 40)
-                                       {
-                                          this.ok = true;
-                                          if(this.aactive[_loc2_] != 1000)
-                                          {
-                                             if(this.aof[_loc2_] < 0 && this.aof[_loc2_] > -100)
-                                             {
-                                                if(this.guns[-Number(this.aof[_loc2_]) - 1].picken_by != -1)
-                                                {
-                                                   if(!this.guns[-Number(this.aof[_loc2_]) - 1].forcars)
-                                                   {
-                                                      if(this.guns[-Number(this.aof[_loc2_]) - 1].picken_by == this.MP_myid || this.mens[this.guns[-Number(this.aof[_loc2_]) - 1].picken_by].team != this.mens[this.MP_myid].team)
-                                                      {
-                                                         this.ok = false;
-                                                      }
-                                                   }
-                                                }
-                                             }
-                                          }
-                                          if(this.ok)
-                                          {
-                                             if(_loc8_ < _loc7_ || _loc7_ == -1)
-                                             {
-                                                this.cinetic_target = _loc2_;
-                                                _loc7_ = _loc8_;
-                                             }
-                                          }
-                                       }
-                                    }
-                                 }
-                              }
-                           }
-                           _loc2_++;
-                        }
-                     }
-                  }
-               }
-               if(this.mens[this.MP_myid].hea > 0)
-               {
-                  if(param1.keyCode >= 48 && param1.keyCode <= 57 || param1.keyCode == 167 || param1.keyCode == 192 || param1.keyCode == 0)
-                  {
-                     if(param1.keyCode == 48 || param1.keyCode == 167 || param1.keyCode == 192 || param1.keyCode == 0)
-                     {
-                        if(this.mens[this.MP_myid].curwea != -1)
-                        {
-                           this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
-                           this.mens[this.MP_myid].curwea = -1;
-                           this.ChangedGun(this.MP_myid);
-                           this.UpdateCurGun();
-                        }
-                     }
-                     else
-                     {
-                        _loc2_ = 0;
-                        while(_loc2_ < this.gunstotal)
-                        {
-                           if(this.guns[_loc2_].io)
-                           {
-                              this.mc = this.guns[_loc2_];
-                              if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
-                              {
-                                 if(this.mc.wep == param1.keyCode - 48)
-                                 {
-                                    if(this.mens[this.MP_myid].curwea != _loc2_)
-                                    {
-                                       this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
-                                       this.mens[this.MP_myid].curwea = _loc2_;
-                                       this.ChangedGun(this.MP_myid);
-                                       this.UpdateCurGun();
-                                    }
-                                 }
-                              }
-                           }
-                           _loc2_++;
-                        }
-                     }
-                  }
-               }
-            }
-         }
-         this.VarChangePreventEnd();
-      }
-      
+		 //if (param1.keyCode == 13) trace("uh oh");
+		 try {
+			 this.VarChangePreventStart();
+			 if(this.last_key_code != param1.keyCode)
+			 {
+				this.last_key_code = param1.keyCode;
+				this.keys_are_being_pressed = true;
+			 }
+			 if(param1.keyCode == Keyboard.CONTROL)
+			 {
+				this.key_ctrl = true;
+			 }
+			 if(currentLabel == "intro")
+			 {
+				if(param1.keyCode == 27)
+				{
+				   // intr.removeChild(vidobj);
+				   // nc.close();
+				   // ns.close();
+				   gotoAndStop("ads");
+				}
+			 }
+			 /*if(currentLabel == "loginform")
+			 {
+				if(param1.keyCode == 13 || param1.keyCode == 32 && stage.focus != this.flogin && stage.focus != this.fpassword)
+				{
+				   this.proceed();
+				}
+			 }*/
+			 if(currentLabel == "gaming")
+			 {
+				if(param1.keyCode == 112)
+				{
+				   this.TakeScreenShot(0,0.75);
+				}
+				else if(!this.MP_mode)
+				{
+				   if(param1.keyCode == 113)
+				   {
+					  this.TakeScreenShot(0,0.5);
+				   }
+				   else if(param1.keyCode == 114)
+				   {
+					  this.TakeScreenShot(0,0.25);
+				   }
+				   else if(param1.keyCode == 115)
+				   {
+					  this.TakeScreenShot(0,0.1);
+				   }
+				}
+				if(param1.keyCode == 82 && !this.MP_mode) {
+				   GotoMap(CUR_LOADING);
+				}
+				if(param1.keyCode == 27)
+				{
+				   if(!this.gamemenu.visible)
+				   {
+					  if(!this.MP_mode)
+					  {
+						 this.system_non_stop = false;
+						 if(this.MP_myid < this.playerstotal && !this.mens[this.MP_myid].dead)
+						 {
+							this.pauze.visible = true;
+						 }
+						 this.stoped_by_focus = false;
+					  }
+					  this.gamemenu.visible = true;
+					  this.myCursor.alpha = 1;
+				   }
+				   else if(this.conmenu_set.visible)
+				   {
+					  this.conmenu_set.visible = false;
+				   }
+				   else if(this.conmenu.visible)
+				   {
+					  this.conmenu.visible = false;
+				   }
+				   else
+				   {
+					  if(!this.MP_mode)
+					  {
+						 this.system_non_stop = true;
+						 if(this.MP_myid < this.playerstotal && !this.mens[this.MP_myid].dead)
+						 {
+							this.pauze.visible = false;
+						 }
+					  }
+					  this.gamemenu.visible = false;
+				   }
+				}
+				if(this.trigger_to_key_binds_down[param1.keyCode] != undefined)
+				{
+				   this.EXEC_TRIGGER(this.trigger_to_key_binds_down[param1.keyCode]);
+				}
+				if(param1.keyCode == 9 || param1.keyCode == 35)
+				{
+				   if(this.MP_mode)
+				   {
+					  if(!this.herolist.visible)
+					  {
+						 _loc2_ = 0;
+						 while(_loc2_ < this.MP_playerstotal)
+						 {
+							this.UpdateHeroList(_loc2_);
+							_loc2_++;
+						 }
+						 this.herolist.visible = true;
+					  }
+				   }
+				   else if(this.CASUAL_MODE)
+				   {
+					  this.ok = true;
+					  _loc2_ = this.MP_myid;
+					  this.i4 = _loc2_ + 1;
+					  while(this.i4 != _loc2_ && this.ok)
+					  {
+						 if(this.i4 >= this.playerstotal)
+						 {
+							this.i4 = 0;
+						 }
+						 else
+						 {
+							if(this.mens[this.i4].io)
+							{
+							   if(this.mens[this.i4].team == this.mens[this.MP_myid].team)
+							   {
+								  if(this.mens[this.i4].hea > 0)
+								  {
+									 if(!this.mens[this.i4].dying)
+									 {
+										this.ok = false;
+										this.MP_myid = this.i4;
+										this.GSPEED = 0.01;
+										this.new_active.visible = true;
+										this.new_active.gotoAndPlay(1);
+										this.PlaySound_full(this.s_team_switch);
+										this.mens[this.i4].isplayer = true;
+										this.mens[_loc2_].isplayer = false;
+										this.UpdateWeps();
+									 }
+								  }
+							   }
+							}
+							++this.i4;
+						 }
+					  }
+				   }
+				}
+				if(this.MP_spectator)
+				{
+				   this.VarChangePreventEnd();
+				   return;
+				}
+				if(param1.keyCode == 13 || this.MP_mode && param1.keyCode == 84 && !this.MP_chat_input)
+				{
+				   if(this.MP_chat_input && param1.keyCode == 13)
+				   {
+					  this.MP_chat_input = false;
+					  this.chat_win.gamechat_input.text = "";
+					  if(!this.MP_mode || this.gamechat_input_text == "bot 1" || this.gamechat_input_text == "bot 0")
+					  {
+						 if(this.gamechat_input_text.length > 0)
+						 {
+							if(false/*this.FORCE_CUSTOM_MAP*/)
+							{
+							   this.ChatNewMsg("<font color=\"#78DBE2\">" + this.mens[this.MP_myid].nick + "</font><font color=\"#FFFFFF\">: " + this.gamechat_input_text + "</font>");
+							   this.PlaySound_full(this.s_chat);
+							   this.UserSays(this.MP_myid,this.gamechat_input_text);
+							}
+							else
+							{
+							   this.ChatNewMsg(this.new_nick2 + this.gamechat_input_text);
+							   this.ok = true;
+							   if(this.gamechat_input_text == "god 1" || this.gamechat_input_text == "god")
+							   {
+								  this.mens[this.MP_myid].hmax *= 100000;
+								  this.mens[this.MP_myid].hea = this.mens[this.MP_myid].hmax;
+								  if(this.mens[this.MP_myid].dead)
+								  {
+									 this.mens[this.MP_myid].dead = false;
+								  }
+								  if(this.mens[this.MP_myid].dying)
+								  {
+									 this.mens[this.MP_myid].dying = false;
+								  }
+								  this.Hurt_nopain(this.MP_myid);
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "gm")
+							   {
+								  this.ARCADE_GAME_MODE = !this.ARCADE_GAME_MODE;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "grow")
+							   {
+								  this.SetPlayerScale(this.mens[this.MP_myid],Number(this.mens[this.MP_myid].scale) * 1.25);
+								  this.mens[this.MP_myid].hmax *= 1.25 * 1.25;
+								  this.mens[this.MP_myid].hea *= 1.25 * 1.25;
+								  this.game_scale /= 1.25;
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "shrink")
+							   {
+								  this.SetPlayerScale(this.mens[this.MP_myid],Number(this.mens[this.MP_myid].scale) / 1.25);
+								  this.mens[this.MP_myid].hmax /= 1.25 * 1.25;
+								  this.mens[this.MP_myid].hea /= 1.25 * 1.25;
+								  this.game_scale *= 1.25;
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "grow enemies")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(_loc2_ != this.MP_myid)
+									 {
+										this.SetPlayerScale(this.mens[_loc2_],Number(this.mens[_loc2_].scale) * 1.25);
+										this.mens[_loc2_].hmax *= 1.25 * 1.25;
+										this.mens[_loc2_].hea *= 1.25 * 1.25;
+									 }
+									 _loc2_++;
+								  }
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "shrink enemies")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(_loc2_ != this.MP_myid)
+									 {
+										this.SetPlayerScale(this.mens[_loc2_],Number(this.mens[_loc2_].scale) / 1.25);
+										this.mens[_loc2_].hmax /= 1.25 * 1.25;
+										this.mens[_loc2_].hea /= 1.25 * 1.25;
+									 }
+									 _loc2_++;
+								  }
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text.indexOf("give ") == 0)
+							   {
+								  _loc3_ = this.gamechat_input_text.substr(5);
+								  this.mc = this.MakeGunByClass(_loc3_,{
+									 "x":this.mens[this.MP_myid].x,
+									 "y":this.mens[this.MP_myid].y,
+									 "upg":3,
+									 "command":-1
+								  });
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text.indexOf("skin enemies ") == 0)
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(_loc2_ != this.MP_myid)
+									 {
+										_loc4_ = int(this.gamechat_input_text.substr(13));
+										this.mc = this.mens[_loc2_];
+										this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "-";
+										this.mc.char = _loc4_;
+										this.mc.mdl_head = this.mc.char;
+										this.mc.mdl_leg1_upper = this.mc.char;
+										this.mc.mdl_leg1_middle = this.mc.char;
+										this.mc.mdl_leg1_lower = this.mc.char;
+										this.mc.mdl_leg2_upper = this.mc.char;
+										this.mc.mdl_leg2_middle = this.mc.char;
+										this.mc.mdl_leg2_lower = this.mc.char;
+										this.mc.mdl_arm1_upper = this.mc.char;
+										this.mc.mdl_arm1_lower = this.mc.char;
+										this.mc.mdl_arm2_upper = this.mc.char;
+										this.mc.mdl_arm2_lower = this.mc.char;
+										this.mc.mdl_toe = this.mc.char;
+										this.mc.mdl_body = this.mc.char;
+										this.mc.alpha = 1;
+										this.UpdateCharProps(this.mc);
+										this.SpawnPlayerImmediately(this.mc);
+									 }
+									 _loc2_++;
+								  }
+							   }
+							   else if(this.gamechat_input_text.indexOf("skin ") == 0)
+							   {
+								  _loc2_ = this.MP_myid;
+								  _loc4_ = int(this.gamechat_input_text.substr(5));
+								  this.mc = this.mens[_loc2_];
+								  this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "-";
+								  this.mc.char = _loc4_;
+								  this.mc.mdl_head = this.mc.char;
+								  this.mc.mdl_leg1_upper = this.mc.char;
+								  this.mc.mdl_leg1_middle = this.mc.char;
+								  this.mc.mdl_leg1_lower = this.mc.char;
+								  this.mc.mdl_leg2_upper = this.mc.char;
+								  this.mc.mdl_leg2_middle = this.mc.char;
+								  this.mc.mdl_leg2_lower = this.mc.char;
+								  this.mc.mdl_arm1_upper = this.mc.char;
+								  this.mc.mdl_arm1_lower = this.mc.char;
+								  this.mc.mdl_arm2_upper = this.mc.char;
+								  this.mc.mdl_arm2_lower = this.mc.char;
+								  this.mc.mdl_toe = this.mc.char;
+								  this.mc.mdl_body = this.mc.char;
+								  this.mc.alpha = 1;
+								  this.UpdateCharProps(this.mc);
+								  this.SpawnPlayerImmediately(this.mc);
+							   }
+							   if(this.gamechat_input_text == "quick start")
+							   {
+								  this.CMPG_money = 999999;
+								  if(this.LEVELS_PASSED < this.LEVELS_TOTAL)
+								  {
+									 this.LEVELS_PASSED = this.LEVELS_TOTAL;
+								  }
+								  this.IM_A_CHEATER = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text.indexOf("hero1skin ") != -1)
+							   {
+								  this.skin_model[0] = int(this.gamechat_input_text.split(" ")[1]);
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text.indexOf("hero2skin ") != -1)
+							   {
+								  this.skin_model[1] = int(this.gamechat_input_text.split(" ")[1]);
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no players")
+							   {
+								  this.playerstotal = 1;
+								  this.MP_myid = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no barrels")
+							   {
+								  this.barrelstotal = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no vehicles")
+							   {
+								  this.vehiclestotal = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no lights" || this.gamechat_input_text == "no lamps")
+							   {
+								  this.lampstotal = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "no guns")
+							   {
+								  this.gunstotal = 0;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "debug" || this.gamechat_input_text == "debug 1")
+							   {
+								  this.DEBUG_MODE = true;
+								  this.debug_screen.visible = true;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "debug 0")
+							   {
+								  this.DEBUG_MODE = false;
+								  this.debug_screen.graphics.clear();
+								  this.debug_screen.visible = false;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "god 0")
+							   {
+								  this.mens[this.MP_myid].hea /= 100000;
+								  this.mens[this.MP_myid].hmax /= 100000;
+								  this.Hurt_nopain(this.MP_myid);
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "headshot")
+							   {
+								  this.xx = this.mens[this.MP_myid].hea;
+								  this.mens[this.MP_myid].hp_head = 0;
+								  this.Hurt(this.MP_myid);
+								  this.mens[this.MP_myid].hea = this.xx;
+								  this.mens[this.MP_myid].dead = false;
+								  this.mens[this.MP_myid].dying = false;
+								  this.mens[this.MP_myid].stability = -2;
+								  this.atoy[this.mens[this.MP_myid].b_head_end] -= 10;
+								  this.atox[this.mens[this.MP_myid].b_head_end] -= Number(this.mens[this.MP_myid].side) * 5;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "friends")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(this.mens[_loc2_].io)
+									 {
+										this.mens[_loc2_].team = 0;
+									 }
+									 _loc2_++;
+								  }
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "dm")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(this.mens[_loc2_].io)
+									 {
+										this.mens[_loc2_].team = _loc2_;
+									 }
+									 _loc2_++;
+								  }
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "kill enemies")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 if(this.mens[_loc2_].io)
+									 {
+										if(this.mens[_loc2_].team != this.mens[this.MP_myid].team)
+										{
+										   this.mens[_loc2_].hea = 0;
+										   this.Hurt_nopain(_loc2_);
+										}
+									 }
+									 _loc2_++;
+								  }
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "hyper jump")
+							   {
+								  this.mens[this.MP_myid].toy = -25;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "over fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 5;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "uber fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 4;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "extra fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 3;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "very fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 2;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "faster")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 1.5;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "fast")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 1.25;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "normal")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = false;
+							   }
+							   if(this.gamechat_input_text == "slow")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 0.75;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "slower")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 0.5;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "very slow")
+							   {
+								  this.MP_fps = this.DEFAULT_FPS * 0.25;
+								  this.ok = false;
+								  this.SP_unlimit_framerate = true;
+							   }
+							   if(this.gamechat_input_text == "zoom 100")
+							   {
+								  this.game_scale = 1;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "zoom 200")
+							   {
+								  this.game_scale = 2;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "zoom 50")
+							   {
+								  this.game_scale = 0.5;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "zoom 25")
+							   {
+								  this.game_scale = 0.25;
+								  this.ok = false;
+							   }
+							   if(this.gamechat_input_text == "give all")
+							   {
+								  _loc2_ = 0;
+								  while(_loc2_ < this.inventoryC.length)
+								  {
+									 this.mc = this.MakeGunByClass(this.inventoryC[_loc2_].mdl,{
+										"x":this.mens[this.MP_myid].x,
+										"y":this.mens[this.MP_myid].y,
+										"upg":this.inventoryC[_loc2_].upg,
+										"command":-1
+									 });
+									 _loc2_++;
+								  }
+								  if(!this.FORCE_CUSTOM_MAP)
+								  {
+									 this.IM_A_CHEATER = true;
+								  }
+								  this.ok = false;
+							   }
+							   if(this.ok)
+							   {
+								  this.ChatNewMsg("bash: " + this.gamechat_input_text + ": command not found");
+								  this.PlaySound_full(this.s_chat);
+							   }
+							   else
+							   {
+								  this.BADGES_ENABLED = false;
+							   }
+							   if(this.IM_A_CHEATER)
+							   {
+								   this.IM_A_CHEATER = false;
+								  // this.ShowNoAch();
+								  // this.SaveGame();
+							   }
+							   this.UserSays(this.MP_myid,this.gamechat_input_text);
+							}
+						 }
+						 if(this.gamechat_input_text == "render 0")
+						 {
+							this.game.visible = false;
+							this.graphics_3d_front.visible = false;
+							this.graphics_3d.visible = false;
+							this.sky.visible = false;
+						 }
+						 if(this.gamechat_input_text == "render 1")
+						 {
+							this.game.visible = true;
+							this.graphics_3d_front.visible = true;
+							this.graphics_3d.visible = true;
+							this.sky.visible = true;
+						 }
+						 if(this.gamechat_input_text == "bot 1")
+						 {
+							this.MP_half_bot = true;
+							if(this.MP_mode)
+							{
+							   this.EASY_MODE = true;
+							   this.PRO_BOTS = false;
+							   this.LOW_HPS = false;
+							}
+						 }
+						 if(this.gamechat_input_text == "bot 0")
+						 {
+							this.MP_half_bot = false;
+						 }
+						 if(this.gamechat_input_text == "kill")
+						 {
+							this.mens[this.MP_myid].hp_head = 0;
+							this.Hurt(this.MP_myid);
+							this.mens[this.MP_myid].hea = 0;
+						 }
+					  }
+					  else
+					  {
+						 this.ok = true;
+						 if(this.gamechat_input_text == "-kill")
+						 {
+							this.mens[this.MP_myid].hp_head = 0;
+							this.Hurt(this.MP_myid);
+							this.mens[this.MP_myid].hea = 0;
+							this.ok = false;
+						 }
+						 if(this.gamechat_input_text.substr(0,5) == "-ping")
+						 {
+							if(Number(getTimer()) - this.LAST_VOTE > 60000)
+							{
+							   _loc5_ = Number(this.gamechat_input_text.substr(6,this.gamechat_input_text.length));
+							   if(Boolean(isNaN(_loc5_)) || !isNaN(_loc5_) && (_loc5_ < 10 || _loc5_ > 1000))
+							   {
+								  this.DialogSay("\'\'" + this.gamechat_input_text.substr(6,this.gamechat_input_text.length) + "\'\' is not a correct ping value.","#FFFF00");
+								  if(!isNaN(_loc5_) && (_loc5_ < 10 || _loc5_ > 1000))
+								  {
+									 this.LAST_VOTE = getTimer();
+								  }
+							   }
+							   else
+							   {
+								  this.MP_custom_events += ";voteping|" + this.gamechat_input_text.substr(6,this.gamechat_input_text.length);
+								  this.LAST_VOTE = getTimer();
+							   }
+							}
+							else
+							{
+							   this.DialogSay("You will be allowed to vote again in " + Math.ceil((60000 - (Number(getTimer()) - this.LAST_VOTE)) / 1000) + " seconds.","#FFFF00");
+							}
+						 }
+						 if(this.MP_type == 3)
+						 {
+							if(this.gamechat_input_text == "-blue")
+							{
+							   this.mc = this.mens[this.MP_myid];
+							   if(Number(getTimer()) - Number(this.mc.whenlastshot) > 7000)
+							   {
+								  this.mc.lastshotby = -1;
+							   }
+							   if(this.mc.dead || this.mc.lastshotby == -1 || this.mc.lastshotby == this.MP_myid)
+							   {
+								  this.mc.team = 13;
+								  this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "B";
+								  this.spawn = false;
+								  this.mc.hea = 0;
+								  this.mc.mdl_head = this.mc.char;
+								  this.mc.mdl_leg1_upper = this.mc.char;
+								  this.mc.mdl_leg1_middle = this.mc.char;
+								  this.mc.mdl_leg1_lower = this.mc.char;
+								  this.mc.mdl_leg2_upper = this.mc.char;
+								  this.mc.mdl_leg2_middle = this.mc.char;
+								  this.mc.mdl_leg2_lower = this.mc.char;
+								  this.mc.mdl_arm1_upper = this.mc.char;
+								  this.mc.mdl_arm1_lower = this.mc.char;
+								  this.mc.mdl_arm2_upper = this.mc.char;
+								  this.mc.mdl_arm2_lower = this.mc.char;
+								  this.mc.mdl_toe = this.mc.char;
+								  this.mc.mdl_body = this.mc.char;
+								  this.UpdateCharProps(this.mc);
+								  this.ok = false;
+								  this.UpdateTeamTable();
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 this.UpdateTeamColor(this.mens[_loc2_]);
+									 _loc2_++;
+								  }
+							   }
+							   else
+							   {
+								  this.DialogSay("Can\'t change team during fight.","#FFFF00");
+							   }
+							}
+							if(this.gamechat_input_text == "-red")
+							{
+							   this.mc = this.mens[this.MP_myid];
+							   if(Number(getTimer()) - Number(this.mc.whenlastshot) > 7000)
+							   {
+								  this.mc.lastshotby = -1;
+							   }
+							   if(this.mc.dead || this.mc.lastshotby == -1 || this.mc.lastshotby == this.MP_myid)
+							   {
+								  this.mc.team = 12;
+								  this.mc.palette[0] = this.mc.palette[1] = this.mc.palette[2] = this.mc.palette[3] = "R";
+								  this.spawn = false;
+								  this.mc.hea = 0;
+								  this.mc.mdl_head = this.mc.char;
+								  this.mc.mdl_leg1_upper = this.mc.char;
+								  this.mc.mdl_leg1_middle = this.mc.char;
+								  this.mc.mdl_leg1_lower = this.mc.char;
+								  this.mc.mdl_leg2_upper = this.mc.char;
+								  this.mc.mdl_leg2_middle = this.mc.char;
+								  this.mc.mdl_leg2_lower = this.mc.char;
+								  this.mc.mdl_arm1_upper = this.mc.char;
+								  this.mc.mdl_arm1_lower = this.mc.char;
+								  this.mc.mdl_arm2_upper = this.mc.char;
+								  this.mc.mdl_arm2_lower = this.mc.char;
+								  this.mc.mdl_toe = this.mc.char;
+								  this.mc.mdl_body = this.mc.char;
+								  this.UpdateCharProps(this.mc);
+								  this.ok = false;
+								  this.UpdateTeamTable();
+								  _loc2_ = 0;
+								  while(_loc2_ < this.playerstotal)
+								  {
+									 this.UpdateTeamColor(this.mens[_loc2_]);
+									 _loc2_++;
+								  }
+							   }
+							   else
+							   {
+								  this.DialogSay("Can\'t change team during fight.","#FFFF00");
+							   }
+							}
+						 }
+						 if(this.ok)
+						 {
+							if(this.gamechat_input_text.length > 0)
+							{
+							   this.MP_last_message_patience -= (Number(getTimer()) - this.MP_last_message) / 550;
+							   if(this.MP_last_message_patience < 0)
+							   {
+								  this.MP_last_message_patience = 0;
+							   }
+							   this.MP_last_message_patience += 20000 / Math.max(300,Number(getTimer()) - this.MP_last_message);
+							   this.MP_last_message = getTimer();
+							   if(this.MP_pass == "")
+							   {
+								  if(this.MP_last_message_patience > 110)
+								  {
+									 if(this.mens[this.MP_myid].dead || this.mens[this.MP_myid].lastshotby == -1 || Number(getTimer()) - Number(this.mens[this.MP_myid].whenlastshot) > 7000)
+									 {
+										this.DialogSay("Disconnected. You didn\'t stopped it, so we are sorry","#FF0000");
+										this.MP_force_disconnect = true;
+									 }
+								  }
+								  else if(this.MP_last_message_patience > 90)
+								  {
+									 this.DialogSay("Please don\'t send messages so quickly. You will be disconnected if you will continue","#FFFF00");
+								  }
+								  else if(this.MP_last_message_patience > 80)
+								  {
+									 this.DialogSay("Please don\'t send messages so quickly. It is not allowed","#FFFF00");
+								  }
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("=","[eq]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("=","[eq]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("|","[i]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("|","[i]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace(";","[dc]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace(";","[dc]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("<","[lt]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("<","[lt]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace(">","[gt]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace(">","[gt]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("\"","[2q]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("\"","[2q]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("/","[sl]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("/","[sl]");
+							   }
+							   while(this.gamechat_input_text != this.gamechat_input_text.replace("\\","[rsl]"))
+							   {
+								  this.gamechat_input_text = this.gamechat_input_text.replace("\\","[rsl]");
+							   }
+							   if(this.MP_chat_input_for == "all")
+							   {
+								  this.MP_custom_events += ";chat|" + this.gamechat_input_text;
+							   }
+							   else if(this.MP_chat_input_for == "team")
+							   {
+								  this.MP_custom_events += ";tchat|" + this.gamechat_input_text;
+							   }
+							   if(this.DISPLAY_CHAT < 1)
+							   {
+								  if(this.MP_mode)
+								  {
+									 this.DialogSay("Note: You\'ve said something, but you have \'\'DISPLAY CHAT\'\' set to \'\'NO\'\' in your Graphics & Gameplay settings.","#FFFF00");
+								  }
+							   }
+							}
+						 }
+					  }
+					  this.chat_win.visible = false;
+				   }
+				   else if(true || this.LEVELS_PASSED >= this.LEVELS_TOTAL || this.MP_mode || this.FORCE_CUSTOM_MAP)
+				   {
+					  this.MP_chat_input = true;
+					  if(this.MP_mode && param1.keyCode == 84)
+					  {
+						 this.MP_chat_input_for = "team";
+					  }
+					  else
+					  {
+						 this.MP_chat_input_for = "all";
+					  }
+					  this.chat_win.gamechat_input.text = "";
+					  this.gamechat_input_text = "";
+					  this.chat_win.chatmode.gotoAndStop(this.MP_chat_input_for);
+					  this.chat_win.visible = true;
+				   }
+				   else
+				   {
+					  this.ChatNewMsg("E: Access denied; complete all campaign levels first");
+				   }
+				}
+				else if(this.MP_chat_input)
+				{
+				   if(param1.keyCode == 8)
+				   {
+					  this.gamechat_input_text = this.gamechat_input_text.slice(0,this.gamechat_input_text.length - 1);
+					  this.chat_win.gamechat_input.htmlText = "<b>" + this.gamechat_input_text + "</b>";
+				   }
+				   else
+				   {
+					  _loc6_ = String.fromCharCode(param1.charCode);
+					  if(this.allowedText.indexOf(_loc6_) != -1)
+					  {
+						 this.gamechat_input_text += _loc6_;
+						 this.chat_win.gamechat_input.htmlText = "<b>" + this.gamechat_input_text.split("<").join("&lt;").split(">").join("&gt;") + "</b>";
+					  }
+				   }
+				}
+				else
+				{
+				   if(param1.keyCode == 65 || param1.keyCode == 37)
+				   {
+					  this.key_left = true;
+				   }
+				   if(param1.keyCode == 68 || param1.keyCode == 39)
+				   {
+					  this.key_right = true;
+				   }
+				   if(param1.keyCode == 32 || param1.keyCode == 82)
+				   {
+					  if(this.LEVEL_END_FORCE != "" && this.LEVEL_END_FORCE != "complete" && this.LEVEL_END_FORCE != "credits")
+					  {
+						 if(!this.MP_mode)
+						 {
+							if(this.darkness.alpha > 0.02)
+							{
+							   this.darkness.visible = true;
+							   this.darkness.alpha = 1;
+							   if(this.LEVEL_END_FORCE == "failed")
+							   {
+								  this.LEVEL_END_FORCE = "restart";
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(param1.keyCode == 87 || param1.keyCode == 38 || param1.keyCode == 32)
+				   {
+					  this.key_up = true;
+				   }
+				   if(param1.keyCode == 71 || param1.keyCode == 96)
+				   {
+					  if(!this.MP_mode)
+					  {
+						 this.StartMiniScenario(0);
+					  }
+					  else if(this.MP_type != 2 || this.MP_gamestate == 0)
+					  {
+						 if(this.grenades_total > 0)
+						 {
+							if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
+							{
+							   this.MP_myspecials[this.MP_myspecials_total] = new Object();
+							   this.MP_myspecials[this.MP_myspecials_total].stat = 1;
+							   this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
+							   this.MP_myspecials[this.MP_myspecials_total].nadekind = 1;
+							   this.MP_custom_events += ";gren|1#" + this.MP_myspecials_total;
+							   ++this.MP_myspecials_total;
+							}
+						 }
+					  }
+				   }
+				   if(this.MP_mode)
+				   {
+					  if(this.MP_type != 2 || this.MP_gamestate == 0)
+					  {
+						 if(param1.keyCode == 67)
+						 {
+							if(this.grenades_port_total > 0)
+							{
+							   if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
+							   {
+								  this.MP_myspecials[this.MP_myspecials_total] = new Object();
+								  this.MP_myspecials[this.MP_myspecials_total].stat = 1;
+								  this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
+								  this.MP_myspecials[this.MP_myspecials_total].nadekind = 2;
+								  this.MP_custom_events += ";gren|2#" + this.MP_myspecials_total;
+								  ++this.MP_myspecials_total;
+							   }
+							}
+						 }
+						 if(param1.keyCode == 90)
+						 {
+							if(this.grenades_sh_total > 0)
+							{
+							   if(this.mini_scenario_cur == -1 && !this.mens[this.MP_myid].dead && !this.mens[this.MP_myid].brk_arms)
+							   {
+								  this.MP_myspecials[this.MP_myspecials_total] = new Object();
+								  this.MP_myspecials[this.MP_myspecials_total].stat = 1;
+								  this.MP_myspecials[this.MP_myspecials_total].id_in_full_list = -1;
+								  this.MP_myspecials[this.MP_myspecials_total].nadekind = 3;
+								  this.MP_custom_events += ";gren|3#" + this.MP_myspecials_total;
+								  ++this.MP_myspecials_total;
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(param1.keyCode == 86 || param1.keyCode == 8)
+				   {
+					  this.key_grab = true;
+				   }
+				   if(param1.keyCode == 81)
+				   {
+					  if(this.last_gun_b4_psi != -1)
+					  {
+						 if(this.last_gun_b4_psi < this.gunstotal)
+						 {
+							this.mc = this.guns[this.last_gun_b4_psi];
+							if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
+							{
+							   if(this.mc.model != "item_grenade" || this.mc.wep >= 0)
+							   {
+								  this.i4 = this.mens[this.MP_myid].curwea;
+								  this.mens[this.MP_myid].curwea = this.last_gun_b4_psi;
+								  this.last_gun_b4_psi = this.i4;
+								  this.ChangedGun(this.MP_myid);
+							   }
+							}
+						 }
+					  }
+					  else
+					  {
+						 this.i4 = this.mens[this.MP_myid].curwea;
+						 this.mens[this.MP_myid].curwea = this.last_gun_b4_psi;
+						 this.last_gun_b4_psi = this.i4;
+						 this.ChangedGun(this.MP_myid);
+					  }
+				   }
+				   if(param1.keyCode == 70)
+				   {
+				   }
+				   if(!this.MP_mode)
+				   {
+					  if(param1.keyCode == 80)
+					  {
+						 if(this.system_non_stop)
+						 {
+							this.system_non_stop = false;
+							if(!this.mens[this.MP_myid].dead)
+							{
+							   this.pauze.visible = true;
+							}
+						 }
+						 else
+						 {
+							this.system_non_stop = true;
+							if(!this.mens[this.MP_myid].dead)
+							{
+							   this.pauze.visible = false;
+							}
+						 }
+						 this.stoped_by_focus = false;
+					  }
+				   }
+				   if(param1.keyCode == 83 || param1.keyCode == 40 || param1.keyCode == 17)
+				   {
+					  this.key_down = true;
+				   }
+				   if(param1.keyCode == 71 || param1.keyCode == 96 || param1.keyCode == 13)
+				   {
+					  this.key_grenade = true;
+				   }
+				   if(param1.keyCode == 69 || param1.keyCode == 45)
+				   {
+					  this.key_pick = true;
+				   }
+				   if(param1.keyCode == 88)
+				   {
+					  this.key_fall = true;
+				   }
+				   if(param1.keyCode == 90)
+				   {
+					  if(!this.key_alt)
+					  {
+						 if(!this.MP_mode)
+						 {
+							this.key_alt = true;
+							if(this.timeshift > 0)
+							{
+							   this.timeshift = 0;
+							   this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
+							   if(this.SCREEN_EFFECTS)
+							   {
+								  this.whitness.alpha += 1;
+								  this.whitness.visible = true;
+							   }
+							}
+							else if(this.ALLOW_TIMESHIFT)
+							{
+							   if(this.energy > 10)
+							   {
+								  if(!this.mens[this.MP_myid].dead)
+								  {
+									 this.energy -= 10;
+									 this.timeshift = 1;
+									 this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
+									 if(this.SCREEN_EFFECTS)
+									 {
+										this.whitness.alpha += 1;
+										this.whitness.visible = true;
+									 }
+								  }
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(param1.keyCode == 34)
+				   {
+					  if(!this.key_alt)
+					  {
+						 if(!this.MP_mode)
+						 {
+							this.key_alt = true;
+							if(this.timeshift > 0)
+							{
+							   this.timeshift = 0;
+							   this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
+							   if(this.SCREEN_EFFECTS)
+							   {
+								  this.whitness.alpha += 1;
+								  this.whitness.visible = true;
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(param1.keyCode == 33)
+				   {
+					  if(!this.key_alt)
+					  {
+						 if(!this.MP_mode)
+						 {
+							this.key_alt = true;
+							if(this.timeshift <= 0)
+							{
+							   if(this.ALLOW_TIMESHIFT)
+							   {
+								  if(this.energy > 10)
+								  {
+									 if(!this.mens[this.MP_myid].dead)
+									 {
+										this.energy -= 10;
+										this.timeshift = 1;
+										this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
+										if(this.SCREEN_EFFECTS)
+										{
+										   this.whitness.alpha += 1;
+										   this.whitness.visible = true;
+										}
+									 }
+								  }
+							   }
+							}
+						 }
+					  }
+				   }
+				   if(this.KINETIC_MODULE_ENABLED)
+				   {
+					  if(param1.keyCode == 67)
+					  {
+						 if(!this.key_kinetic)
+						 {
+							this.key_kinetic = true;
+							this.cinetic_target = -1;
+							_loc7_ = -1;
+							_loc2_ = 0;
+							while(_loc2_ < this.atotal)
+							{
+							   if(this.aio[_loc2_] == true || this.aio[_loc2_] == false)
+							   {
+								  if(this.aof[_loc2_] >= 0 && this.aof[_loc2_] < 100 && this.mens[this.aof[_loc2_]].incar == -1 && this.aof[_loc2_] != this.MP_myid || this.aof[_loc2_] >= 100 || this.aof[_loc2_] > -200 && this.aof[_loc2_] <= -100 || this.aof[_loc2_] < 0 && this.aof[_loc2_] > -100 && !this.guns[-Number(this.aof[_loc2_]) - 1].forcars && this.guns[-Number(this.aof[_loc2_]) - 1].alpha > 0)
+								  {
+									 if(this.arad[_loc2_] < 16)
+									 {
+										if(this.arad[_loc2_] > 0)
+										{
+										   if((_loc8_ = this.Dist2D(this.ax[_loc2_],this.ay[_loc2_],this.mens[this.MP_myid].tarx,this.mens[this.MP_myid].tary)) < this.arad[_loc2_] + 40)
+										   {
+											  this.ok = true;
+											  if(this.aactive[_loc2_] != 1000)
+											  {
+												 if(this.aof[_loc2_] < 0 && this.aof[_loc2_] > -100)
+												 {
+													if(this.guns[-Number(this.aof[_loc2_]) - 1].picken_by != -1)
+													{
+													   if(!this.guns[-Number(this.aof[_loc2_]) - 1].forcars)
+													   {
+														  if(this.guns[-Number(this.aof[_loc2_]) - 1].picken_by == this.MP_myid || this.mens[this.guns[-Number(this.aof[_loc2_]) - 1].picken_by].team != this.mens[this.MP_myid].team)
+														  {
+															 this.ok = false;
+														  }
+													   }
+													}
+												 }
+											  }
+											  if(this.ok)
+											  {
+												 if(_loc8_ < _loc7_ || _loc7_ == -1)
+												 {
+													this.cinetic_target = _loc2_;
+													_loc7_ = _loc8_;
+												 }
+											  }
+										   }
+										}
+									 }
+								  }
+							   }
+							   _loc2_++;
+							}
+						 }
+					  }
+				   }
+				   if(this.mens[this.MP_myid].hea > 0)
+				   {
+					  if(param1.keyCode >= 48 && param1.keyCode <= 57 || param1.keyCode == 167 || param1.keyCode == 192 || param1.keyCode == 0)
+					  {
+						 if(param1.keyCode == 48 || param1.keyCode == 167 || param1.keyCode == 192 || param1.keyCode == 0)
+						 {
+							if(this.mens[this.MP_myid].curwea != -1)
+							{
+							   this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
+							   this.mens[this.MP_myid].curwea = -1;
+							   this.ChangedGun(this.MP_myid);
+							   this.UpdateCurGun();
+							}
+						 }
+						 else
+						 {
+							_loc2_ = 0;
+							while(_loc2_ < this.gunstotal)
+							{
+							   if(this.guns[_loc2_].io)
+							   {
+								  this.mc = this.guns[_loc2_];
+								  if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
+								  {
+									 if(this.mc.wep == param1.keyCode - 48)
+									 {
+										if(this.mens[this.MP_myid].curwea != _loc2_)
+										{
+										   this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
+										   this.mens[this.MP_myid].curwea = _loc2_;
+										   this.ChangedGun(this.MP_myid);
+										   this.UpdateCurGun();
+										}
+									 }
+								  }
+							   }
+							   _loc2_++;
+							}
+						 }
+					  }
+				   }
+				}
+			 }
+			 this.VarChangePreventEnd();
+		  }
+		 catch(e:*) {
+			 this.LAST_ERROR = "For some reason k_down errored. " + e.message;
+			 DropGameTimer();
+			 gotoAndStop("menu");
+		 }
+	  }
       public function onMouseWheelEvent(param1:MouseEvent) : void
       {
          this.VarChangePreventStart();
@@ -24686,8 +24764,8 @@ import flash.display.Sprite;
                                        this.mcc.toy += this.puls[_loc1_].spy;
                                        if(this.puls[_loc1_].master == this.MP_myid)
                                        {
-                                          this.game.x += this.u;
-                                          this.game.y += this.v;
+                                          this.game_x += this.u;
+                                          this.game_y += this.v;
                                        }
                                        this.i4 = 0;
                                        while(this.i4 < this.atotal)
@@ -25929,9 +26007,9 @@ import flash.display.Sprite;
                         {
                            if(this.ef[this.i].contains(this.ef[this.i].expl))
                            {
-                              this.MeasureStart(9);
-                              this.ef[this.i].expl.gotoAndStop(Math.min(this.ef[this.i].expl.totalFrames,this.ef[this.i].expl.currentFrame + Math.ceil(Number(this.ef[this.i].framespeed) * this.GSPEED)));
-                              this.MeasureStop(9);
+                              //this.MeasureStop(9);
+							  this.ef[this.i].expl.gotoAndStop(Math.min(this.ef[this.i].expl.totalFrames,this.ef[this.i].expl.currentFrame + Math.ceil(Number(this.ef[this.i].framespeed) * this.GSPEED)));
+							  //this.MeasureStop(9);
                            }
                         }
                      }
@@ -25939,15 +26017,15 @@ import flash.display.Sprite;
                   if(this.ef[this.i].typ == 1 || this.ef[this.i].typ == 4)
                   {
                      this.ok = true;
-                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x,this.ef[this.i].y))
+                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x_,this.ef[this.i].y_))
                      {
-                        if(this.ef[this.i].x > this.boxx[this.i2])
+                        if(this.ef[this.i].x_ > this.boxx[this.i2])
                         {
-                           if(this.ef[this.i].x < this.boxx[this.i2] + this.boxw[this.i2])
+                           if(this.ef[this.i].x_ < this.boxx[this.i2] + this.boxw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.boxy[this.i2])
+                              if(this.ef[this.i].y_ > this.boxy[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.boxy[this.i2] + this.boxh[this.i2])
+                                 if(this.ef[this.i].y_ < this.boxy[this.i2] + this.boxh[this.i2])
                                  {
                                     this.ok = false;
                                     break;
@@ -25958,8 +26036,8 @@ import flash.display.Sprite;
                      }
                      if(this.ok)
                      {
-                        this.ef[this.i].x += Number(this.ef[this.i].tox) * this.GSPEED;
-                        this.ef[this.i].y += Number(this.ef[this.i].toy) * this.GSPEED;
+                        this.ef[this.i].x_ += Number(this.ef[this.i].tox) * this.GSPEED;
+                        this.ef[this.i].y_ += Number(this.ef[this.i].toy) * this.GSPEED;
                         this.ef[this.i].toy += this.gravity * this.GSPEED;
                         if(this.ef[this.i].typ == 1)
                         {
@@ -25974,13 +26052,13 @@ import flash.display.Sprite;
                      this.i2 = 0;
                      while(this.i2 < this.watertotal && !this.ok)
                      {
-                        if(this.ef[this.i].x > this.wax[this.i2])
+                        if(this.ef[this.i].x_ > this.wax[this.i2])
                         {
-                           if(this.ef[this.i].x < this.wax[this.i2] + this.waw[this.i2])
+                           if(this.ef[this.i].x_ < this.wax[this.i2] + this.waw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.way[this.i2])
+                              if(this.ef[this.i].y_ > this.way[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.way[this.i2] + this.wah[this.i2])
+                                 if(this.ef[this.i].y_ < this.way[this.i2] + this.wah[this.i2])
                                  {
                                     if(this.wa_friction[this.i2])
                                     {
@@ -26008,7 +26086,7 @@ import flash.display.Sprite;
                      }
                      if(this.ef[this.i].typ == 1)
                      {
-                        this.MeasureStart(10);
+                        //this.MeasureStop(10);
                         if(this.ef[this.i].inner_blood_cloud == undefined)
                         {
                            _loc1_ = Math.ceil(Number(this.ef[this.i].framespeed) * this.GSPEED);
@@ -26022,24 +26100,24 @@ import flash.display.Sprite;
                         {
                            this.Logic_eff_blood(this.ef[this.i]);
                         }
-                        this.MeasureStop(10);
+                        //this.MeasureStop(10);
                      }
                   }
                   if(this.ef[this.i].typ == 2)
                   {
-                     this.ef[this.i].x += -1 + Math.random() * 2;
-                     this.ef[this.i].y -= this.gravity * 5;
+                     this.ef[this.i].x_ += -1 + Math.random() * 2;
+                     this.ef[this.i].y_ -= this.gravity * 5;
                      this.ok = false;
                      this.i2 = 0;
                      while(this.i2 < this.watertotal && !this.ok)
                      {
-                        if(this.ef[this.i].x > this.wax[this.i2])
+                        if(this.ef[this.i].x_ > this.wax[this.i2])
                         {
-                           if(this.ef[this.i].x < this.wax[this.i2] + this.waw[this.i2])
+                           if(this.ef[this.i].x_ < this.wax[this.i2] + this.waw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.way[this.i2])
+                              if(this.ef[this.i].y_ > this.way[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.way[this.i2] + this.wah[this.i2])
+                                 if(this.ef[this.i].y_ < this.way[this.i2] + this.wah[this.i2])
                                  {
                                     if(this.wa_friction[this.i2])
                                     {
@@ -26054,15 +26132,15 @@ import flash.display.Sprite;
                      }
                      if(this.ok)
                      {
-                        for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x,this.ef[this.i].y))
+                        for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x_,this.ef[this.i].y_))
                         {
-                           if(this.ef[this.i].x > this.boxx[this.i2])
+                           if(this.ef[this.i].x_ > this.boxx[this.i2])
                            {
-                              if(this.ef[this.i].x < this.boxx[this.i2] + this.boxw[this.i2])
+                              if(this.ef[this.i].x_ < this.boxx[this.i2] + this.boxw[this.i2])
                               {
-                                 if(this.ef[this.i].y > this.boxy[this.i2])
+                                 if(this.ef[this.i].y_ > this.boxy[this.i2])
                                  {
-                                    if(this.ef[this.i].y < this.boxy[this.i2] + this.boxh[this.i2])
+                                    if(this.ef[this.i].y_ < this.boxy[this.i2] + this.boxh[this.i2])
                                     {
                                        this.ok = false;
                                        break;
@@ -26079,20 +26157,20 @@ import flash.display.Sprite;
                   }
                   if(this.ef[this.i].typ == 3)
                   {
-                     this.ef[this.i].x += Number(this.ef[this.i].tox) * this.GSPEED;
-                     this.ef[this.i].y += Number(this.ef[this.i].toy) * this.GSPEED;
+                     this.ef[this.i].x_ += Number(this.ef[this.i].tox) * this.GSPEED;
+                     this.ef[this.i].y_ += Number(this.ef[this.i].toy) * this.GSPEED;
                      this.ef[this.i].toy += this.gravity * this.GSPEED;
                      this.ok = true;
                      this.i2 = 0;
                      while(this.i2 < this.watertotal && this.ok)
                      {
-                        if(this.ef[this.i].x > this.wax[this.i2])
+                        if(this.ef[this.i].x_ > this.wax[this.i2])
                         {
-                           if(this.ef[this.i].x < this.wax[this.i2] + this.waw[this.i2])
+                           if(this.ef[this.i].x_ < this.wax[this.i2] + this.waw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.way[this.i2])
+                              if(this.ef[this.i].y_ > this.way[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.way[this.i2] + this.wah[this.i2])
+                                 if(this.ef[this.i].y_ < this.way[this.i2] + this.wah[this.i2])
                                  {
                                     if(this.wa_friction[this.i2])
                                     {
@@ -26106,15 +26184,15 @@ import flash.display.Sprite;
                         ++this.i2;
                      }
                      this.ok = true;
-                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x,this.ef[this.i].y))
+                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x_,this.ef[this.i].y_))
                      {
-                        if(this.ef[this.i].x > this.boxx[this.i2])
+                        if(this.ef[this.i].x_ > this.boxx[this.i2])
                         {
-                           if(this.ef[this.i].x < this.boxx[this.i2] + this.boxw[this.i2])
+                           if(this.ef[this.i].x_ < this.boxx[this.i2] + this.boxw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.boxy[this.i2])
+                              if(this.ef[this.i].y_ > this.boxy[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.boxy[this.i2] + this.boxh[this.i2])
+                                 if(this.ef[this.i].y_ < this.boxy[this.i2] + this.boxh[this.i2])
                                  {
                                     this.ef[this.i].tox = 0;
                                     this.ef[this.i].toy = 0;
@@ -26129,15 +26207,15 @@ import flash.display.Sprite;
                   if(this.ef[this.i].typ == 5)
                   {
                      this.ok = false;
-                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x,this.ef[this.i].y))
+                     for each(this.i2 in this.GetNearBoxBSP_at(this.ef[this.i].x_,this.ef[this.i].y_))
                      {
-                        if(this.ef[this.i].x > this.boxx[this.i2])
+                        if(this.ef[this.i].x_ > this.boxx[this.i2])
                         {
-                           if(this.ef[this.i].x < this.boxx[this.i2] + this.boxw[this.i2])
+                           if(this.ef[this.i].x_ < this.boxx[this.i2] + this.boxw[this.i2])
                            {
-                              if(this.ef[this.i].y > this.boxy[this.i2])
+                              if(this.ef[this.i].y_ > this.boxy[this.i2])
                               {
-                                 if(this.ef[this.i].y < this.boxy[this.i2] + this.boxh[this.i2])
+                                 if(this.ef[this.i].y_ < this.boxy[this.i2] + this.boxh[this.i2])
                                  {
                                     this.ok = true;
                                     break;
@@ -26156,10 +26234,10 @@ import flash.display.Sprite;
                            this.ef[this.i].visible = false;
                         }
                      }
-                     this.ef[this.i].x += Number(this.ef[this.i].tox) * this.GSPEED;
-                     this.ef[this.i].y += Number(this.ef[this.i].toy) * this.GSPEED;
+                     this.ef[this.i].x_ += Number(this.ef[this.i].tox) * this.GSPEED;
+                     this.ef[this.i].y_ += Number(this.ef[this.i].toy) * this.GSPEED;
                      this.ef[this.i].toy += this.gravity * this.GSPEED;
-                     this.MeasureStart(11);
+                     //this.MeasureStop(11);
                      if(this.ef[this.i].inner_blood_splat1 == undefined)
                      {
                         _loc1_ = Math.ceil(Number(this.ef[this.i].framespeed) * this.GSPEED);
@@ -26173,16 +26251,16 @@ import flash.display.Sprite;
                      {
                         this.Logic_eff_blood_sprite(this.ef[this.i]);
                      }
-                     this.MeasureStop(11);
+                     //this.MeasureStop(11);
                   }
                   if(this.ef[this.i].typ == 6)
                   {
-                     if(Math.abs(Number(this.ef[this.i].x) - Number(this.ax[this.mens[this.ef[this.i].attached].b_head_start])) < 200)
+                     if(Math.abs(Number(this.ef[this.i].x_) - Number(this.ax[this.mens[this.ef[this.i].attached].b_head_start])) < 200)
                      {
-                        if(Math.abs(this.ef[this.i].y - (Number(this.ay[this.mens[this.ef[this.i].attached].b_head_start]) - 30)) < 200)
+                        if(Math.abs(this.ef[this.i].y_ - (Number(this.ay[this.mens[this.ef[this.i].attached].b_head_start]) - 30)) < 200)
                         {
-                           this.ef[this.i].x = (Number(this.ax[this.mens[this.ef[this.i].attached].b_head_start]) * this.GSPEED + Number(this.ef[this.i].x) * 5) / (5 + this.GSPEED);
-                           this.ef[this.i].y = ((Number(this.ay[this.mens[this.ef[this.i].attached].b_head_start]) - 30) * this.GSPEED + Number(this.ef[this.i].y) * 5) / (5 + this.GSPEED);
+                           this.ef[this.i].x_ = (Number(this.ax[this.mens[this.ef[this.i].attached].b_head_start]) * this.GSPEED + Number(this.ef[this.i].x_) * 5) / (5 + this.GSPEED);
+                           this.ef[this.i].y_ = ((Number(this.ay[this.mens[this.ef[this.i].attached].b_head_start]) - 30) * this.GSPEED + Number(this.ef[this.i].y_) * 5) / (5 + this.GSPEED);
                         }
                      }
                      if(this.ef[this.i].totalFrames < 90)
@@ -26676,8 +26754,8 @@ import flash.display.Sprite;
                               this.mc.act_movex = 0;
                               this.mc.act_movey = 0;
                            }
-                           this.mc.tarx = (this.mouse_x - this.game.x) / this.game_scale;
-                           this.mc.tary = (this.mouse_y - this.game.y) / this.game_scale;
+                           this.mc.tarx = (this.mouse_x - this.game_x) / this.game_scale;
+                           this.mc.tary = (this.mouse_y - this.game_y) / this.game_scale;
                            if(Boolean(is_firing) && this.MP_gamestate == 0)
                            {
                               if(this.mc.act_fire == false)
@@ -27806,8 +27884,8 @@ import flash.display.Sprite;
                                  {
                                     if(is_firing)
                                     {
-                                       this.mc.tarx = (this.mouse_x - this.game.x) / this.game_scale;
-                                       this.mc.tary = (this.mouse_y - this.game.y) / this.game_scale;
+                                       this.mc.tarx = (this.mouse_x - this.game_x) / this.game_scale;
+                                       this.mc.tary = (this.mouse_y - this.game_y) / this.game_scale;
                                     }
                                     if(this.key_up)
                                     {
@@ -27923,18 +28001,11 @@ import flash.display.Sprite;
                                     {
                                        this.xx *= 0.1;
                                     }
-                                    this.game.x += Math.sin(this.xx) * 200;
-                                    this.game.y += Math.cos(this.xx) * 200;
+                                    this.game_x += Math.sin(this.xx) * 200;
+                                    this.game_y += Math.cos(this.xx) * 200;
                                  }
                                  if(!this.MP_mode)
                                  {
-									removeEventListener(Event.ENTER_FRAME,fr_func);
-									gt_timer.removeEventListener(TimerEvent.TIMER, gt_func);
-									gt_timer.stop();
-									rt_timer.removeEventListener(TimerEvent.TIMER, rt_func);
-									rt_timer.stop();
-									 
-									 
                                     this.LEVEL_END_FORCE = "failed";
                                     this.LAST_ERROR = "YOUR TEAM IS DEAD.";
                                     if(this.HINTS)
@@ -27954,17 +28025,11 @@ import flash.display.Sprite;
                                  {
                                     this.xx *= 0.1;
                                  }
-                                 this.game.x += Math.sin(this.xx) * 200;
-                                 this.game.y += Math.cos(this.xx) * 200;
+                                 this.game_x += Math.sin(this.xx) * 200;
+                                 this.game_y += Math.cos(this.xx) * 200;
                               }
                               if(!this.MP_mode)
-                              {
-								 removeEventListener(Event.ENTER_FRAME,fr_func);
-								 gt_timer.removeEventListener(TimerEvent.TIMER, gt_func);
-								 gt_timer.stop();
-								 rt_timer.removeEventListener(TimerEvent.TIMER, rt_func);
-								 rt_timer.stop();								  
-								  
+                              {							  
                                  this.LEVEL_END_FORCE = "failed";
                                  if(this.mens[this.MP_myid].lastshotby == this.MP_myid || this.mens[this.MP_myid].lastshotby == -1)
                                  {
@@ -30505,6 +30570,7 @@ import flash.display.Sprite;
       
       public function VarChangePreventStart() : void
       {
+		 return;
          if(currentFrame != 18)
          {
             return;
@@ -30599,6 +30665,7 @@ import flash.display.Sprite;
       
       public function VarChangePreventEnd() : void
       {
+		 return;
          var i:int;
          if(currentFrame != 18)
          {
@@ -30715,7 +30782,7 @@ import flash.display.Sprite;
          var t:* = undefined;
          var f:* = undefined;
          var event:Event = param1;
-		 if(this.FRAMERATE == 4) {
+		 if(this.FRAMERATE == 1000) {
 			 var originalFrameRate = stage.frameRate;
 			 this.fps_toggle_perf = !this.fps_toggle_perf;
 			 if (this.fps_toggle_perf)
@@ -30731,6 +30798,7 @@ import flash.display.Sprite;
          this.VarChangePreventStart();
          try
          {
+	        this.fr_func();
             this.allow_unlag_fps = true;
             this.DebugBugCaches();
             /*if(this.MP_get_done_HAP)
@@ -30792,10 +30860,10 @@ import flash.display.Sprite;
             {
                if(this.FREEZE_OFFSCREEN_ENTITIES)
                {
-                  this.render_minX = (-this.game.x - 300) / this.game_scale;
-                  this.render_minY = (-this.game.y - 200) / this.game_scale;
-                  this.render_maxX = (-this.game.x + this.screenX + 300) / this.game_scale;
-                  this.render_maxY = (-this.game.y + this.screenY + 200) / this.game_scale;
+                  this.render_minX = (-this.game_x - 300) / this.game_scale;
+                  this.render_minY = (-this.game_y - 200) / this.game_scale;
+                  this.render_maxX = (-this.game_x + this.screenX + 300) / this.game_scale;
+                  this.render_maxY = (-this.game_y + this.screenY + 200) / this.game_scale;
                }
                else
                {
@@ -30836,31 +30904,39 @@ import flash.display.Sprite;
                      this.energy -= 0.4 * this.GSPEED2;
                   }
                }
-               if(this.GET_LITE_PHYS())
-               {
-                  this.Physics();
-                  this.LITE_PHYS_tim = !this.LITE_PHYS_tim;
-               }
-               else
-               {
-                  this.Physics();
-               }
+
+			   if(this.GET_LITE_PHYS())
+			   {
+				  this.Physics();
+				  this.LITE_PHYS_tim = !this.LITE_PHYS_tim;
+			   }
+			   else
+			   {
+				  this.Physics();
+			   }
                this.UpdateAtomPathCache();
                this.DoorLogic();
                this.BulletLogic();
                this.PlayerLogic();
                this.ThinkOfFlakes();
                this.EffectsLogic();
+		   
+			   this.updateEffects();
+			   this.updateMap();
+
+			   this.gt_func();
+			   this.rt_func();
+		   
                if(this.lock_camera_intensity > 0)
                {
                   if(this.lock_camera_intensity > 1)
                   {
                      this.lock_camera_intensity = 1;
                   }
-                  this.xx2 = this.game.x;
-                  this.yy2 = this.game.y;
-                  this.xx = -Number(this.lock_camera_region.x) * this.game.scaleX * this.lock_camera_intensity + this.game.x * (1 - this.lock_camera_intensity);
-                  this.yy = -Number(this.lock_camera_region.y) * this.game.scaleY * this.lock_camera_intensity + this.game.y * (1 - this.lock_camera_intensity) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale;
+                  this.xx2 = this.game_x;
+                  this.yy2 = this.game_y;
+                  this.xx = -Number(this.lock_camera_region.x) * this.game.scaleX * this.lock_camera_intensity + this.game_x * (1 - this.lock_camera_intensity);
+                  this.yy = -Number(this.lock_camera_region.y) * this.game.scaleY * this.lock_camera_intensity + this.game_y * (1 - this.lock_camera_intensity) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale;
                   if(Math.round(this.xx) == this.xx2)
                   {
                      if(this.xx > -Number(this.lock_camera_region.x) * this.game.scaleX)
@@ -30883,15 +30959,15 @@ import flash.display.Sprite;
                         this.yy += 1 * this.game.scaleY;
                      }
                   }
-                  this.game.x = Math.round(this.xx);
-                  this.game.y = Math.round(this.yy);
+                  this.game_x = Math.round(this.xx);
+                  this.game_y = Math.round(this.yy);
                }
                else if(this.MP_mode && this.mens[this.MP_myid].dead || this.MP_spectator)
                {
                   if(this.death_cam >= 0 && this.death_cam < this.playerstotal)
                   {
-                     old_x = this.game.x;
-                     old_y = this.game.y;
+                     old_x = this.game_x;
+                     old_y = this.game_y;
                      if(this.MP_spectator)
                      {
                         if(this.MP_myid != this.death_cam)
@@ -30904,8 +30980,8 @@ import flash.display.Sprite;
                               i++;
                            }
                         }
-                        look_x = this.mens[this.death_cam].tarx + this.game.x;
-                        look_y = this.mens[this.death_cam].tary + this.game.y;
+                        look_x = this.mens[this.death_cam].tarx + this.game_x;
+                        look_y = this.mens[this.death_cam].tary + this.game_y;
                      }
                      else
                      {
@@ -30914,37 +30990,37 @@ import flash.display.Sprite;
                      }
                      if(this.SOFT_SCREEN)
                      {
-                        this.game.x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game.x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2)));
-                        this.game.y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game.y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
+                        this.game_x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game_x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2)));
+                        this.game_y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game_y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
                      }
                      else
                      {
-                        this.game.x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game.x) / 2));
-                        this.game.y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game.y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
+                        this.game_x = Math.round(((-Number(this.ax[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenX - look_x + this.hscreenX + this.game_x) / 2));
+                        this.game_y = Math.round(((-Number(this.ay[this.mens[this.death_cam].b_toe]) * this.game_scale + this.hscreenY - look_y + this.hscreenY + this.game_y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale));
                      }
                      if(this.MP_spectator)
                      {
-                        this.myCursor.x = (this.myCursor.x + look_x) / 2 - this.game.x + old_x;
-                        this.myCursor.y = (this.myCursor.y + look_y) / 2 - this.game.y + old_y;
+                        this.myCursor.x = (this.myCursor.x + look_x) / 2 - this.game_x + old_x;
+                        this.myCursor.y = (this.myCursor.y + look_y) / 2 - this.game_y + old_y;
                      }
                   }
                   else
                   {
                      if(this.key_left)
                      {
-                        this.game.x += 15;
+                        this.game_x += 15;
                      }
                      if(this.key_right)
                      {
-                        this.game.x -= 15;
+                        this.game_x -= 15;
                      }
                      if(this.key_up)
                      {
-                        this.game.y += 15;
+                        this.game_y += 15;
                      }
                      if(this.key_down)
                      {
-                        this.game.y -= 15;
+                        this.game_y -= 15;
                      }
                   }
                   if(this.darkness.alpha >= 0.25 || this.MP_spectator || this.death_cam == -1 || this.death_cam != this.MP_myid)
@@ -30968,13 +31044,13 @@ import flash.display.Sprite;
                {
                   if(this.SOFT_SCREEN)
                   {
-                     this.game.x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game.x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2));
-                     this.game.y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game.y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
+                     this.game_x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game_x * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2));
+                     this.game_y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game_y * 10 / this.GSPEED2) / (1 + 10 / this.GSPEED2) + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
                   }
                   else
                   {
-                     this.game.x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game.x) / 2);
-                     this.game.y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game.y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
+                     this.game_x = Math.round((-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.min_max(0,this.mouse_x,this.screenX) + this.hscreenX + this.game_x) / 2);
+                     this.game_y = Math.round((-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.min_max(0,this.mouse_y,this.screenY) + this.hscreenY + this.game_y) / 2 + Math.sin(Number(getTimer()) * 0.05) * this.SHAKEAMMOUT * this.game_scale);
                   }
                   this.death_cam = this.MP_myid;
                }
@@ -30993,8 +31069,8 @@ import flash.display.Sprite;
                }
                if(this.new_active.visible)
                {
-                  this.new_active.x = this.mens[this.MP_myid].x + this.game.x;
-                  this.new_active.y = Number(this.mens[this.MP_myid].y) - 90 + this.game.y;
+                  this.new_active.x = this.mens[this.MP_myid].x + this.game_x;
+                  this.new_active.y = Number(this.mens[this.MP_myid].y) - 90 + this.game_y;
                }
                if(!this.MP_spectator)
                {
@@ -31032,8 +31108,8 @@ import flash.display.Sprite;
                                                          {
                                                             this.ok = true;
                                                             this.need_heal.visible = true;
-                                                            this.need_heal.x = Number(this.ax[this.mens[i2].b_body]) * this.game_scale + this.game.x;
-                                                            this.need_heal.y = (Number(this.ay[this.mens[i2].b_body]) - 41) * this.game_scale + this.game.y;
+                                                            this.need_heal.x = Number(this.ax[this.mens[i2].b_body]) * this.game_scale + this.game_x;
+                                                            this.need_heal.y = (Number(this.ay[this.mens[i2].b_body]) - 41) * this.game_scale + this.game_y;
                                                          }
                                                       }
                                                    }
@@ -31062,11 +31138,11 @@ import flash.display.Sprite;
                   this.graphics_3d_front.scaleX = this.graphics_3d.scaleX = this.game_scale;
                   this.graphics_3d_front.scaleY = this.graphics_3d.scaleY = this.game_scale;
                   this.lgame_scale = this.game_scale;
-                  this.game.x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.mouse_x + this.hscreenX);
-                  this.game.y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.mouse_y + this.hscreenY);
+                  this.game_x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX - this.mouse_x + this.hscreenX);
+                  this.game_y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY - this.mouse_y + this.hscreenY);
                }
-               this.graphics_3d_front.x = this.graphics_3d.x = this.game.x;
-               this.graphics_3d_front.y = this.graphics_3d.y = this.game.y;
+               //this.graphics_3d_front.x = this.graphics_3d.x = this.game_x;
+               //this.graphics_3d_front.y = this.graphics_3d.y = this.game_y;
                i = 0;
                while(i < this.surf_lnk.length)
                {
@@ -31191,6 +31267,25 @@ import flash.display.Sprite;
 				   i++;
 			   }
 		   
+			   i = 0;
+			   while(i < this.bgstotal) {
+				   if(this.bgbox != undefined) {
+					   if(this.bgx[i] + (this.bgw[i] * 100) < this.render_minX || this.bgx[i] > this.render_maxX) {
+						   if(!this.bgbox[i].visible) {
+							   i++;
+							   continue;
+						   }
+						   this.bgbox[i].visible = false;
+					   } else {
+						   if(this.bgbox[i].visible) {
+							   i++;
+							   continue;
+						   }
+						   this.bgbox[i].visible = true;
+					   }
+					   i++;
+				   }
+			   }
 		   
                /*if(this.game.contains(this.ef[this.nextef]))
                {
@@ -31680,7 +31775,7 @@ import flash.display.Sprite;
                            this.chdef[this.mc.ch_leg2upper] = this.chdef[this.mc.ch_leg2lower] = this.Dist2D(this.ax[this.mc.b_p1],this.ay[this.mc.b_p1],this.ax[this.mc.b_w2],this.ay[this.mc.b_w2]) / 3;
                            this.mc.x = this.ax[this.mc.b_p1];
                            this.mc.y = this.ay[this.mc.b_p1];
-                           this.MeasureStart(12);
+                           //this.MeasureStop(12);
                            this.mc.carbody.rotation = 270 - this.xx / Math.PI * 180;
                            this.mc.leg1.rotation = 180 - Math.atan2(Number(this.ax[this.mc.b_p1]) - Number(this.ax[this.mc.b_w1]),Number(this.ay[this.mc.b_p1]) - Number(this.ay[this.mc.b_w1])) / Math.PI * 180;
                            this.SetMCFrame(this.mc.leg1,Math.max(1,Math.min(100,Math.round(this.Dist2D(this.ax[this.mc.b_p1],this.ay[this.mc.b_p1],this.ax[this.mc.b_w1],this.ay[this.mc.b_w1]) / 210 * 100))),5);
@@ -31706,7 +31801,7 @@ import flash.display.Sprite;
                            {
                               this.mc.leg2b.rotation = (this.mc.leg2.rotation + Number(this.mc.leg2b.rotation) * 5) / 6;
                            }
-                           this.MeasureStop(12);
+                           //this.MeasureStop(12);
                         }
                         if(this.mc.typ == 2)
                         {
@@ -32663,7 +32758,7 @@ import flash.display.Sprite;
                         {
                            this.guns[i].floatframe += this.GSPEED * Number(this.guns[i].speed_multiplier);
                         }
-                        this.MeasureStart(13);
+                        //this.MeasureStop(13);
                         if(this.guns[i].floatframe >= this.guns[i].totalFrames)
                         {
                            if(!this.guns[i].ready)
@@ -32703,7 +32798,7 @@ import flash.display.Sprite;
                         {
                            this.SetMCFrame(this.guns[i],Math.floor(this.guns[i].floatframe));
                         }
-                        this.MeasureStop(13);
+                        //this.MeasureStop(13);
                      }
                      if(this.guns[i].ready)
                      {
@@ -33058,7 +33153,7 @@ import flash.display.Sprite;
                                                                            {
                                                                               if(this.mc.wep <= 9)
                                                                               {
-                                                                                 this.weps["gi" + this.mc.wep].gotoAndStop(2);
+                                                                                 this.slots[this.mc.wep].gotoAndStop(2);
                                                                               }
                                                                            }
                                                                         }
@@ -33187,7 +33282,7 @@ import flash.display.Sprite;
                               }
                            }
                         }
-                        this.MeasureStart(14);
+                        //this.MeasureStop(14);
                         if(this.guns[i].ready)
                         {
                            if(this.guns[i].riflestatus != undefined)
@@ -33202,7 +33297,7 @@ import flash.display.Sprite;
                               }
                            }
                         }
-                        this.MeasureStop(14);
+                        //this.MeasureStop(14);
                         if(this.ok2 && Boolean(this.guns[i].ready))
                         {
                            this.guns[i].ray.scaleX = this.u / 100;
@@ -33264,7 +33359,7 @@ import flash.display.Sprite;
                i = 0;
                while(i < this.barrelstotal)
                {
-                  if(this.barrels[i].x > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.barrels[i].x < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.barrels[i].y > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.barrels[i].y < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_top] > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_top] < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_top] > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_top] < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_bottom] > -this.game.x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_bottom] < -this.game.x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_bottom] > -this.game.y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_bottom] < -this.game.y / this.game_scale + this.screenY * 2 / this.game_scale)
+                  if(this.barrels[i].x > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.barrels[i].x < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.barrels[i].y > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.barrels[i].y < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_top] > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_top] < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_top] > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_top] < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale || this.ax[this.barrels[i].b_left_bottom] > -this.game_x / this.game_scale - this.screenX / this.game_scale && this.ax[this.barrels[i].b_left_bottom] < -this.game_x / this.game_scale + this.screenX * 2 / this.game_scale && this.ay[this.barrels[i].b_left_bottom] > -this.game_y / this.game_scale - this.screenY / this.game_scale && this.ay[this.barrels[i].b_left_bottom] < -this.game_y / this.game_scale + this.screenY * 2 / this.game_scale)
                   {
                      this.aactive[-100 - i] = true;
                      this.mc = this.barrels[i];
@@ -33342,7 +33437,7 @@ import flash.display.Sprite;
                while(i < this.flarestotal)
                {
                   this.mc = this.flare[i];
-                  if(this.mc.x > -this.game.x / this.game_scale && this.mc.x < (-this.game.x + this.screenX) / this.game_scale && this.mc.y > -this.game.y / this.game_scale && this.mc.y < (-this.game.y + this.screenY) / this.game_scale)
+                  if(this.mc.x > -this.game_x / this.game_scale && this.mc.x < (-this.game_x + this.screenX) / this.game_scale && this.mc.y > -this.game_y / this.game_scale && this.mc.y < (-this.game_y + this.screenY) / this.game_scale)
                   {
                      this.mc.alpha = (this.mc.alpha + this.flare_power[i]) / 2;
                      if(!this.mc.visible)
@@ -33362,16 +33457,16 @@ import flash.display.Sprite;
                   {
                      if(this.HQ || this.SUPER_COMPUTER)
                      {
-                        this.mc.f2.x = (-this.game.x + this.hscreenX - this.mc.x) * 0.4;
-                        this.mc.f2.y = (-this.game.y + this.hscreenY - this.mc.y) * 0.4;
-                        this.mc.f3.x = (-this.game.x + this.hscreenX - this.mc.x) * 0.8;
-                        this.mc.f3.y = (-this.game.y + this.hscreenY - this.mc.y) * 0.8;
-                        this.mc.f4.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.4;
-                        this.mc.f4.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.4;
-                        this.mc.f5.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.8;
-                        this.mc.f5.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.8;
-                        this.mc.f6.x = (-this.game.x + this.hscreenX - this.mc.x) * 1.5;
-                        this.mc.f6.y = (-this.game.y + this.hscreenY - this.mc.y) * 1.5;
+                        this.mc.f2.x = (-this.game_x + this.hscreenX - this.mc.x) * 0.4;
+                        this.mc.f2.y = (-this.game_y + this.hscreenY - this.mc.y) * 0.4;
+                        this.mc.f3.x = (-this.game_x + this.hscreenX - this.mc.x) * 0.8;
+                        this.mc.f3.y = (-this.game_y + this.hscreenY - this.mc.y) * 0.8;
+                        this.mc.f4.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.4;
+                        this.mc.f4.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.4;
+                        this.mc.f5.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.8;
+                        this.mc.f5.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.8;
+                        this.mc.f6.x = (-this.game_x + this.hscreenX - this.mc.x) * 1.5;
+                        this.mc.f6.y = (-this.game_y + this.hscreenY - this.mc.y) * 1.5;
                      }
                      else if(this.mc.f2.visible)
                      {
@@ -33818,7 +33913,7 @@ import flash.display.Sprite;
                this.myCursor.ch1.scaleX = this.myCursor.ch2.scaleX = this.myCursor.ch3.scaleX = this.myCursor.ch4.scaleX = this.myCursor.ch3.scaleY = this.myCursor.ch4.scaleY = this.xx * this.xx + 0.5;
                if(this.TOOLTIPS && !this.ANONYMOUS_MODE)
                {
-                  if(this.Math_abs(this.lastcurx - this.myCursor.x - this.game.x) + this.Math_abs(this.lastcury - this.myCursor.y - this.game.y) < 10)
+                  if(this.Math_abs(this.lastcurx - this.myCursor.x - this.game_x) + this.Math_abs(this.lastcury - this.myCursor.y - this.game_y) < 10)
                   {
                      if(!this.tooltip_updated)
                      {
@@ -33830,13 +33925,13 @@ import flash.display.Sprite;
                         {
                            if(this.wa_friction[i2])
                            {
-                              if(this.myCursor.x > Number(this.wax[i2]) * this.game_scale + this.game.x)
+                              if(this.myCursor.x > Number(this.wax[i2]) * this.game_scale + this.game_x)
                               {
-                                 if(this.myCursor.x < (this.wax[i2] + this.waw[i2]) * this.game_scale + this.game.x)
+                                 if(this.myCursor.x < (this.wax[i2] + this.waw[i2]) * this.game_scale + this.game_x)
                                  {
-                                    if(this.myCursor.y > Number(this.way[i2]) * this.game_scale + this.game.y)
+                                    if(this.myCursor.y > Number(this.way[i2]) * this.game_scale + this.game_y)
                                     {
-                                       if(this.myCursor.y < (this.way[i2] + this.wah[i2]) * this.game_scale + this.game.y)
+                                       if(this.myCursor.y < (this.way[i2] + this.wah[i2]) * this.game_scale + this.game_y)
                                        {
                                           if(this.wadamage[i2] > 0)
                                           {
@@ -33860,7 +33955,7 @@ import flash.display.Sprite;
                         {
                            if(this.vehicles[i2].nick != "")
                            {
-                              if(this.Dist2D(Number(this.vehicles[i2].x) * this.game_scale + this.game.x,Number(this.vehicles[i2].y) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 150)
+                              if(this.Dist2D(Number(this.vehicles[i2].x) * this.game_scale + this.game_x,Number(this.vehicles[i2].y) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 150)
                               {
                                  if(this.vehicles[i2].dead)
                                  {
@@ -33928,7 +34023,7 @@ import flash.display.Sprite;
                               {
                                  if(this.mens[i].alpha > 0.5)
                                  {
-                                    if(this.Dist2D(Number(this.ax[this.mens[i].b_body]) * this.game_scale + this.game.x,Number(this.ay[this.mens[i].b_body]) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 50)
+                                    if(this.Dist2D(Number(this.ax[this.mens[i].b_body]) * this.game_scale + this.game_x,Number(this.ay[this.mens[i].b_body]) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 50)
                                     {
                                        this.str = this.mens[i].nick + "\n";
                                        if(this.mens[i].team == this.mens[this.MP_myid].team)
@@ -34005,7 +34100,7 @@ import flash.display.Sprite;
                                     {
                                        if(!this.guns[i].forcars)
                                        {
-                                          if(this.Dist2D(Number(this.guns[i].x) * this.game_scale + this.game.x,Number(this.guns[i].y) * this.game_scale + this.game.y,this.myCursor.x,this.myCursor.y) < 40)
+                                          if(this.Dist2D(Number(this.guns[i].x) * this.game_scale + this.game_x,Number(this.guns[i].y) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 40)
                                           {
                                              this.str = this.GunModelToGunName(this.guns[i].model) + "\n";
                                              if(this.guns[i].upg != undefined)
@@ -34048,8 +34143,8 @@ import flash.display.Sprite;
                   else
                   {
                      this.lastcurmove = 0;
-                     this.lastcurx = this.myCursor.x + this.game.x;
-                     this.lastcury = this.myCursor.y + this.game.y;
+                     this.lastcurx = this.myCursor.x + this.game_x;
+                     this.lastcury = this.myCursor.y + this.game_y;
                      this.tooltip_updated = false;
                   }
                }
@@ -34212,8 +34307,8 @@ import flash.display.Sprite;
             {
                try
                {
-                  this.debug_screen.x = this.game.x;
-                  this.debug_screen.y = this.game.y;
+                  this.debug_screen.x = this.game_x;
+                  this.debug_screen.y = this.game_y;
                }
                catch(e:*)
                {
@@ -34594,8 +34689,8 @@ import flash.display.Sprite;
                                  ++this.i4;
                               }
                               this.tnds = 10;
-                              this.game.x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX);
-                              this.game.y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY);
+                              this.game_x = Math.round(-Number(this.ax[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenX);
+                              this.game_y = Math.round(-Number(this.ay[this.mens[this.MP_myid].b_toe]) * this.game_scale + this.hscreenY);
                               this.system_non_stop = true;
                            }
                         }
@@ -34799,7 +34894,7 @@ import flash.display.Sprite;
       
       public function UpdateGravitatorVol() : void
       {
-         if(this.NONMUTE)
+         if(this.NONMUTE && this.FX_VOLUME != 0)
          {
             if(this.grav_working)
             {
@@ -34814,8 +34909,8 @@ import flash.display.Sprite;
                   {
                      if(this.decors[this.i].currentFrameLabel == "antigravity" || this.decors[this.i].currentFrameLabel == "antigravity_left" || this.decors[this.i].currentFrameLabel == "antigravity_right" || this.decors[this.i].currentFrameLabel == "doomwrath_rapier_active" || this.decors[this.i].currentFrameLabel == "doomwrath_rapier_active2" || this.decors[this.i].currentFrameLabel == "falkok_ship3" || this.decors[this.i].currentFrameLabel == "falkok_ship6")
                      {
-                        this.smod = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game.x - 400 - 300,Number(this.decors[this.i].y) * this.game_scale + this.game.y - 200,this.dist_to_face);
-                        this.smod2 = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game.x - 400 + 300,Number(this.decors[this.i].y) * this.game_scale + this.game.y - 200,this.dist_to_face);
+                        this.smod = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game_x - 400 - 300,Number(this.decors[this.i].y) * this.game_scale + this.game_y - 200,this.dist_to_face);
+                        this.smod2 = this.dist_to_face / this.Dist3Dm(Number(this.decors[this.i].x) * this.game_scale + this.game_x - 400 + 300,Number(this.decors[this.i].y) * this.game_scale + this.game_y - 200,this.dist_to_face);
                         this.xx += this.smod2 * 0.5;
                         this.yy += 0;
                         this.xx2 += this.smod * 0.5;
@@ -34949,7 +35044,7 @@ import flash.display.Sprite;
                   this.musTransform.leftToRight = 0;
                   this.musTransform.rightToRight = this.CUR_MUSIC_VOLUME * (1 - this.darkness.alpha);
                   this.musTransform.rightToLeft = 0;
-                  if(!this.NOBASE && this.graphics_3d.hitTestPoint(Number(this.mens[this.MP_myid].x) * this.game_scale + this.game.x,(Number(this.mens[this.MP_myid].y) - 41) * this.game_scale + this.game.y,true))
+                  if(!this.NOBASE && this.graphics_3d.hitTestPoint(Number(this.mens[this.MP_myid].x) * this.game_scale + this.game_x,(Number(this.mens[this.MP_myid].y) - 41) * this.game_scale + this.game_y,true))
                   {
                      this.wind_base += 0.1;
                   }
@@ -36088,19 +36183,20 @@ import flash.display.Sprite;
       public function UpdateMenuHue() : void
       {
          var _loc1_:AdjustColor = null;
-         var _loc2_:ColorMatrixFilter = null;
+         //var _loc2_:ColorMatrixFilter = null;
          var _loc3_:Array = null;
          _loc1_ = new AdjustColor();
          _loc1_.brightness = 0;
          _loc1_.contrast = 0;
          _loc1_.hue = this.menu_hue;
          _loc1_.saturation = 0;
-         _loc2_ = new ColorMatrixFilter(_loc1_.CalculateFinalFlatArray());
+         //_loc2_ = new ColorMatrixFilter(_loc1_.CalculateFinalFlatArray());
          _loc3_ = [];
-         _loc3_.push(_loc2_);
-         this.earth.filters = _loc3_;
+         //_loc3_.push(_loc2_);
+         /*this.earth.filters = _loc3_;
          this.menu_buttons.filters = _loc3_;
-         this.errmenu.filters = _loc3_;
+         this.errmenu.filters = _loc3_;*/
+		  // FILTERS
       }
       
       public function k_down_space(param1:KeyboardEvent) : void
@@ -36256,7 +36352,7 @@ import flash.display.Sprite;
          {
             this.skin_color_legs[param1] = this.clrs.length - 1;
          }
-         _loc2_.head.filters = new Array(this.clrs[this.skin_color_head[param1]]);
+         /*_loc2_.head.filters = new Array(this.clrs[this.skin_color_head[param1]]);
          _loc2_.body.filters = new Array(this.clrs[this.skin_color_body[param1]]);
          _loc2_.arm1_lower.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
          _loc2_.arm2_lower.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
@@ -36268,7 +36364,8 @@ import flash.display.Sprite;
          _loc2_.leg2_lower.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
          _loc2_.toe.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
          _loc2_.arm1_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
-         _loc2_.arm2_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
+         _loc2_.arm2_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);*/
+		// FILTER
       }
       
       public function RefrSkin(param1:int) : void
@@ -37329,7 +37426,7 @@ import flash.display.Sprite;
             m = new Matrix();
             if(where == 0)
             {
-               m.translate(-(mouseX - this.game.x) / this.game_scale + 200 / scale,-(mouseY - this.game.y) / this.game_scale + 100 / scale);
+               m.translate(-(mouseX - this.game_x) / this.game_scale + 200 / scale,-(mouseY - this.game_y) / this.game_scale + 100 / scale);
             }
             else
             {

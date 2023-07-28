@@ -1,4 +1,4 @@
-package pb2_re34_alt_fla
+﻿package pb2_re34_alt_fla
 {
    import flash.accessibility.*;
    import flash.display.*;
@@ -29,11 +29,6 @@ package pb2_re34_alt_fla
       public function hp_box_138()
       {
          super();
-      }
-      
-      internal function frame1() : *
-      {
-         this.stop();
       }
    }
 }
