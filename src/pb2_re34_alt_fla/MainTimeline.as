@@ -4948,7 +4948,7 @@ import flash.display.Sprite;
          }
          if(this.my_so.data["framerate"] == undefined)
          {
-            this.FRAMERATE = 3;
+            this.FRAMERATE = 60;
          }
          else
          {
