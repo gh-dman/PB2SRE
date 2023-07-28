@@ -4708,7 +4708,7 @@ import flash.display.Sprite;
          {
             if(param2 == 0 || param2 == 1)
             {
-               /*param1.head.filters = new Array(this.clrs[this.skin_color_head[param2]]);
+               param1.head.filters = new Array(this.clrs[this.skin_color_head[param2]]);
                param1.body.filters = new Array(this.clrs[this.skin_color_body[param2]]);
                param1.arm1.upper.filters = new Array(this.clrs[this.skin_color_arms[param2]]);
                param1.arm1.lower.filters = new Array(this.clrs[this.skin_color_arms[param2]]);
@@ -4720,7 +4720,7 @@ import flash.display.Sprite;
                param1.leg2.upper.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
                param1.leg2.middle.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
                param1.leg2.lower.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
-               param1.toe.filters = new Array(this.clrs[this.skin_color_legs[param2]]);*/
+               param1.toe.filters = new Array(this.clrs[this.skin_color_legs[param2]]);
 			   // FILTER
             }
          }
@@ -30798,6 +30798,7 @@ import flash.display.Sprite;
          this.VarChangePreventStart();
          try
          {
+		    this.rt_func();
 	        this.fr_func();
             this.allow_unlag_fps = true;
             this.DebugBugCaches();
@@ -30925,7 +30926,6 @@ import flash.display.Sprite;
 			   this.updateMap();
 
 			   this.gt_func();
-			   this.rt_func();
 		   
                if(this.lock_camera_intensity > 0)
                {
@@ -36352,19 +36352,29 @@ import flash.display.Sprite;
          {
             this.skin_color_legs[param1] = this.clrs.length - 1;
          }
-         /*_loc2_.head.filters = new Array(this.clrs[this.skin_color_head[param1]]);
-         _loc2_.body.filters = new Array(this.clrs[this.skin_color_body[param1]]);
-         _loc2_.arm1_lower.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
-         _loc2_.arm2_lower.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
-         _loc2_.leg1_upper.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
-         _loc2_.leg1_middle.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
-         _loc2_.leg1_lower.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
-         _loc2_.leg2_upper.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
-         _loc2_.leg2_middle.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
-         _loc2_.leg2_lower.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
-         _loc2_.toe.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
-         _loc2_.arm1_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
-         _loc2_.arm2_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);*/
+		 if(this.skin_color_head[param1] != 0) {
+			_loc2_.head.filters = new Array(this.clrs[this.skin_color_head[param1]]);
+		 }
+		 if(this.skin_color_body[param1] != 0) {
+			_loc2_.body.filters = new Array(this.clrs[this.skin_color_body[param1]]);
+		 }
+		 if(this.skin_color_arms[param1] != 0) {
+			 _loc2_.arm1_lower.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
+			 _loc2_.arm2_lower.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
+		 }
+		 if(this.skin_color_legs[param1] != 0) {
+			 _loc2_.leg1_upper.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
+			 _loc2_.leg1_middle.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
+			 _loc2_.leg1_lower.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
+			 _loc2_.leg2_upper.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
+			 _loc2_.leg2_middle.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
+			 _loc2_.leg2_lower.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
+			 _loc2_.toe.filters = new Array(this.clrs[this.skin_color_legs[param1]]);
+		 }
+         if(this.skin_color_arms[param1] != 0) {
+			 _loc2_.arm1_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
+			 _loc2_.arm2_upper.filters = new Array(this.clrs[this.skin_color_arms[param1]]);
+		 }
 		// FILTER
       }
       
