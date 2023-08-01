@@ -73,7 +73,7 @@
 	  
 	  public var preview_elements_y = [];
 	   
-	  public var custom_text = "Example";
+	  public var custom_text = "";
 	  
 	  public var gt_counter = 0;
 	  
@@ -4394,7 +4394,6 @@
       {
 		 if(this.FRAMERATE == 20) {
 			 stage.frameRate = 20;
-			 trace("HELLO");
 		 } else if(this.FRAMERATE == 30) {
 			 stage.frameRate = 30;
 		 } else {
@@ -4793,7 +4792,7 @@ import flash.display.Sprite;
             this.my_so.data["curB"] = 0;
             this.my_so.data["last_mp"] = this.loaderInfo.parameters.default_server != undefined ? int(this.loaderInfo.parameters.default_server) : 0;
             this.my_so.data["psychoblood_mode"] = 1;
-            this.my_so.data["framerate"] = 3;
+            this.my_so.data["framerate"] = 60;
             this.i = 0;
             while(this.i < this.BADGES_TOTAL)
             {
@@ -30807,7 +30806,7 @@ import flash.display.Sprite;
          var t:* = undefined;
          var f:* = undefined;
          var event:Event = param1;
-		 if(this.FRAMERATE == 1000) {
+		 if(this.FRAMERATE > 60) {
 			 var originalFrameRate = stage.frameRate;
 			 this.fps_toggle_perf = !this.fps_toggle_perf;
 			 if (this.fps_toggle_perf)
@@ -30819,6 +30818,8 @@ import flash.display.Sprite;
 			 {
 				stage.frameRate = originalFrameRate;
 			 }
+		 } else {
+			 trace(this.FRAMERATE);
 		 }
          this.VarChangePreventStart();
          try
