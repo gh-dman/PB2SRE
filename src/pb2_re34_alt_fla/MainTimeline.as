@@ -24,9 +24,12 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	   
+	  public var temp_timer = 0;	   
+	   
 	  public var LESS_NOISE = false;
 	   
-	  public var slots = new<MovieClip>[];
+	  public var slots = new Vector.<MovieClip>(27);
 	   
 	  public var slotstotal = 0;
 	   
@@ -11102,7 +11105,7 @@ import flash.display.Sprite;
                   }
                   ++this.i2;
                }
-			   this.bottomsurfacebox[i] = new Sprite();
+			   this.bottomsurfacebox[i] = new Shape();
                len = 0;
                this.i2 = 0;
                while(this.i2 < Number(this.boxw[i]) / 10)
@@ -11339,7 +11342,7 @@ import flash.display.Sprite;
                   }
                   ++this.i2;
                }
-			   this.topsurfacebox[i] = new Sprite();
+			   this.topsurfacebox[i] = new Shape();
                len = 0;
                this.i2 = 0;
                while(this.i2 < Number(this.boxw[i]) / 10)
@@ -17327,7 +17330,15 @@ import flash.display.Sprite;
       public function CheckHit(param1:int, param2:int) : Boolean
       {
          var _loc3_:* = undefined;
-         _loc3_ = this.atom_pos_buffer[param2];
+         //_loc3_ = this.atom_pos_buffer[param2];
+		 _loc3_ = 
+		 {
+			"x":this.ax[param2],
+			"y":this.ay[param2],
+			"lx":this.ax[param2],
+			"ly":this.ay[param2],
+			"t":getTimer()
+		 };
          if(_loc3_ == undefined)
          {
             return false;
@@ -30930,7 +30941,11 @@ import flash.display.Sprite;
 			   {
 				  this.Physics();
 			   }
-               this.UpdateAtomPathCache();
+				
+			   /*if(getTimer() > this.temp_timer + ((1 / (this.temp_fps * 2)) * 100)) {
+				   this.UpdateAtomPathCache();
+				   this.temp_timer = getTimer();
+			   }*/
                this.DoorLogic();
                this.BulletLogic();
                this.PlayerLogic();
