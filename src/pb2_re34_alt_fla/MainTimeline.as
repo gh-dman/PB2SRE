@@ -20857,7 +20857,7 @@ import flash.display.Sprite;
 					  this.TakeScreenShot(0,0.1);
 				   }
 				}
-				if(param1.keyCode == 82 && !this.MP_mode) {
+				if(param1.keyCode == 82 && !this.MP_mode && !this.chat_win.visible) {
 				   GotoMap(CUR_LOADING);
 				}
 				if(param1.keyCode == 27)
