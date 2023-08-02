@@ -2951,8 +2951,6 @@
 	  }
   
 	  public function gt_func() {
-		  if(this.ui_elements_visible[3] && this.gt_real != null) 
-		  {
 			 if(this.system_non_stop && !this.pauze.visible) {
 				 if(this.LEVEL_END_FORCE == "") {
 					 this.end_ms = getTimer();
@@ -2990,16 +2988,18 @@
 						 this.gt_h = "0".concat(this.gt_h);
 					 }
 				 
-				 	 if(String(this.gt_m).length == 0) {
+					 if(String(this.gt_m).length == 0) {
 						 this.gt_m = "00";
 					 }
-				 
-					 if(this.gt_h <= 0) {
-						this.gt_real.time.text = "GT ".concat(this.gt_m, ":", this.gt_s, ".", this.gt_ms_text);
-					 } else {
-						this.gt_real.time.text = "GT ".concat(this.gt_h, " ", this.gt_m, ":", this.gt_s, "." , this.gt_ms_text);
+					
+					 if(this.ui_elements_visible[3] && this.gt_real != null) {
+						 if(this.gt_h <= 0) {
+							this.gt_real.time.text = "GT ".concat(this.gt_m, ":", this.gt_s, ".", this.gt_ms_text);
+						 } else {
+							this.gt_real.time.text = "GT ".concat(this.gt_h, " ", this.gt_m, ":", this.gt_s, "." , this.gt_ms_text);
+						 }
 					 }
-				 }
+				}
 			 } else {
 				 if(this.LEVEL_END_FORCE == "") {
 					 this.loss_time = getTimer();
@@ -3009,37 +3009,6 @@
 					 this.gt_counter = Math.max(0,getTimer() - this.start_ms - this.losses + 1) / 1000;
 				 }
 			 }
-		  } else {
-			 if(this.system_non_stop && !this.pauze.visible) {
-				 if(this.LEVEL_END_FORCE == "") {
-					 this.end_ms = getTimer();
-					 this.gt_ms = Math.max(0,this.end_ms - this.start_ms - this.losses);
-					 this.gt_ms_text = this.gt_ms - (Math.floor(this.gt_ms / 1000) * 1000);
-					 
-					 if(this.gt_ms / 1000 >= this.gt_counter) {
-						 this.gt_counter += 1;
-						 this.gt_ms_text = 0;
-						 this.gt_s++;
-					 }
-					 if(this.gt_s >= 60) {
-						this.gt_s = 0;
-						this.gt_m++;
-					 }
-					 if(this.gt_m >= 60) {
-						this.gt_m = 0;
-						this.gt_h++;
-					 }
-				 }
-			 } else {
-				 if(this.LEVEL_END_FORCE == "") {
-					 this.loss_time = getTimer();
-					 this.loss_time = Math.min(getTimer(), getTimer() - this.loss_time);
-					 this.losses += this.loss_time;
-					 this.losses = Math.min(getTimer() - this.start_ms,this.losses);
-					 this.gt_counter = Math.max(0,getTimer() - this.start_ms - this.losses + 1) / 1000;
-				 }
-			 }
-		  }
 	  }
   
   
