@@ -3010,6 +3010,8 @@
 				 }
 			 }
 		  } else {
+			 if(this.system_non_stop && !this.pauze.visible) {
+				 if(this.LEVEL_END_FORCE == "") {
 					 this.end_ms = getTimer();
 					 this.gt_ms = Math.max(0,this.end_ms - this.start_ms - this.losses);
 					 this.gt_ms_text = this.gt_ms - (Math.floor(this.gt_ms / 1000) * 1000);
@@ -3027,6 +3029,16 @@
 						this.gt_m = 0;
 						this.gt_h++;
 					 }
+				 }
+			 } else {
+				 if(this.LEVEL_END_FORCE == "") {
+					 this.loss_time = getTimer();
+					 this.loss_time = Math.min(getTimer(), getTimer() - this.loss_time);
+					 this.losses += this.loss_time;
+					 this.losses = Math.min(getTimer() - this.start_ms,this.losses);
+					 this.gt_counter = Math.max(0,getTimer() - this.start_ms - this.losses + 1) / 1000;
+				 }
+			 }
 		  }
 	  }
   
