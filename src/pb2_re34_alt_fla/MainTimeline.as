@@ -24,6 +24,7 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var RUN_CATEGORY = "IL";
 	   
 	  public var temp_timer = 0;	   
 	   
@@ -77,7 +78,7 @@
 	  
 	  public var gt_counter = 0;
 	  
-	  public var gt_ms_text = "";
+	  public var gt_ms_text = "000";
 	  
 	  public var gt_s = 0;
 	  
@@ -89,7 +90,7 @@
 	  
 	  public var rt_counter = 0;
 	  
-	  public var rt_ms_text = "";
+	  public var rt_ms_text = "000";
 	  
 	  public var rt_s = 0;
 	  
@@ -3015,7 +3016,7 @@
 	  public function rt_func() {
 		  if(this.ui_elements_visible[2] && this.rt_real != null) 
 		  {
-			 if(this.LEVEL_END_FORCE != "complete") {
+			 if(this.LEVEL_END_FORCE == "" && this.RUN_CATEGORY == "IL" || this.RUN_CATEGORY == "ANY%" && !(this.LEVEL_END_FORCE == "complete" && this.CMPG_THIS_LEVEL == 41)) {
 				 this.end_ms = getTimer();
 				 this.rt_ms = this.end_ms - this.start_ms;
 				 this.rt_ms_text = this.rt_ms - (Math.floor(this.rt_ms / 1000) * 1000);
