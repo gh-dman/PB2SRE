@@ -3057,10 +3057,15 @@
 					 this.rt_m = "00";
 				 }
 			
-				 if(this.rt_h <= 0) {
-					this.rt_real.time.text = this.rt_m.concat(":", this.rt_s, ".", this.rt_ms_text);
-				 } else {
-					this.rt_real.time.text = this.rt_h.concat(":", this.rt_m, ":", this.rt_s, ".", this.rt_ms_text);
+				 try {
+					 if(this.rt_h <= 0) {
+						this.rt_real.time.text = String(this.rt_m).concat(":", this.rt_s, ".", this.rt_ms_text);
+					 } else {
+						this.rt_real.time.text = String(this.rt_h).concat(":", this.rt_m, ":", this.rt_s, ".", this.rt_ms_text);
+					 }
+				 } catch(e:*) {
+					 trace(e.message + " <-WOW-> " + e.name);
+					 trace("Variables:" + rt_m + " " + rt_s + " " + rt_ms_text + " <HMM");
 				 }
 			 }
 		  }
