@@ -2919,39 +2919,55 @@
   
       public function updateMap()
       {
+		 try {
          this.game.x = this.game_x;
 		 this.game.y = this.game_y;
 	     this.graphics_3d_front.x = this.graphics_3d.x = this.game_x;
 	     this.graphics_3d_front.y = this.graphics_3d.y = this.game_y;
+		 } catch(e:*) {
+			 trace("PROBLEMS WITH UPDATING MAP");
+			 trace("Error uM:" + e.message);
+		 }
       }
   
       public function updateEffects()
       {
-		 var i = 0;
-		 while(i < this.maxef) {
-			 if(this.ef[i] != null) {
-				 this.ef[i].x = this.ef[i].x_;
-				 this.ef[i].y = this.ef[i].y_;
+		 try {
+			 var i = 0;
+			 while(i < this.maxef) {
+				 if(this.ef[i] != null) {
+					 this.ef[i].x = this.ef[i].x_;
+					 this.ef[i].y = this.ef[i].y_;
+				 }
+				 i++;
 			 }
-			 i++;
+		 } catch(e:*) {
+			 trace("PROBLEMS WITH UPDATING EFFECTS");
+			 trace("Error uE:" + e.message);
 		 }
       }
   
 	  public function fr_func() {
-		  if(this.LEVEL_END_FORCE == "" && this.fr_real != null) {
-			++this.frames_display;
-			if(getTimer() - this.prev_frames >= 500)
-			{
-			   this.temp_fps = this.frames_display * 1000 / (getTimer() - this.prev_frames);
-			   var fps_txt = Math.round(this.temp_fps);
-			   this.fr_real.fps.text = fps_txt.toString().concat(" FPS");
-			   this.prev_frames = getTimer();
-			   this.frames_display = 0;
-			}
+		  try {
+			  if(this.LEVEL_END_FORCE == "" && this.fr_real != null) {
+				++this.frames_display;
+				if(getTimer() - this.prev_frames >= 500)
+				{
+				   this.temp_fps = this.frames_display * 1000 / (getTimer() - this.prev_frames);
+				   var fps_txt = Math.round(this.temp_fps);
+				   this.fr_real.fps.text = fps_txt.toString().concat(" FPS");
+				   this.prev_frames = getTimer();
+				   this.frames_display = 0;
+				}
+			  }
+		  } catch(e:*) {
+			  trace("PROBLEMS WITH FRAMERATE COUNTER");
+			  trace("Error FR:" + e.message);
 		  }
 	  }
   
 	  public function gt_func() {
+		  try {
 			 if(this.system_non_stop && !this.pauze.visible) {
 				 if(this.LEVEL_END_FORCE == "") {
 					 this.end_ms = getTimer();
@@ -3010,59 +3026,68 @@
 					 this.gt_counter = Math.max(0,getTimer() - this.start_ms - this.losses + 1) / 1000;
 				 }
 			 }
+		  } catch(e:*) {
+			  trace("PROBLEMS WITH GAME TIMER");
+			  trace("Error FR:" + e.message);
+		  }
 	  }
   
   
 	  public function rt_func() {
-		  if(this.ui_elements_visible[2] && this.rt_real != null) 
-		  {
-			 if(this.LEVEL_END_FORCE == "" && this.RUN_CATEGORY == "IL" || this.RUN_CATEGORY == "ANY%" && !(this.LEVEL_END_FORCE == "complete" && this.CMPG_THIS_LEVEL == 41)) {
-				 this.end_ms = getTimer();
-				 this.rt_ms = this.end_ms - this.start_ms;
-				 this.rt_ms_text = this.rt_ms - (Math.floor(this.rt_ms / 1000) * 1000);
+		  try {
+			  if(this.ui_elements_visible[2] && this.rt_real != null) 
+			  {
+				 if(this.LEVEL_END_FORCE == "" && this.RUN_CATEGORY == "IL" || this.RUN_CATEGORY == "ANY%" && !(this.LEVEL_END_FORCE == "complete" && this.CMPG_THIS_LEVEL == 41)) {
+					 this.end_ms = getTimer();
+					 this.rt_ms = this.end_ms - this.start_ms;
+					 this.rt_ms_text = this.rt_ms - (Math.floor(this.rt_ms / 1000) * 1000);
+					 
+					 if(this.rt_ms / 1000 >= this.rt_counter) {
+						 this.rt_counter += 1;
+						 this.rt_ms_text = 0;
+						 this.rt_s++;
+					 }
+					 if(this.rt_s >= 60) {
+						this.rt_s = 0;
+						this.rt_m++;
+					 }
+					 if(this.rt_m >= 60) {
+						this.rt_m = 0;
+						this.rt_h++;
+					 }
 				 
-				 if(this.rt_ms / 1000 >= this.rt_counter) {
-					 this.rt_counter += 1;
-					 this.rt_ms_text = 0;
-					 this.rt_s++;
-				 }
-				 if(this.rt_s >= 60) {
-					this.rt_s = 0;
-					this.rt_m++;
-				 }
-				 if(this.rt_m >= 60) {
-					this.rt_m = 0;
-					this.rt_h++;
-				 }
-			 
+					
+					 if(String(this.rt_ms_text).length == 1) {
+						 this.rt_ms_text = "0".concat("0", this.rt_ms_text);
+					 }
+					 if(String(this.rt_ms_text).length == 2) {
+						 this.rt_ms_text = "0".concat(this.rt_ms_text);
+					 }
+				 
+					 if(String(this.rt_s).length == 1) {
+						 this.rt_s = "0".concat(this.rt_s);
+					 }
+					 if(String(this.rt_m).length == 1) {
+						 this.rt_m = "0".concat(this.rt_m);
+					 }
+					 if(String(this.rt_h).length == 1) {
+						 this.rt_h = "0".concat(this.rt_h);
+					 }
+					 
+					 if(String(this.rt_m).length == 0) {
+						 this.rt_m = "00";
+					 }
 				
-				 if(String(this.rt_ms_text).length == 1) {
-					 this.rt_ms_text = "0".concat("0", this.rt_ms_text);
+					 if(this.rt_h <= 0) {
+						this.rt_real.time.text = String(this.rt_m).concat(":", this.rt_s, ".", this.rt_ms_text);
+					 } else {
+						this.rt_real.time.text = String(this.rt_h).concat(":", this.rt_m, ":", this.rt_s, ".", this.rt_ms_text);
+					 }
 				 }
-				 if(String(this.rt_ms_text).length == 2) {
-					 this.rt_ms_text = "0".concat(this.rt_ms_text);
-				 }
-			 
-				 if(String(this.rt_s).length == 1) {
-					 this.rt_s = "0".concat(this.rt_s);
-				 }
-				 if(String(this.rt_m).length == 1) {
-					 this.rt_m = "0".concat(this.rt_m);
-				 }
-				 if(String(this.rt_h).length == 1) {
-					 this.rt_h = "0".concat(this.rt_h);
-				 }
-				 
-				 if(String(this.rt_m).length == 0) {
-					 this.rt_m = "00";
-				 }
-			
-				 if(this.rt_h <= 0) {
-					this.rt_real.time.text = String(this.rt_m).concat(":", this.rt_s, ".", this.rt_ms_text);
-				 } else {
-					this.rt_real.time.text = String(this.rt_h).concat(":", this.rt_m, ":", this.rt_s, ".", this.rt_ms_text);
-				 }
-			 }
+			  }
+		  } catch(e:*) {
+			  trace("PROBLEMS WITH REAL TIMER");
+			  trace("Error RT:" + e.message);
 		  }
 	  }
   
@@ -30788,20 +30813,22 @@ import flash.display.Sprite;
          var t:* = undefined;
          var f:* = undefined;
          var event:Event = param1;
-		 if(this.FRAMERATE > 60) {
-			 var originalFrameRate = stage.frameRate;
-			 this.fps_toggle_perf = !this.fps_toggle_perf;
-			 if (this.fps_toggle_perf)
-			 {
-				originalFrameRate = stage.frameRate;
-				stage.frameRate = 1000;
+		 try {
+			 if(this.FRAMERATE > 60) {
+				 var originalFrameRate = stage.frameRate;
+				 this.fps_toggle_perf = !this.fps_toggle_perf;
+				 if (this.fps_toggle_perf)
+				 {
+					originalFrameRate = stage.frameRate;
+					stage.frameRate = 1000;
+				 }
+				 else
+				 {
+					stage.frameRate = originalFrameRate;
+				 }
 			 }
-			 else
-			 {
-				stage.frameRate = originalFrameRate;
-			 }
-		 } else {
-			 trace(this.FRAMERATE);
+		 } catch(e:*) {
+			 
 		 }
          this.VarChangePreventStart();
          try
