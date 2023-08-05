@@ -31232,13 +31232,13 @@ import flash.display.Sprite;
 			   while(i < this.decorstotal) {
 				   if(this.decorbox[i] != undefined) {
 					   if(this.decorbox[i].x < this.render_minX || this.decorbox[i].x > this.render_maxX) {
-						   if(!this.decorbox[i].visible) {
+						   if(!this.decorbox[i].custom_bitmap.visible) {
 								i++;
 							    continue;
 						   }
 						   this.decorbox[i].custom_bitmap.visible = false;
 					   } else{
-						   if(this.decorbox[i].visible) {
+						   if(this.decorbox[i].custom_bitmap.visible) {
 								i++;
 						        continue;
 						   }
