@@ -24,6 +24,17 @@
    
    public dynamic class MainTimeline extends MovieClip
    {
+	  public var bulletProperties = 
+		 {
+			"x":-100000,
+			"y":-100000,
+			"lx":-100000,
+			"ly":-100000,
+			"t":0
+		 };	   
+	   
+	  public var keystrokes:MovieClip;
+	   
 	  public var RUN_CATEGORY = "IL";
 	   
 	  public var temp_timer = 0;	   
@@ -2915,6 +2926,54 @@
          super();
 		 DRAW_EARTH = true;
 		 init3DMenu();
+      }
+  
+      public function keystrokes_func()
+      {
+		 if(this.keystrokes != null && this.keystrokes.visible) {
+			 if(this.key_left) {
+				 this.keystrokes.key_3.visible = false;
+				 this.keystrokes.key_3_down.visible = true;
+			 } else {
+				 this.keystrokes.key_3.visible = true;
+				 this.keystrokes.key_3_down.visible = false;
+			 }
+			 if(this.key_right) {
+				 this.keystrokes.key_1.visible = false;
+				 this.keystrokes.key_1_down.visible = true;
+			 } else {
+				 this.keystrokes.key_1.visible = true;
+				 this.keystrokes.key_1_down.visible = false;
+			 }
+			 if(this.key_up) {
+				 this.keystrokes.key_4.visible = false;
+				 this.keystrokes.key_4_down.visible = true;
+			 } else {
+				 this.keystrokes.key_4.visible = true;
+				 this.keystrokes.key_4_down.visible = false;
+			 }
+			 if(this.key_fall) {
+				 this.keystrokes.key_5.visible = false;
+				 this.keystrokes.key_5_down.visible = true;
+			 } else {
+				 this.keystrokes.key_5.visible = true;
+				 this.keystrokes.key_5_down.visible = false;
+			 }
+			 if(this.key_down) {
+				 this.keystrokes.key_2.visible = false;
+				 this.keystrokes.key_2_down.visible = true;
+			 } else {
+				 this.keystrokes.key_2.visible = true;
+				 this.keystrokes.key_2_down.visible = false;
+			 }
+			 if(this.mens[this.MP_myid].act_fire) {
+				 this.keystrokes.key_6.visible = false;
+				 this.keystrokes.key_6_down.visible = true;
+			 } else {
+				 this.keystrokes.key_6.visible = true;
+				 this.keystrokes.key_6_down.visible = false;
+			 }
+		 }
       }
   
       public function updateMap()
@@ -9122,15 +9181,15 @@ import flash.display.Sprite;
          var a:* = undefined;
          var b:* = undefined;
          var c:* = undefined;
-		 var topsurface:* = [];
-		 var bottomsurface:* = [];
-		 var topsurfacebox:* = [];
-		 var bottomsurfacebox:* = [];
+		 this.topsurface = [];
+		 this.bottomsurface = [];
+		 this.topsurfacebox = [];
+		 this.bottomsurfacebox = [];
 		 var mShape:* = undefined;
          var mShape_front:* = undefined;
          var bookInfo:XML = null;
          var brdr:int = 0;
-         var TEST_STRING:String = null;
+         //var TEST_STRING:String = null;
          var watercolor1:String = null;
          var watercolor2:String = null;
          var region_i:int = 0;
@@ -9245,18 +9304,18 @@ import flash.display.Sprite;
             {
                Mouse.show();
             }
-            loadmap_stage += "; " + MovieClip(root).mapdata.slice(0,3);
-            loadmap_stage += "; " + (MovieClip(root).mapdata.slice(0,3) == "<q.");
+            loadmap_stage = loadmap_stage.concat("; ", MovieClip(root).mapdata.slice(0,3));
+            loadmap_stage = loadmap_stage.concat("; ", (MovieClip(root).mapdata.slice(0,3) == "<q."));
             if(MovieClip(root).mapdata.slice(0,3) == "<q.")
             {
-               loadmap_stage += "; eq qp";
+               loadmap_stage = loadmap_stage.concat("; eq qp");
                MovieClip(root).mapdata = this.un_qpack(MovieClip(root).mapdata);
-               loadmap_stage += "; unqp ok";
+               loadmap_stage = loadmap_stage.concat("; unqp ok");
             }
-            loadmap_stage += "; qp is " + this.qpack_pattern_length;
-            loadmap_stage += "; pass qp eq tst";
+            loadmap_stage = loadmap_stage.concat("; qp is ", this.qpack_pattern_length);
+            loadmap_stage = loadmap_stage.concat("; pass qp eq tst");
             this.firstframe = true;
-            loadmap_stage += "; bfr parse";
+            loadmap_stage = loadmap_stage.concat("; bfr parse");
             xml = new XML("<r>" + MovieClip(root).mapdata + "</r>");
             loadmap_stage = "1004";
             loadmap_stage = "1005";
@@ -9902,7 +9961,7 @@ import flash.display.Sprite;
                }
                i++;
             }
-            TEST_STRING = "";
+            /*TEST_STRING = "";
             i = 0;
             while(i < this.NearBoxBSP_width)
             {
@@ -9914,7 +9973,7 @@ import flash.display.Sprite;
                }
                TEST_STRING += "\n";
                i++;
-            }
+            }*/
             i = 0;
             while(i < this.doorstotal)
             {
@@ -10134,7 +10193,7 @@ import flash.display.Sprite;
                         }
                      }
                   }
-                  loadmap_stage += "; " + new_model;
+                  loadmap_stage = loadmap_stage.concat("; ", new_model);
                   this.PushSynonym(b["#uid"],this.gunstotal);
                   if(this.LOW_HPS)
                   {
@@ -10183,7 +10242,7 @@ import flash.display.Sprite;
                if(a == "inf")
                {
                   loadmap_stage = "4003";
-                  loadmap_stage += ";mrk=" + b["#mark"];
+                  loadmap_stage = loadmap_stage.concat(";mrk=", b["#mark"]);
                   if(b["#mark"] == "watercolor")
                   {
                      watercolor1 = String(b["#forteam"]);
@@ -10729,7 +10788,7 @@ import flash.display.Sprite;
                }
             }
             loadmap_stage = "5";
-            loadmap_stage += "; Player does not exist. Can\'t display team table";
+            loadmap_stage = loadmap_stage.concat("; Player does not exist. Can\'t display team table");
             if(this.MP_spectator)
             {
                this.MP_myid = 0;
@@ -10786,10 +10845,10 @@ import flash.display.Sprite;
                else if(a == "player" || a == "enemy")
                {
                   loadmap_stage = "5016";
-                  loadmap_stage += "; player_i=" + player_i;
-                  loadmap_stage += "; mens[player_i]=" + this.mens[player_i];
-                  loadmap_stage += "; mens[player_i].incar=" + this.mens[player_i].incar;
-                  loadmap_stage += "; DecodeUID(mens[player_i].incar)=" + this.DecodeUID(this.mens[player_i].incar);
+                  loadmap_stage = loadmap_stage.concat("; player_i=" + player_i);
+                  loadmap_stage = loadmap_stage.concat("; mens[player_i]=", this.mens[player_i]);
+                  loadmap_stage = loadmap_stage.concat("; mens[player_i].incar=", this.mens[player_i].incar);
+                  loadmap_stage = loadmap_stage.concat("; DecodeUID(mens[player_i].incar)=", this.DecodeUID(this.mens[player_i].incar));
                   this.mens[player_i].incar = this.DecodeUID(this.mens[player_i].incar);
                   loadmap_stage = "5017";
                   this.mens[player_i].ondeath = this.DecodeUID(this.mens[player_i].ondeath);
@@ -10923,10 +10982,10 @@ import flash.display.Sprite;
                this.g_miny = Math.min(this.boxy[i],this.g_miny);
                this.g_maxx = Math.max(this.boxx[i] + this.boxw[i],this.g_maxx);
                this.g_maxy = Math.max(this.boxy[i] + this.boxh[i],this.g_maxy);
-			   if(bottomsurfacebox[i] != undefined) {
+			   if(this.bottomsurfacebox[i] != undefined) {
 					this.bottomsurface[i] = this.graphics_3d.addChildAt(this.bottomsurfacebox[i],this.graphics_3d.numChildren);
 			   }
-			   if(topsurfacebox[i] != undefined) {
+			   if(this.topsurfacebox[i] != undefined) {
 					this.topsurface[i] = this.graphics_3d.addChildAt(this.topsurfacebox[i],this.graphics_3d.numChildren);
 			   }
                i++;
@@ -12020,7 +12079,7 @@ import flash.display.Sprite;
                if(this.MP_mode)
                {
                   loadmap_stage = "1801";
-                  loadmap_stage += "; Player does not exist";
+                  loadmap_stage = loadmap_stage.concat("; Player does not exist");
                   this.mens[this.MP_myid].login_name = this.MP_login_name;
                   loadmap_stage = "1802";
                }
@@ -14414,6 +14473,7 @@ import flash.display.Sprite;
                            loader = this.GetNewURLLoader();
                            loader.addEventListener(Event.COMPLETE,function(param1:Event):void
                            {
+							  trace(param1.target.data + " TARGET DATA");
                               level_variables[variable_to_save_name] = param1.target.data;
                            });
                            loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR,function(param1:SecurityErrorEvent):void
@@ -17335,17 +17395,13 @@ import flash.display.Sprite;
       
       public function CheckHit(param1:int, param2:int) : Boolean
       {
-         var _loc3_:* = undefined;
          //_loc3_ = this.atom_pos_buffer[param2];
-		 _loc3_ = 
-		 {
-			"x":this.ax[param2],
-			"y":this.ay[param2],
-			"lx":this.ax[param2],
-			"ly":this.ay[param2],
-			"t":getTimer()
-		 };
-         if(_loc3_ == undefined)
+		 this.bulletProperties.x = this.ax[param2];
+		 this.bulletProperties.y = this.ay[param2];
+		 this.bulletProperties.lx = this.ax[param2];
+		 this.bulletProperties.ly = this.ay[param2];
+		 this.bulletProperties.t = getTimer();
+         if(this.bulletProperties == undefined)
          {
             return false;
          }
@@ -17357,16 +17413,7 @@ import flash.display.Sprite;
          this.pb2Bullet.csolver_minx = Math.min(this.puls[param1].lx,this.puls[param1].nx);
          this.pb2Bullet.csolver_maxy = Math.max(this.puls[param1].ly,this.puls[param1].ny);
          this.pb2Bullet.csolver_miny = Math.min(this.puls[param1].ly,this.puls[param1].ny);
-         if(this.pb2Bullet.csolver_maxx + 0 < Math.min(Number(_loc3_.x) - Number(this.arad[param2]),Number(_loc3_.lx) - Number(this.arad[param2])))
-         {
-		    this.pb2Bullet.csolver_lx = undefined;
-		    this.pb2Bullet.csolver_ly = undefined;
-		    this.pb2Bullet.csolver_tox1 = undefined;
-		    this.pb2Bullet.csolver_toy1 = undefined;
-			 
-            return false;
-         }
-         if(Number(this.pb2Bullet.csolver_minx) - 0 > Math.max(_loc3_.x + this.arad[param2],_loc3_.lx + this.arad[param2]))
+         if(this.pb2Bullet.csolver_maxx + 0 < Math.min(Number(this.bulletProperties.x) - Number(this.arad[param2]),Number(this.bulletProperties.lx) - Number(this.arad[param2])))
          {
 		    this.pb2Bullet.csolver_lx = undefined;
 		    this.pb2Bullet.csolver_ly = undefined;
@@ -17374,25 +17421,31 @@ import flash.display.Sprite;
 		    this.pb2Bullet.csolver_toy1 = undefined;
             return false;
          }
-         if(this.pb2Bullet.csolver_maxy + 0 < Math.min(Number(_loc3_.y) - Number(this.arad[param2]),Number(_loc3_.ly) - Number(this.arad[param2])))
+         if(Number(this.pb2Bullet.csolver_minx) - 0 > Math.max(this.bulletProperties.x + this.arad[param2],this.bulletProperties.lx + this.arad[param2]))
          {
 		    this.pb2Bullet.csolver_lx = undefined;
 		    this.pb2Bullet.csolver_ly = undefined;
 		    this.pb2Bullet.csolver_tox1 = undefined;
 		    this.pb2Bullet.csolver_toy1 = undefined;
-			 
             return false;
          }
-         if(Number(this.pb2Bullet.csolver_miny) - 0 > Math.max(_loc3_.y + this.arad[param2],_loc3_.ly + this.arad[param2]))
+         if(this.pb2Bullet.csolver_maxy + 0 < Math.min(Number(this.bulletProperties.y) - Number(this.arad[param2]),Number(this.bulletProperties.ly) - Number(this.arad[param2])))
          {
 		    this.pb2Bullet.csolver_lx = undefined;
 		    this.pb2Bullet.csolver_ly = undefined;
 		    this.pb2Bullet.csolver_tox1 = undefined;
 		    this.pb2Bullet.csolver_toy1 = undefined;
-			 
             return false;
          }
-         return this.pb2Bullet._MovingSphereIntersection(_loc3_.x,_loc3_.y,_loc3_.lx,_loc3_.ly,this.arad[param2]);
+         if(Number(this.pb2Bullet.csolver_miny) - 0 > Math.max(this.bulletProperties.y + this.arad[param2],this.bulletProperties.ly + this.arad[param2]))
+         {
+		    this.pb2Bullet.csolver_lx = undefined;
+		    this.pb2Bullet.csolver_ly = undefined;
+		    this.pb2Bullet.csolver_tox1 = undefined;
+		    this.pb2Bullet.csolver_toy1 = undefined;
+            return false;
+         }
+         return this.pb2Bullet._MovingSphereIntersection(this.bulletProperties.x,this.bulletProperties.y,this.bulletProperties.lx,this.bulletProperties.ly,this.arad[param2]);
       }
       
       public function TraceLine(param1:Number, param2:Number, param3:Number, param4:Number) : Boolean
@@ -30836,6 +30889,7 @@ import flash.display.Sprite;
 			this.gt_func();
 		    this.rt_func();
 	        this.fr_func();
+			this.keystrokes_func();
             this.allow_unlag_fps = true;
             this.DebugBugCaches();
             /*if(this.MP_get_done_HAP)
@@ -30882,7 +30936,7 @@ import flash.display.Sprite;
                         this.lags.visible = true;
                      }
                   }
-                  this.lags.val.text = "Your ping is " + this._mp_ping_rl + " ms";
+                  this.lags.val.text = "Your ping is ".concat(this._mp_ping_rl, " ms");
                }
                else
                {
@@ -31942,20 +31996,23 @@ import flash.display.Sprite;
                                  this.mc.rotation = 0;
                                  this.mc.gotoAndStop(2);
                                  this.n2 = 0;
+								 
                                  while(this.n2 < 10)
                                  {
-                                    this.mc["b_g" + this.n2] = this.CreatePoint(this.mc.x + this.mc["g" + this.n2].x,this.mc.y + this.mc["g" + this.n2].y,(Math.random() - 0.5) * 10,(Math.random() - 0.5) * 10,0,false,9,-i - 200);
+									b_g_text = "b_g".concat(this.n2);
+									g_text = "g".concat(this.n2);
+                                    this.mc[b_g_text] = this.CreatePoint(this.mc.x + this.mc[g_text].x,this.mc.y + this.mc[g_text].y,(Math.random() - 0.5) * 10,(Math.random() - 0.5) * 10,0,false,9,-i - 200);
                                     if(Math.random() < 0.33)
                                     {
-                                       this.mc["g" + this.n2].gotoAndStop(1);
+                                       this.mc[g_text].gotoAndStop(1);
                                     }
                                     else if(Math.random() > 0.5)
                                     {
-                                       this.mc["g" + this.n2].gotoAndStop(2);
+                                       this.mc[g_text].gotoAndStop(2);
                                     }
                                     else
                                     {
-                                       this.mc["g" + this.n2].gotoAndStop(3);
+                                       this.mc[g_text].gotoAndStop(3);
                                     }
                                     ++this.n2;
                                  }
@@ -32120,26 +32177,28 @@ import flash.display.Sprite;
                               this.n2 = 0;
                               while(this.n2 < 10)
                               {
-                                 if(this.mc["g" + this.n2].visible == true)
+								 var b_g_text = "b_g".concat(this.n2);
+								 var g_text = "g".concat(this.n2);
+                                 if(this.mc[g_text].visible == true)
                                  {
-                                    this.mc["g" + this.n2].x = Number(this.ax[this.mc["b_g" + this.n2]]) - this.mc.x;
-                                    this.mc["g" + this.n2].y = Number(this.ay[this.mc["b_g" + this.n2]]) - this.mc.y;
-                                    this.mc["g" + this.n2].rotation = Number(this.mc["g" + this.n2].x) * 3 + this.n2 * 60;
-                                    if(this.aio[this.mc["b_g" + this.n2]] == false)
+                                    this.mc[g_text].x = Number(this.ax[this.mc[b_g_text]]) - this.mc.x;
+                                    this.mc[g_text].y = Number(this.ay[this.mc[b_g_text]]) - this.mc.y;
+                                    this.mc[g_text].rotation = Number(this.mc[g_text].x) * 3 + this.n2 * 60;
+                                    if(this.aio[this.mc[b_g_text]] == false)
                                     {
-                                       if(this.mc["g" + this.n2].alpha > 0)
+                                       if(this.mc[g_text].alpha > 0)
                                        {
-                                          this.mc["g" + this.n2].alpha -= 0.1;
+                                          this.mc[g_text].alpha -= 0.1;
                                        }
                                        else
                                        {
-                                          this.mc["g" + this.n2].visible = false;
-                                          this.aio[this.mc["b_g" + this.n2]] = -1;
+                                          this.mc[g_text].visible = false;
+                                          this.aio[this.mc[g_text]] = -1;
                                        }
                                     }
-                                    else if(this.mc["g" + this.n2].alpha < 1)
+                                    else if(this.mc[g_text].alpha < 1)
                                     {
-                                       this.mc["g" + this.n2].alpha += 0.1;
+                                       this.mc[g_text].alpha += 0.1;
                                     }
                                  }
                                  ++this.n2;
@@ -32337,12 +32396,14 @@ import flash.display.Sprite;
                            i2 = 0;
                            while(i2 < 9)
                            {
-                              this.mc["ch" + i2].x = Number(this.ax[this.mc["b_c" + i2]]) - this.mc.x;
-                              this.mc["ch" + i2].y = Number(this.ay[this.mc["b_c" + i2]]) - this.mc.y;
-                              this.aio[this.mc["b_c" + i2]] = true;
-                              this.atim[this.mc["b_c" + i2]] = 0;
-                              this.mc["ch" + i2].rotation = 180 - Math.atan2(Number(this.ax[this.mc["b_c" + i2]]) - Number(this.ax[this.mc["b_c" + (i2 + 1)]]),Number(this.ay[this.mc["b_c" + i2]]) - Number(this.ay[this.mc["b_c" + (i2 + 1)]])) * 180 / Math.PI;
-                              this.mc["ch" + i2].scaleY = this.Dist2D(this.ax[this.mc["b_c" + i2]],this.ay[this.mc["b_c" + i2]],this.ax[this.mc["b_c" + (i2 + 1)]],this.ay[this.mc["b_c" + (i2 + 1)]]) * 0.01;
+							  var ch_text = "ch".concat(i2);
+							  var b_c_text = "b_c".concat(i2);
+                              this.mc[ch_text].x = Number(this.ax[this.mc[b_c_text]]) - this.mc.x;
+                              this.mc[ch_text].y = Number(this.ay[this.mc[b_c_text]]) - this.mc.y;
+                              this.aio[this.mc[b_c_text]] = true;
+                              this.atim[this.mc[b_c_text]] = 0;
+                              this.mc[ch_text].rotation = 180 - Math.atan2(Number(this.ax[this.mc[b_c_text]]) - Number(this.ax[this.mc["b_c" + (i2 + 1)]]),Number(this.ay[this.mc[b_c_text]]) - Number(this.ay[this.mc["b_c" + (i2 + 1)]])) * 180 / Math.PI;
+                              this.mc[ch_text].scaleY = this.Dist2D(this.ax[this.mc[b_c_text]],this.ay[this.mc[b_c_text]],this.ax[this.mc["b_c" + (i2 + 1)]],this.ay[this.mc["b_c" + (i2 + 1)]]) * 0.01;
                               if(this.mc.resttim <= 0)
                               {
                                  if(this.mc.master == -1)
@@ -32351,7 +32412,7 @@ import flash.display.Sprite;
                                     {
                                        if(this.mens[this.MP_myid].incar == -1)
                                        {
-                                          if(this.Dist2D(this.ax[this.mc["b_c" + i2]],this.ay[this.mc["b_c" + i2]],this.ax[this.mens[this.MP_myid].b_arm2],this.ay[this.mens[this.MP_myid].b_arm2]) < 40)
+                                          if(this.Dist2D(this.ax[this.mc[b_c_text]],this.ay[this.mc[b_c_text]],this.ax[this.mens[this.MP_myid].b_arm2],this.ay[this.mens[this.MP_myid].b_arm2]) < 40)
                                           {
                                              this.mc.master = this.MP_myid;
                                              this.mc.holdat = i2;
@@ -32368,16 +32429,16 @@ import flash.display.Sprite;
                                     {
                                        this.mc2 = this.mens[this.mc.master];
                                        this.mc2.stability = -0.1;
-                                       this.xx = (this.ax[this.mc2.b_body] + Number(this.ax[this.mc["b_c" + i2]]) * 3) * 0.25;
-                                       this.yy = (this.ay[this.mc2.b_body] + Number(this.ay[this.mc["b_c" + i2]]) * 3) * 0.25;
-                                       this.xx2 = (this.atox[this.mc2.b_body] + Number(this.atox[this.mc["b_c" + i2]]) * 3) * 0.25;
-                                       this.yy2 = (this.atoy[this.mc2.b_body] + Number(this.atoy[this.mc["b_c" + i2]]) * 3) * 0.25;
+                                       this.xx = (this.ax[this.mc2.b_body] + Number(this.ax[this.mc[b_c_text]]) * 3) * 0.25;
+                                       this.yy = (this.ay[this.mc2.b_body] + Number(this.ay[this.mc[b_c_text]]) * 3) * 0.25;
+                                       this.xx2 = (this.atox[this.mc2.b_body] + Number(this.atox[this.mc[b_c_text]]) * 3) * 0.25;
+                                       this.yy2 = (this.atoy[this.mc2.b_body] + Number(this.atoy[this.mc[b_c_text]]) * 3) * 0.25;
                                        this.xx2 -= Math.cos(Math.atan2(this.mc.x - this.xx,this.mc.y - this.yy)) * Number(this.mc2.act_movex) * 1;
                                        this.yy2 -= Math.sin(Math.atan2(this.mc.x - this.xx,this.mc.y - this.yy)) * Number(this.mc2.act_movex) * 1;
-                                       this.lax[this.mc["b_c" + i2]] = this.ax[this.mc["b_c" + i2]] = this.xx;
-                                       this.lay[this.mc["b_c" + i2]] = this.ay[this.mc["b_c" + i2]] = this.yy;
-                                       this.atox[this.mc["b_c" + i2]] = this.xx2;
-                                       this.atoy[this.mc["b_c" + i2]] = this.yy2;
+                                       this.lax[this.mc[b_c_text]] = this.ax[this.mc[b_c_text]] = this.xx;
+                                       this.lay[this.mc[b_c_text]] = this.ay[this.mc[b_c_text]] = this.yy;
+                                       this.atox[this.mc[b_c_text]] = this.xx2;
+                                       this.atoy[this.mc[b_c_text]] = this.yy2;
                                        this.u = this.xx2 - Number(this.atox[this.mc2.b_body]);
                                        this.v = this.yy2 - Number(this.atoy[this.mc2.b_body]);
                                        this.atox[this.mc2.b_body] += this.u;
@@ -32392,8 +32453,8 @@ import flash.display.Sprite;
                                        this.atoy[this.mc2.b_arm1] += this.v;
                                        this.atox[this.mc2.b_arm2] += this.u;
                                        this.atoy[this.mc2.b_arm2] += this.v;
-                                       this.aio[this.mc["b_c" + i2]] = true;
-                                       this.atim[this.mc["b_c" + i2]] = true;
+                                       this.aio[this.mc[b_c_text]] = true;
+                                       this.atim[this.mc[b_c_text]] = true;
                                        if(this.key_pick)
                                        {
                                           this.key_pick = false;
@@ -33432,26 +33493,28 @@ import flash.display.Sprite;
                         this.n2 = 0;
                         while(this.n2 < 10)
                         {
-                           if(this.mc["g" + this.n2].visible == true)
+						   b_g_text = "b_g".concat(this.n2);
+						   g_text = "g".concat(this.n2);
+                           if(this.mc[g_text].visible == true)
                            {
-                              this.mc["g" + this.n2].x = Number(this.ax[this.mc["b_g" + this.n2]]) - this.mc.x;
-                              this.mc["g" + this.n2].y = Number(this.ay[this.mc["b_g" + this.n2]]) - this.mc.y;
-                              this.mc["g" + this.n2].rotation = Number(this.mc["g" + this.n2].x) * 3 + this.n2 * 60;
-                              if(this.aio[this.mc["b_g" + this.n2]] == false)
+                              this.mc[g_text].x = Number(this.ax[this.mc[b_g_text]]) - this.mc.x;
+                              this.mc[g_text].y = Number(this.ay[this.mc[b_g_text]]) - this.mc.y;
+                              this.mc[g_text].rotation = Number(this.mc[g_text].x) * 3 + this.n2 * 60;
+                              if(this.aio[this.mc[b_g_text]] == false)
                               {
-                                 if(this.mc["g" + this.n2].alpha > 0)
+                                 if(this.mc[g_text].alpha > 0)
                                  {
-                                    this.mc["g" + this.n2].alpha -= 0.1;
+                                    this.mc[g_text].alpha -= 0.1;
                                  }
                                  else
                                  {
-                                    this.mc["g" + this.n2].visible = false;
-                                    this.aio[this.mc["b_g" + this.n2]] = -1;
+                                    this.mc[g_text].visible = false;
+                                    this.aio[this.mc[b_g_text]] = -1;
                                  }
                               }
-                              else if(this.mc["g" + this.n2].alpha < 1)
+                              else if(this.mc[g_text].alpha < 1)
                               {
-                                 this.mc["g" + this.n2].alpha += 0.1;
+                                 this.mc[g_text].alpha += 0.1;
                               }
                            }
                            ++this.n2;
@@ -33794,26 +33857,27 @@ import flash.display.Sprite;
                      this.i4 = 0;
                      while(this.i4 < 4)
                      {
-                        if(this._root["pb" + this.i4].visible)
+						var pb_text = "pb".concat(this.i4);
+                        if(this._root[pb_text].visible)
                         {
-                           if(this._root["pb" + this.i4].alpha > 0)
+                           if(this._root[pb_text].alpha > 0)
                            {
                               if(Number(this.mens[this.MP_myid].hea) / Number(this.mens[this.MP_myid].hmax) > 0.5 || this.GLOBAL_REGEN_SPEED == 0 || this.GLOBAL_REGEN_DELAY >= 10)
                               {
-                                 this._root["pb" + this.i4].alpha -= 0.05 * this.GSPEED2;
+                                 this._root[pb_text].alpha -= 0.05 * this.GSPEED2;
                               }
                               if(Boolean(this.mens[this.MP_myid].dead) && this.death_cam != this.MP_myid)
                               {
-                                 this._root["pb" + this.i4].alpha = 0;
+                                 this._root[pb_text].alpha = 0;
                               }
-                              if(this._root["pb" + this.i4].alpha > 0.6)
+                              if(this._root[pb_text].alpha > 0.6)
                               {
-                                 this._root["pb" + this.i4].alpha = 0.6;
+                                 this._root[pb_text].alpha = 0.6;
                               }
                            }
                            else
                            {
-                              this._root["pb" + this.i4].visible = false;
+                              this._root[pb_text].visible = false;
                            }
                         }
                         ++this.i4;
@@ -33824,34 +33888,35 @@ import flash.display.Sprite;
                      this.i4 = 0;
                      while(this.i4 < 5)
                      {
-                        if(this._root["pb" + this.i4].visible)
+					    pb_text = "pb".concat(this.i4);
+                        if(this._root[pb_text].visible)
                         {
-                           if(this._root["pb" + this.i4].alpha > 0)
+                           if(this._root[pb_text].alpha > 0)
                            {
                               if(Number(this.mens[this.MP_myid].hea) / Number(this.mens[this.MP_myid].hmax) > 0.5 || (this.GLOBAL_REGEN_SPEED == 0 || this.GLOBAL_REGEN_DELAY >= 10) && this.mens[this.MP_myid].hea >= 0)
                               {
-                                 this._root["pb" + this.i4].alpha -= 0.02 * this.GSPEED2;
+                                 this._root[pb_text].alpha -= 0.02 * this.GSPEED2;
                               }
                               else if(this.mens[this.MP_myid].hea >= 0)
                               {
-                                 this._root["pb" + this.i4].alpha -= 0.01 * this.GSPEED2;
+                                 this._root[pb_text].alpha -= 0.01 * this.GSPEED2;
                               }
                               else
                               {
-                                 this._root["pb" + this.i4].alpha -= 0.005 * this.GSPEED2;
+                                 this._root[pb_text].alpha -= 0.005 * this.GSPEED2;
                               }
                               if(Boolean(this.mens[this.MP_myid].dead) && this.death_cam != this.MP_myid)
                               {
-                                 this._root["pb" + this.i4].alpha = 0;
+                                 this._root[pb_text].alpha = 0;
                               }
-                              if(this._root["pb" + this.i4].alpha > 0.6)
+                              if(this._root[pb_text].alpha > 0.6)
                               {
-                                 this._root["pb" + this.i4].alpha = 0.6;
+                                 this._root[pb_text].alpha = 0.6;
                               }
                            }
                            else
                            {
-                              this._root["pb" + this.i4].visible = false;
+                              this._root[pb_text].visible = false;
                            }
                         }
                         ++this.i4;
@@ -33974,9 +34039,9 @@ import flash.display.Sprite;
                                        {
                                           if(this.wadamage[i2] > 0)
                                           {
-                                             this.str = "<font color=\'#FF0000\'>" + this.ACID_NAME + "</font>\n";
-                                             this.str += Number(this.wadamage[i2]) * 30 + " damage per second\n";
-                                             this.str += "<font color=\'#FFFF00\'>" + Math.floor(Number(this.mens[this.MP_myid].hmax) / Number(this.wadamage[i2]) / 30 * 10) / 10 + " seconds to die</font>\n";
+                                             this.str = "<font color=\'#FF0000\'>".concat(this.ACID_NAME, "</font>\n");
+                                             this.str = this.str.concat(Number(this.wadamage[i2]) * 30, " damage per second\n");
+                                             this.str = this.str.concat("<font color=\'#FFFF00\'>", Math.floor(Number(this.mens[this.MP_myid].hmax) / Number(this.wadamage[i2]) / 30 * 10) / 10, " seconds to die</font>\n");
                                           }
                                           else
                                           {
@@ -34013,41 +34078,41 @@ import flash.display.Sprite;
                                     {
                                        if(i == this.MP_myid)
                                        {
-                                          this.str += "<font color=\'#00FF00\'>";
+                                          this.str = this.str.concat("<font color=\'#00FF00\'>");
                                        }
                                        else
                                        {
-                                          this.str += "<font color=\'#FFFF00\'>";
+                                          this.str = this.str.concat("<font color=\'#FFFF00\'>");
                                        }
                                     }
                                     else if(this.mens[i].dead)
                                     {
-                                       this.str += "<font color=\'#AA3333\'>";
+                                       this.str = this.str.concat("<font color=\'#AA3333\'>");
                                     }
                                     else
                                     {
-                                       this.str += "<font color=\'#FF0000\'>";
+                                       this.str = this.str.concat("<font color=\'#FF0000\'>");
                                     }
                                     if(this.mens[i].team == this.mens[this.MP_myid].team)
                                     {
                                        if(i == this.MP_myid)
                                        {
-                                          this.str += "You";
+                                          this.str = this.str.concat("You");
                                        }
                                        else
                                        {
-                                          this.str += "Ally";
+                                          this.str = this.str.concat("Ally");
                                        }
                                     }
                                     else
                                     {
-                                       this.str += "Enemy";
+                                       this.str = this.str.concat("Enemy");
                                     }
-                                    this.str += "</font>";
+                                    this.str = this.str.concat("</font>");
                                  }
                                  else if(!this.vehicles[i2].dead)
                                  {
-                                    this.str += "Neutral";
+                                    this.str = this.str.concat("Neutral");
                                  }
                               }
                            }
@@ -34064,58 +34129,58 @@ import flash.display.Sprite;
                                  {
                                     if(this.Dist2D(Number(this.ax[this.mens[i].b_body]) * this.game_scale + this.game_x,Number(this.ay[this.mens[i].b_body]) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 50)
                                     {
-                                       this.str = this.mens[i].nick + "\n";
+                                       this.str = this.mens[i].nick.concat("\n");
                                        if(this.mens[i].team == this.mens[this.MP_myid].team)
                                        {
                                           if(i == this.MP_myid)
                                           {
-                                             this.str += "<font color=\'#00FF00\'>";
+                                             this.str = this.str.concat("<font color=\'#00FF00\'>");
                                           }
                                           else
                                           {
-                                             this.str += "<font color=\'#FFFF00\'>";
+                                             this.str = this.str.concat("<font color=\'#FFFF00\'>");
                                           }
                                        }
                                        else if(this.mens[i].dead)
                                        {
-                                          this.str += "<font color=\'#AA3333\'>";
+                                          this.str = this.str.concat("<font color=\'#AA3333\'>");
                                        }
                                        else
                                        {
-                                          this.str += "<font color=\'#FF0000\'>";
+                                          this.str = this.str.concat("<font color=\'#FF0000\'>");
                                        }
                                        if(this.mens[i].dead)
                                        {
-                                          this.str += "Dead ";
+                                          this.str = this.str.concat("Dead ");
                                        }
                                        else if(this.mens[i].dying)
                                        {
-                                          this.str += "Dying ";
+                                          this.str = this.str.concat("Dying ");
                                        }
                                        else if(this.mens[i].hunt == -1 && this.mens[i].team != this.mens[this.MP_myid].team && !this.mens[i].isplayer)
                                        {
-                                          this.str += "Inactive ";
+                                          this.str = this.str.concat("Inactive ");
                                        }
                                        if(this.mens[i].team == this.mens[this.MP_myid].team)
                                        {
                                           if(i == this.MP_myid)
                                           {
-                                             this.str += "You";
+                                             this.str = this.str.concat("You");
                                           }
                                           else
                                           {
-                                             this.str += "Ally";
+                                             this.str = this.str.concat("Ally");
                                           }
                                        }
                                        else
                                        {
-                                          this.str += "Enemy";
+                                          this.str = this.str.concat("Enemy");
                                        }
                                        if(Boolean(this.mens[i].isplayer) && i != this.MP_myid)
                                        {
-                                          this.str += " Player";
+                                          this.str = this.str.concat(" Player");
                                        }
-                                       this.str += "</font>";
+                                       this.str = this.str.concat("</font>");
                                        if(!this.mens[i].dead)
                                        {
                                           this.ok = false;
@@ -34141,31 +34206,31 @@ import flash.display.Sprite;
                                        {
                                           if(this.Dist2D(Number(this.guns[i].x) * this.game_scale + this.game_x,Number(this.guns[i].y) * this.game_scale + this.game_y,this.myCursor.x,this.myCursor.y) < 40)
                                           {
-                                             this.str = this.GunModelToGunName(this.guns[i].model) + "\n";
+                                             this.str = this.GunModelToGunName(this.guns[i].model).concat("\n");
                                              if(this.guns[i].upg != undefined)
                                              {
                                                 if(this.guns[i].wep > 0)
                                                 {
                                                    if(this.guns[i].upg == 0)
                                                    {
-                                                      this.str += "<font color=\'#AAAAAA\'>No upgrades</font>";
+                                                      this.str = this.str.concat("<font color=\'#AAAAAA\'>No upgrades</font>");
                                                    }
                                                    else
                                                    {
-                                                      this.str += "<font color=\'#AAAAAA\'>Upgrade Level: " + this.guns[i].upg + "</font>";
+                                                      this.str = this.str.concat("<font color=\'#AAAAAA\'>Upgrade Level: ", this.guns[i].upg, "</font>");
                                                    }
                                                 }
                                              }
-                                             this.str += "\n";
+                                             this.str = this.str.concat("\n");
                                              if(this.guns[i].wep > 0)
                                              {
                                                 if(this.guns[i].command == -1 || this.guns[i].command == this.mens[this.MP_myid].team)
                                                 {
-                                                   this.str += "<font color=\'#FFFF00\'>Slot: " + this.guns[i].wep + "</font>";
+                                                   this.str = this.str.concat("<font color=\'#FFFF00\'>Slot: ", this.guns[i].wep, "</font>");
                                                 }
                                                 else
                                                 {
-                                                   this.str += "<font color=\'#FF0000\'>Unknown technology</font>";
+                                                   this.str = this.str.concat("<font color=\'#FF0000\'>Unknown technology</font>");
                                                 }
                                              }
                                           }
@@ -34188,7 +34253,9 @@ import flash.display.Sprite;
                   }
                }
             }
-            if(this.gamechatbox2["item" + this.chat_i3].y > 0)
+		
+			var item_text = "item" + this.chat_i3;
+            if(this.gamechatbox2[item_text].y > 0)
             {
                this.ok = true;
             }
@@ -34199,40 +34266,41 @@ import flash.display.Sprite;
             this.chat_i = 0;
             while(this.chat_i < 11)
             {
-               if(this.gamechatbox2["item" + this.chat_i].visible)
+			   item_text = "item" + this.chat_i;
+               if(this.gamechatbox2[item_text].visible)
                {
-                  targ_a = this.gamechatbox2["item" + this.chat_i].timer > 0 ? (this.gamechatbox2["item" + this.chat_i].y < -18 * 1.5 ? 0.5 : 1) : 0;
+                  targ_a = this.gamechatbox2[item_text].timer > 0 ? (this.gamechatbox2[item_text].y < -18 * 1.5 ? 0.5 : 1) : 0;
                   if(this.DISPLAY_CHAT <= 1)
                   {
-                     this.gamechatbox2["item" + this.chat_i].timer -= this.GSPEED2 * 4;
-                     if(this.gamechatbox2["item" + this.chat_i].y < -18 * 1.5)
+                     this.gamechatbox2[item_text].timer -= this.GSPEED2 * 4;
+                     if(this.gamechatbox2[item_text].y < -18 * 1.5)
                      {
                         targ_a = 0;
                      }
                   }
                   else
                   {
-                     this.gamechatbox2["item" + this.chat_i].timer -= this.GSPEED2;
+                     this.gamechatbox2[item_text].timer -= this.GSPEED2;
                   }
-                  if(this.gamechatbox2["item" + this.chat_i].alpha > targ_a)
+                  if(this.gamechatbox2[item_text].alpha > targ_a)
                   {
-                     this.gamechatbox2["item" + this.chat_i].alpha = Math.max(targ_a,Number(this.gamechatbox2["item" + this.chat_i].alpha) - Math.max(0.01,0.05 * this.GSPEED2));
-                     if(this.gamechatbox2["item" + this.chat_i].alpha <= targ_a)
+                     this.gamechatbox2[item_text].alpha = Math.max(targ_a,Number(this.gamechatbox2[item_text].alpha) - Math.max(0.01,0.05 * this.GSPEED2));
+                     if(this.gamechatbox2[item_text].alpha <= targ_a)
                      {
                         if(targ_a == 0)
                         {
-                           this.gamechatbox2["item" + this.chat_i].visible = false;
+                           this.gamechatbox2[item_text].visible = false;
                         }
                      }
                   }
                   else
                   {
-                     this.gamechatbox2["item" + this.chat_i].alpha = Math.min(targ_a,this.gamechatbox2["item" + this.chat_i].alpha + Math.max(0.01,0.05 * this.GSPEED2));
+                     this.gamechatbox2[item_text].alpha = Math.min(targ_a,this.gamechatbox2[item_text].alpha + Math.max(0.01,0.05 * this.GSPEED2));
                   }
                }
                if(this.ok)
                {
-                  --this.gamechatbox2["item" + this.chat_i].y;
+                  --this.gamechatbox2[item_text].y;
                }
                ++this.chat_i;
             }
