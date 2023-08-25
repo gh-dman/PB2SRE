@@ -37,21 +37,21 @@
 	   
 	  public var RUN_CATEGORY = "IL";
 	   
-	  public var temp_timer = 0;	   
+	  public var temp_timer:int = 0;	   
 	   
-	  public var LESS_NOISE = false;
+	  public var LESS_NOISE:Boolean = false;
 	   
-	  public var slots = new Vector.<MovieClip>(27);
+	  public var slots:Vector.<MovieClip> = new Vector.<MovieClip>(27);
 	   
-	  public var slotstotal = 0;
+	  public var slotstotal:int = 0;
 	   
-	  public var previous_channel = 0;
+	  public var previous_channel:int = 0;
 	   
-	  public var game_x = 0;
+	  public var game_x:int = 0;
 	   
-	  public var game_y = 0;
+	  public var game_y:int = 0;
 	   
-	  public var fps_toggle_perf = false;
+	  public var fps_toggle_perf:Boolean = false;
 	   
 	  public var bottomsurface = [];
 	   
@@ -85,11 +85,11 @@
 	  
 	  public var preview_elements_y = [];
 	   
-	  public var custom_text = "";
+	  public var custom_text:String = "";
 	  
-	  public var gt_counter = 0;
+	  public var gt_counter:int = 0;
 	  
-	  public var gt_ms_text = "000";
+	  public var gt_ms_text:String = "000";
 	  
 	  public var gt_s = 0;
 	  
@@ -99,9 +99,9 @@
 	  
 	  public var gt_m = 0;
 	  
-	  public var rt_counter = 0;
+	  public var rt_counter:int = 0;
 	  
-	  public var rt_ms_text = "000";
+	  public var rt_ms_text:String = "000";
 	  
 	  public var rt_s = 0;
 	  
@@ -111,19 +111,19 @@
 	  
 	  public var rt_m = 0;
 	  
-	  public var start_ms = 0;
+	  public var start_ms:int = 0;
 	  
-	  public var end_ms = 0;
+	  public var end_ms:int = 0;
 	  
-	  public var losses = 0;
+	  public var losses:int = 0;
 	  
-	  public var frames_display = 0;
+	  public var frames_display:int = 0;
 	  
-	  public var prev_frames = 0;
+	  public var prev_frames:int = 0;
 	  
-	  public var temp_fps = 0;
+	  public var temp_fps:int = 0;
 	  
-	  public var temp_variable = 0;
+	  public var temp_variable:int = 0;
 	  
 	  public var mc_ct:MovieClip;
 	  
@@ -3031,11 +3031,11 @@
 				 if(this.LEVEL_END_FORCE == "") {
 					 this.end_ms = getTimer();
 					 this.gt_ms = Math.max(0,this.end_ms - this.start_ms - this.losses);
-					 this.gt_ms_text = this.gt_ms - (Math.floor(this.gt_ms / 1000) * 1000);
+					 this.gt_ms_text = String(this.gt_ms - (Math.floor(this.gt_ms / 1000) * 1000));
 					 
 					 if(this.gt_ms / 1000 >= this.gt_counter) {
 						 this.gt_counter += 1;
-						 this.gt_ms_text = 0;
+						 this.gt_ms_text = "0";
 						 this.gt_s++;
 					 }
 					 if(this.gt_s >= 60) {
@@ -3099,11 +3099,11 @@
 				 if(this.LEVEL_END_FORCE == "" && this.RUN_CATEGORY == "IL" || this.RUN_CATEGORY == "ANY%" && !(this.LEVEL_END_FORCE == "complete" && this.CMPG_THIS_LEVEL == 41)) {
 					 this.end_ms = getTimer();
 					 this.rt_ms = this.end_ms - this.start_ms;
-					 this.rt_ms_text = this.rt_ms - (Math.floor(this.rt_ms / 1000) * 1000);
+					 this.rt_ms_text = String(this.rt_ms - (Math.floor(this.rt_ms / 1000) * 1000));
 					 
 					 if(this.rt_ms / 1000 >= this.rt_counter) {
 						 this.rt_counter += 1;
-						 this.rt_ms_text = 0;
+						 this.rt_ms_text = "0";
 						 this.rt_s++;
 					 }
 					 if(this.rt_s >= 60) {
