@@ -36391,11 +36391,17 @@ import flash.display.Sprite;
 			 this.skin_model[param1] = 61;
 		 }
 	 
-		 if(this.skin_model[param1] > 90) {
+		 if(this.skin_model[param1] == 91) {
+			 this.skin_model[param1] = 130;
+		 }
+		 if(this.skin_model[param1] < 130 && this.skin_model[param1] > 91) {
+			 this.skin_model[param1] = 90;
+		 }
+		 if(this.skin_model[param1] > 151) {
 			 this.skin_model[param1] = 1;
 		 }
 		 if(this.skin_model[param1] < 1) {
-			 this.skin_model[param1] = 90;
+			 this.skin_model[param1] = 151;
 		 }
 	 
 		 if(this.skin_model[param1] == 5) {
