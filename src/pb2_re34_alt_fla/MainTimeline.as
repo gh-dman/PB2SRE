@@ -31,7 +31,25 @@
 			"lx":-100000,
 			"ly":-100000,
 			"t":0
-		 };	   
+		 };	 
+	 
+	  public var movingMobile;
+	 
+	  public var aimingMobile;
+	 
+	  public var shootbutton:MovieClip;
+	 
+	  public var vusebutton:MovieClip;
+	 
+	  public var usebutton:MovieClip;
+	 
+	  public var joystick:MovieClip;
+	 
+	  public var vjoystick:MovieClip;
+	 
+	  public var rjoystick:MovieClip;
+	 
+	  public var vrjoystick:MovieClip;
 	   
 	  public var keystrokes:MovieClip;
 	   
@@ -5757,11 +5775,11 @@ import flash.display.Sprite;
          }
          if(this.vehhp.visible)
          {
-            this.weps.y = 41;
+            this.weps.y = 47.75;
          }
          else
          {
-            this.weps.y = 21;
+            this.weps.y = 22.95;
          }
       }
       
@@ -18505,7 +18523,288 @@ import flash.display.Sprite;
             this.mens[param1].toe.scaleY = this.mens[param1].scale;
          }
       }
-      
+	
+	  public function EnergyMobile(e:*) {
+		  if(!this.key_alt)
+		  {
+			 if(!this.MP_mode)
+			 {
+				this.key_alt = true;
+				if(this.timeshift > 0)
+				{
+				   this.timeshift = 0;
+				   this.timeshiftch = this.s_slow_up.play(0,0,this.vol);
+				   if(this.SCREEN_EFFECTS)
+				   {
+					  this.whitness.alpha += 1;
+					  this.whitness.visible = true;
+				   }
+				}
+				else if(this.ALLOW_TIMESHIFT)
+				{
+				   if(this.energy > 10)
+				   {
+					  if(!this.mens[this.MP_myid].dead)
+					  {
+						 this.energy -= 10;
+						 this.timeshift = 1;
+						 this.timeshiftch = this.s_slow_down.play(0,0,this.vol);
+						 if(this.SCREEN_EFFECTS)
+						 {
+							this.whitness.alpha += 1;
+							this.whitness.visible = true;
+						 }
+					  }
+				   }
+				}
+			 }
+		  }
+		  this.key_alt = !this.key_alt;
+	  }
+  
+      public function WeaponMobile(e:*) {
+		 if(e.currentTarget.id == 0) {
+		     this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
+		     this.mens[this.MP_myid].curwea = -1;
+		     this.ChangedGun(this.MP_myid);
+		     this.UpdateCurGun();
+			 return;
+		 }
+		 var _loc2_ = 0;
+		 while(_loc2_ < this.gunstotal)
+		 {
+		   if(this.guns[_loc2_].io)
+		   {
+			  this.mc = this.guns[_loc2_];
+			  if(this.mc.picken_by == this.MP_myid && !this.mc.forcars)
+			  {
+				 if(this.mc.wep == e.currentTarget.id)
+				 {
+					if(this.mens[this.MP_myid].curwea != _loc2_)
+					{
+					   this.last_gun_b4_psi = this.mens[this.MP_myid].curwea;
+					   this.mens[this.MP_myid].curwea = _loc2_;
+					   this.ChangedGun(this.MP_myid);
+					   this.UpdateCurGun();
+					}
+				 }
+			  }
+		   }
+		   _loc2_++;
+		 }
+	  }
+  
+      public function UseMobile(e:*) {
+		this.key_pick = true;
+		this.usebutton.gotoAndStop(2);
+	  }  
+  
+      public function ShootMobile(e:*) {
+		is_firing = !is_firing;
+		if(is_firing) {
+			this.shootbutton.gotoAndStop(2);
+			this.shootbutton2.gotoAndStop(2);
+		} else {
+			this.shootbutton.gotoAndStop(1);
+			this.shootbutton2.gotoAndStop(1);
+		}
+	  }    
+  
+      public function FallMobile(e:*) {
+		this.key_fall = true;
+		this.fallbutton.gotoAndStop(2);
+	  }  
+
+	  public function MoveMobile(e:*) {
+		this.stage.addEventListener(TouchEvent.TOUCH_MOVE, this.PMoveMobile);
+		this.stage.addEventListener(TouchEvent.TOUCH_END, this.DMoveMobile);
+		  
+		if(this.Dist2D(this.vjoystick.x, this.vjoystick.y, e.stageX, e.stageY) < 75) {
+			this.movingMobile = e.touchPointID;
+			
+			this.joystick.x = e.stageX;
+			this.joystick.y = e.stageY;
+		} else {
+			if(this.movingMobile != -1) {
+				var touchX = e.stageX - 100;
+				var touchY = e.stageY - 300;
+				this.joystick.x = touchX * 64 / Math.sqrt(touchX*touchX + touchY*touchY) + 100;
+				this.joystick.y = touchY * 64 / Math.sqrt(touchX*touchX + touchY*touchY) + 300;
+			}
+		}
+	
+	    if(Math.abs(this.vjoystick.x - this.joystick.x) > 30) {
+			if(this.joystick.x > this.vjoystick.x) {
+				this.key_right = true;
+				this.key_left = false;
+			}
+			if(this.joystick.x < this.vjoystick.x) {
+				this.key_left = true;
+				this.key_right = false;
+			}
+		}
+		else {
+			this.key_left = false;
+			this.key_right = false;
+		}
+	
+		if(Math.abs(this.vjoystick.y - this.joystick.y) > 30) {
+			if(this.joystick.y > this.vjoystick.y) {
+				this.key_down = true;
+				this.key_up = false;
+			}
+			else if(this.joystick.y < this.vjoystick.y) {
+				this.key_up = true;
+				this.key_down = false;
+			}
+		}
+		else {
+			this.key_down = false;
+			this.key_up = false;
+		}
+	  }
+
+	  public function AimMobile(e:*) {
+		this.aimingMobile = e.touchPointID;
+		this.stage.addEventListener(TouchEvent.TOUCH_MOVE, this.PAimMobile);
+		this.stage.addEventListener(TouchEvent.TOUCH_END, this.DAimMobile);
+		  
+		if(this.Dist2D(this.vrjoystick.x, this.vrjoystick.y, e.stageX, e.stageY) < 100) {
+			this.rjoystick.x = e.stageX;
+			this.rjoystick.y = e.stageY;
+		} else {
+			if(this.aimingMobile != -1) {
+				var touchX2 = e.stageX - 700;
+				var touchY2 = e.stageY - 300;
+				this.rjoystick.x = touchX2 * 64 / Math.sqrt(touchX2*touchX2 + touchY2*touchY2) + 700;
+				this.rjoystick.y = touchY2 * 64 / Math.sqrt(touchX2*touchX2 + touchY2*touchY2) + 300;
+			}
+		}
+	
+		if(this.aimingMobile != -1) {
+			var touchX3 = e.stageX - 700;
+			var touchY3 = e.stageY - 300;
+			this.mouse_x = touchX3 * 100 / Math.sqrt(touchX3*touchX3 + touchY3*touchY3) + 400;
+			this.mouse_y = touchY3 * 100 / Math.sqrt(touchX3*touchX3 + touchY3*touchY3) + 200;	
+			this.myCursor.x = this.mouse_x;
+			this.myCursor.y = this.mouse_y;
+		}
+	  }
+    
+      public function DUseMobile(e:*) {
+		this.key_pick = false;
+		this.usebutton.gotoAndStop(1);
+	  }   
+   
+      public function DFallMobile(e:*) {
+		this.key_fall = false;
+		this.fallbutton.gotoAndStop(1);
+	  }  
+  
+	  public function DAimMobile(e:*) {
+			var touchY = 300;
+			var touchX2 = 700;
+		  
+			this.rjoystick.x = touchX2;
+			this.rjoystick.y = touchY;
+		  
+			this.aimingMobile = -1;
+		  
+			this.stage.removeEventListener(TouchEvent.TOUCH_MOVE, this.MAMobile);
+			this.stage.removeEventListener(TouchEvent.TOUCH_END, this.RAMobile);
+	  }  
+  
+	  public function PAimMobile(e:*) {
+		if(e.touchPointID != this.aimingMobile) {
+		    return;
+		}
+		if(this.Dist2D(this.vrjoystick.x, this.vrjoystick.y, e.stageX, e.stageY) < 75) {
+			this.rjoystick.x = e.stageX;
+			this.rjoystick.y = e.stageY;
+		} else {
+			if(this.aimingMobile != -1) {
+				var touchX2 = e.stageX - 700;
+				var touchY2 = e.stageY - 300;
+				this.rjoystick.x = touchX2 * 64 / Math.sqrt(touchX2*touchX2 + touchY2*touchY2) + 700;
+				this.rjoystick.y = touchY2 * 64 / Math.sqrt(touchX2*touchX2 + touchY2*touchY2) + 300;
+			}
+		}
+	
+		if(this.aimingMobile != -1) {
+			var touchX3 = e.stageX - 700;
+			var touchY3 = e.stageY - 300;
+			this.mouse_x = touchX3 * 100 / Math.sqrt(touchX3*touchX3 + touchY3*touchY3) + 400;
+			this.mouse_y = touchY3 * 100 / Math.sqrt(touchX3*touchX3 + touchY3*touchY3) + 200;	
+			this.myCursor.x = this.mouse_x;
+			this.myCursor.y = this.mouse_y;			
+		}
+	  }
+  
+	  public function PMoveMobile(e:*) {
+		if(e.touchPointID != this.movingMobile) {
+		    return;
+		}
+		if(this.Dist2D(this.vjoystick.x, this.vjoystick.y, e.stageX, e.stageY) < 75) {
+			this.joystick.x = e.stageX;
+			this.joystick.y = e.stageY;
+		} else {
+			if(this.movingMobile != -1) {
+				var touchX = e.stageX - 100;
+				var touchY = e.stageY - 300;
+				this.joystick.x = touchX * 64 / Math.sqrt(touchX*touchX + touchY*touchY) + 100;
+				this.joystick.y = touchY * 64 / Math.sqrt(touchX*touchX + touchY*touchY) + 300;
+			}
+		}
+	
+	    if(Math.abs(this.vjoystick.x - this.joystick.x) > 30) {
+			if(this.joystick.x > this.vjoystick.x) {
+				this.key_right = true;
+				this.key_left = false;
+			}
+			if(this.joystick.x < this.vjoystick.x) {
+				this.key_left = true;
+				this.key_right = false;
+			}
+		}
+		else {
+			this.key_left = false;
+			this.key_right = false;
+		}
+	
+		if(Math.abs(this.vjoystick.y - this.joystick.y) > 30) {
+			if(this.joystick.y > this.vjoystick.y) {
+				this.key_down = true;
+				this.key_up = false;
+			}
+			else if(this.joystick.y < this.vjoystick.y) {
+				this.key_up = true;
+				this.key_down = false;
+			}
+		}
+		else {
+			this.key_down = false;
+			this.key_up = false;
+		}
+	  }
+  
+	  public function DMoveMobile(e:*) {
+			var touchX = 100;
+			var touchY = 300;
+		  
+			this.joystick.x = touchX;
+			this.joystick.y = touchY;
+		  
+		    this.movingMobile = -1;
+		  
+			this.key_down = false;
+			this.key_up = false;
+			this.key_left = false;
+			this.key_right = false;  
+		  
+			this.stage.removeEventListener(TouchEvent.TOUCH_MOVE, this.MMMobile);
+			this.stage.removeEventListener(TouchEvent.TOUCH_END, this.RMMobile);
+	  }  
+  
       public function ChangedGun(param1:int) : void
       {
          if(param1 >= 0)
@@ -22205,7 +22504,7 @@ import flash.display.Sprite;
          }
          if(mouseY < 50)
          {
-            if(this.pcg.hitTestPoint(mouseX,mouseY,false))
+            /*if(this.pcg.hitTestPoint(mouseX,mouseY,false))
             {
                if(this.key_ctrl)
                {
@@ -22224,11 +22523,12 @@ import flash.display.Sprite;
                {
                   this.DialogSay("Hold \'\'Ctrl\'\' (\'\'Cmd\'\') key to press this button","#FFFF00");
                }
-            }
+            }*/
+			// ANTI-MOBILE
             if(this.qmenu.hitTestPoint(mouseX,mouseY,false))
             {
-               if(this.key_ctrl)
-               {
+               /*if(this.key_ctrl)
+               {*/
                   is_firing = false;
                   this.PlaySound_full(this.ss_info_act);
                   this.key_ctrl = false;
@@ -22246,11 +22546,12 @@ import flash.display.Sprite;
                      this.gamemenu.visible = true;
                      this.myCursor.alpha = 1;
                   }
-               }
-               else
+               //}
+			   // ANTI-MOBILE
+               /*else
                {
                   this.DialogSay("Hold \'\'Ctrl\'\' (\'\'Cmd\'\') key to press this button","#FFFF00");
-               }
+               }*/
             }
          }
          if(this.MP_mode)
@@ -30911,8 +31212,8 @@ import flash.display.Sprite;
             }*/
             if(mouseX != 0 || mouseY != 0)
             {
-               this.mouse_x = mouseX;
-               this.mouse_y = mouseY;
+               //this.mouse_x = mouseX;
+               //this.mouse_y = mouseY;
             }
             this.c_sim_rt = getTimer();
             this.c_sim_rt2 = Number(getTimer()) - this.c_sim_rt2;
