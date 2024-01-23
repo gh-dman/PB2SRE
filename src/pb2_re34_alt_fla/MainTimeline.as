@@ -24350,45 +24350,47 @@ import flash.display.Sprite;
                                                       }
                                                    }
                                                 }
-                                                if(this.CheckHit(_loc1_,this.mc2.b_head_end) || this.CheckHit(_loc1_,this.mc2.b_head_start))
-                                                {
-                                                   this.i3 = this.mc2.b_head_end;
-                                                   this.str = "head";
-                                                }
-                                                else if(this.CheckHit(_loc1_,this.mc2.b_body) || !this.mc2.brk_body && this.CheckCross(this.puls[_loc1_].lx,this.puls[_loc1_].ly,this.puls[_loc1_].nx,this.puls[_loc1_].ny,this.ax[this.mc2.b_body],this.ay[this.mc2.b_body],this.ax[this.mc2.b_toe],this.ay[this.mc2.b_toe],_loc1_))
-                                                {
-                                                   this.i3 = this.mc2.b_body;
-                                                   this.str = "body";
-                                                }
-                                                else if(this.CheckHit(_loc1_,this.mc2.b_toe))
-                                                {
-                                                   this.i3 = this.mc2.b_toe;
-                                                   this.str = "legs";
-                                                }
-                                                else if(this.CheckHit(_loc1_,this.mc2.b_arm1))
-                                                {
-                                                   this.i3 = this.mc2.b_arm1;
-                                                   this.str = "arms";
-                                                }
-                                                else if(this.CheckHit(_loc1_,this.mc2.b_arm2))
-                                                {
-                                                   this.i3 = this.mc2.b_arm2;
-                                                   this.str = "arms";
-                                                }
-                                                else if(this.CheckHit(_loc1_,this.mc2.b_leg1) || this.CheckCross(this.puls[_loc1_].lx,this.puls[_loc1_].ly,this.puls[_loc1_].nx,this.puls[_loc1_].ny,this.ax[this.mc2.b_toe],this.ay[this.mc2.b_toe],this.ax[this.mc2.b_leg1],this.ay[this.mc2.b_leg1],_loc1_))
-                                                {
-                                                   this.i3 = this.mc2.b_leg1;
-                                                   this.str = "legs";
-                                                }
-                                                else if(this.CheckHit(_loc1_,this.mc2.b_leg2) || this.CheckCross(this.puls[_loc1_].lx,this.puls[_loc1_].ly,this.puls[_loc1_].nx,this.puls[_loc1_].ny,this.ax[this.mc2.b_toe],this.ay[this.mc2.b_toe],this.ax[this.mc2.b_leg2],this.ay[this.mc2.b_leg2],_loc1_))
-                                                {
-                                                   this.i3 = this.mc2.b_leg2;
-                                                   this.str = "legs";
-                                                }
-                                                else
-                                                {
-                                                   this.i3 = -1;
-                                                }
+											    if(this.Dist2D(this.puls[_loc1_].x,this.puls[_loc1_].y,this.mc2.x,this.mc2.y) < 300 * this.mc2.scale) {
+													if(this.CheckHit(_loc1_,this.mc2.b_head_end) || this.CheckHit(_loc1_,this.mc2.b_head_start))
+													{
+													   this.i3 = this.mc2.b_head_end;
+													   this.str = "head";
+													}
+													else if(this.CheckHit(_loc1_,this.mc2.b_body) || !this.mc2.brk_body && this.CheckCross(this.puls[_loc1_].lx,this.puls[_loc1_].ly,this.puls[_loc1_].nx,this.puls[_loc1_].ny,this.ax[this.mc2.b_body],this.ay[this.mc2.b_body],this.ax[this.mc2.b_toe],this.ay[this.mc2.b_toe],_loc1_))
+													{
+													   this.i3 = this.mc2.b_body;
+													   this.str = "body";
+													}
+													else if(this.CheckHit(_loc1_,this.mc2.b_toe))
+													{
+													   this.i3 = this.mc2.b_toe;
+													   this.str = "legs";
+													}
+													else if(this.CheckHit(_loc1_,this.mc2.b_arm1))
+													{
+													   this.i3 = this.mc2.b_arm1;
+													   this.str = "arms";
+													}
+													else if(this.CheckHit(_loc1_,this.mc2.b_arm2))
+													{
+													   this.i3 = this.mc2.b_arm2;
+													   this.str = "arms";
+													}
+													else if(this.CheckHit(_loc1_,this.mc2.b_leg1) || this.CheckCross(this.puls[_loc1_].lx,this.puls[_loc1_].ly,this.puls[_loc1_].nx,this.puls[_loc1_].ny,this.ax[this.mc2.b_toe],this.ay[this.mc2.b_toe],this.ax[this.mc2.b_leg1],this.ay[this.mc2.b_leg1],_loc1_))
+													{
+													   this.i3 = this.mc2.b_leg1;
+													   this.str = "legs";
+													}
+													else if(this.CheckHit(_loc1_,this.mc2.b_leg2) || this.CheckCross(this.puls[_loc1_].lx,this.puls[_loc1_].ly,this.puls[_loc1_].nx,this.puls[_loc1_].ny,this.ax[this.mc2.b_toe],this.ay[this.mc2.b_toe],this.ax[this.mc2.b_leg2],this.ay[this.mc2.b_leg2],_loc1_))
+													{
+													   this.i3 = this.mc2.b_leg2;
+													   this.str = "legs";
+													}
+													else
+													{
+													   this.i3 = -1;
+													}
+												}
                                                 if(this.i3 != -1)
                                                 {
                                                    if(this.MP_mode)
