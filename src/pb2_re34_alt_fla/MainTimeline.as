@@ -32,8 +32,16 @@
 			"ly":-100000,
 			"t":0
 		 };	   
+	 
+	  public var col:Array = null;
 	   
 	  public var keystrokes:MovieClip;
+	 
+	 public var gunsx;
+	 public var gunsy;
+	 public var gunsupg;
+	 public var gunscommand;
+	 public var gunsmodel;
 	   
 	  public var RUN_CATEGORY = "IL";
 	   
@@ -1988,6 +1996,10 @@
       public var boxmat:Array;
       
       public var bgx:Array;
+	  
+	  public var bg_done:Array;
+	  
+	  public var bg_bitmap_data:Array;
       
       public var bgy:Array;
       
@@ -6426,6 +6438,7 @@ import flash.display.Sprite;
 	  // x, y, type, scale1, scale2
       public function Effect(param1:Number, param2:Number, param3:int, param4:Number, param5:Number) : void
       {
+		 return;
          this.ok2 = false;
          if(param1 > -this.game_x / this.game_scale - 150 && param1 < -this.game_x / this.game_scale + this.screenX / this.game_scale + 150 && param2 > -this.game_y / this.game_scale - 150 && param2 < -this.game_y / this.game_scale + this.screenY / this.game_scale + 150)
          {
@@ -9199,7 +9212,6 @@ import flash.display.Sprite;
          var half_step_size:int = 0;
          var ldis:Number = NaN;
          var brtns:Number = NaN;
-         var col:Array = null;
          var len:int = 0;
          var i:int = 0;
          var _mtx:Matrix = null;
@@ -9270,8 +9282,8 @@ import flash.display.Sprite;
          this.mxnds2 = 0;
          this.mxnds3 = 0;
          this.tnds = 10;
-		 try
-         {
+		 /*try
+         {*/
             this.optimalupd = true;
             POST_ERR_CODE = "";
             this.CUR_MUSIC_VOLUME = 0;
@@ -9566,6 +9578,8 @@ import flash.display.Sprite;
                   this.bgw[this.bgstotal] = new Number(b["#w"]);
                   this.bgh[this.bgstotal] = new Number(b["#h"]);
                   this.bg_cast[this.bgstotal] = b["#s"] != "false";
+				  this.bg_done[this.bgstotal] = true;
+			      this.bg_bitmap_data[this.bgstotal] = bitmap_data;
                   ++this.bgstotal;
                }
                if(a == "pushf")
@@ -10227,6 +10241,11 @@ import flash.display.Sprite;
                         }
                      }
                   }
+				  this.gunsx[this.gunstotal] = b["#x"];
+				  this.gunsy[this.gunstotal] = b["#y"]
+				  this.gunsupg[this.gunstotal] = new_upg;
+				  this.gunscommand[this.gunstotal] = new_command;
+				  this.gunsmodel[this.gunstotal] = new_model;
                   this.mc = this.MakeGunByClass(new_model,{
                      "x":Number(b["#x"]),
                      "y":Number(b["#y"]),
@@ -11127,7 +11146,7 @@ import flash.display.Sprite;
                i++;
             }
             loadmap_stage = "10";
-            this.mShape = new Sprite();
+            this.mShape2 = new Sprite();
             SnowShape = new Sprite();
             i = 0;
             while(i < this.boxestotal)
@@ -11780,7 +11799,7 @@ import flash.display.Sprite;
                }
                i++;
             }		
-            this.temp = this.graphics_3d.addChildAt(this.mShape,this.graphics_3d.numChildren);
+            this.temp = this.graphics_3d.addChildAt(this.mShape2,this.graphics_3d.numChildren);
 			i = 0;
 			while(i < this.boxestotal) {
 				if(this.bottomsurfacebox[i] != undefined) {
@@ -12098,7 +12117,7 @@ import flash.display.Sprite;
                this.LAST_ERROR = "Oh! Seems like there was problem with map :(\nMap loading failed and error is:\n" + POST_ERR_CODE;
                gotoAndStop("menu");
             }
-         }
+         /*}
          catch(error:Error)
          {
             crash_failed = function(param1:IOErrorEvent):void
@@ -12127,7 +12146,7 @@ import flash.display.Sprite;
             LAST_ERROR = "Oh! Something terrible happend :(\nMap loading failed. Here displayed information on error.\n Error code: " + error.errorID + "\nLoadMap_StopAddress: " + loadmap_stage + "\nMap size: " + MovieClip(root).mapdata.length + " bytes\nError message: " + error.message + "\nApplication size: " + total + "\nViewer: " + this.loaderInfo.parameters.l + "\n" + player_version_os;
             DropGameTimer();
             gotoAndStop("menu");
-         }
+         }*/
          this.MP_start_guns_total = this.gunstotal;
       }
       
@@ -30886,8 +30905,8 @@ import flash.display.Sprite;
 			 
 		 }
          this.VarChangePreventStart();
-         try
-         {
+         //try
+         //{
 			this.gt_func();
 		    this.rt_func();
 	        this.fr_func();
@@ -31240,8 +31259,10 @@ import flash.display.Sprite;
                i = 0;
                while(i < this.surf_lnk.length)
                {
-                  this.surf_lnk[i].x = this.doors[this.surf_lnk_to[i]].x;
-                  this.surf_lnk[i].y = this.doors[this.surf_lnk_to[i]].y;
+				  if(this.graphics_3d.contains(this.surf_lnk[i])) {
+					  this.surf_lnk[i].x = this.doors[this.surf_lnk_to[i]].x;
+					  this.surf_lnk[i].y = this.doors[this.surf_lnk_to[i]].y;
+				  }
                   i++;
                }
 			   i = 0;
@@ -31264,21 +31285,24 @@ import flash.display.Sprite;
 				   i++;
 			   }
 		   
-			   i = 0;
+		   
+			   i = 0; // DOORS SUPER COOL
 			   while(i < this.doorstotal) {
-				   if(this.gamedoor[i] != undefined) {
-					   if(this.gamedoor[i].x + (this.gamedoor[i].scaleX * 100) < this.render_minX || this.gamedoor[i].x > this.render_maxX) {
-						   if(!this.gamedoor[i].visible) {
-								i++;
-							   continue;
+				   if(this.gamedoor[i] != null) {
+					   if(this.graphics_3d.contains(this.gamedoor[i])) {
+						   if(this.gamedoor[i].x + (this.gamedoor[i].scaleX * 100) < this.render_minX || this.gamedoor[i].x > this.render_maxX) {
+								this.graphics_3d.removeChild(this.gamedoor[i]);
 						   }
-						   this.gamedoor[i].visible = false;
 					   } else {
-						   if(this.gamedoor[i].visible) {
-								i++;
-						        continue;
-						   }
-						   this.gamedoor[i].visible = true;
+						  if(this.gamedoor[i].x + (this.gamedoor[i].scaleX * 100) > this.render_minX && this.gamedoor[i].x < this.render_maxX) {
+							  this.gamedoor[i] = this.graphics_3d.addChildAt(new texture_front0(),this.graphics_3d.numChildren);
+							  this.NoMouse(this.gamedoor[i]);
+							  this.gamedoor[i].x = this.doors[i].x;
+							  this.gamedoor[i].scaleX = this.doors[i].scaleX;
+							  this.gamedoor[i].scaleY = this.doors[i].scaleY;
+							  this.gamedoor[i].y = this.doors[i].y;
+							  this.link_surface(this.gamedoor[i],i);
+						  }
 					   }
 				   }
 				   i++;
@@ -31304,7 +31328,7 @@ import flash.display.Sprite;
 				   i++;
 			   }
 		   
-			   i = 0;
+			   /*i = 0;
 			   while(i < this.boxestotal) { 
 				   // DOORS STUFF 
 				   if(this.gamebox[i].x + (this.gamebox[i].scaleX * 100) < this.render_minX || this.gamebox[i].x > this.render_maxX) {
@@ -31339,7 +31363,709 @@ import flash.display.Sprite;
 					   }
 				   }
 				   i++;
+			   }*/
+			   
+			   i = 0; // BG SUPER COOL
+			   while(i < this.bgstotal) {
+				   if(this.mShape.contains(this.bgbox[i])) {
+						if(this.bgx[i] + (this.bgw[i]) < this.render_minX || this.bgx[i] > this.render_maxX) {
+								this.mShape.removeChild(this.bgbox[i]);
+					   } 
+				   }
+			       if(!this.graphics_3d.contains(this.bgtexture[i])) {
+						if(this.bgx[i] + (this.bgw[i]) > this.render_minX && this.bgx[i] < this.render_maxX) {
+							 this.bgbox[i] = this.mShape.addChildAt(this.bgtexture[i],this.mShape.numChildren);
+					   }
+				   }
+				   i++;
+			   }	
+		   
+			   
+			   i = 0; // WORK ON BOXES TEXTURES
+			   while(i < this.boxestotal) {
+				   if(this.gamebox[i] != null) {
+					   if(this.graphics_3d.contains(this.gamebox[i])) {
+						   if(this.gamebox[i].x + (this.gamebox[i].scaleX * 100) < this.render_minX || this.gamebox[i].x > this.render_maxX) {
+								this.graphics_3d.removeChild(this.gamebox[i]);
+						   }
+					   } else {
+						  if(this.gamebox[i].x + (this.gamebox[i].scaleX * 100) > this.render_minX && this.gamebox[i].x < this.render_maxX) {
+							   this.gamebox[i] = this.graphics_3d.addChildAt(new texture_front0(),this.graphics_3d.numChildren);
+							   this.NoMouse(this.gamebox[i]);
+							   this.gamebox[i].x = this.boxx[i];
+							   this.gamebox[i].scaleX = Number(this.boxw[i]) / 100;
+							   this.gamebox[i].scaleY = Number(this.boxh[i]) / 100;
+							   this.gamebox[i].y = this.boxy[i];
+
+						}
+					   }
+					
+				   }
+				   i++;
 			   }
+		   
+
+		   
+		   i = 0;
+		   var len;
+		   var _mtx;
+		   var corner_sample_left;
+		   var corner_sample_right;
+			while(i < this.boxestotal)
+            {
+               this.i2 = 0;
+               while(this.i2 < Number(this.boxw[i]) / 10)
+               {
+                  col[this.i2] = true;
+                  ++this.i2;
+               }
+               this.i2 = 0;
+               while(this.i2 < this.boxestotal)
+               {
+                  if(i != this.i2)
+                  {
+                     if(this.boxy[i] > this.boxy[this.i2])
+                     {
+                        if(this.boxy[i] <= this.boxy[this.i2] + this.boxh[this.i2])
+                        {
+                           if(this.boxx[this.i2] <= this.boxx[i] + this.boxw[i])
+                           {
+                              if(this.boxx[this.i2] + this.boxw[this.i2] >= this.boxx[i])
+                              {
+                                 this.i3 = 0;
+                                 while(this.i3 < Number(this.boxw[i]) / 10)
+                                 {
+                                    if(this.boxx[i] + this.i3 * 10 >= this.boxx[this.i2])
+                                    {
+                                       if(this.boxx[i] + this.i3 * 10 < this.boxx[this.i2] + this.boxw[this.i2])
+                                       {
+                                          col[this.i3] = false;
+                                       }
+                                    }
+                                    ++this.i3;
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+                  ++this.i2;
+               }
+			   this.topsurfacebox[i] = new Shape();
+               len = 0;
+               this.i2 = 0;
+               while(this.i2 < Number(this.boxw[i]) / 10)
+               {
+                  if(col[this.i2])
+                  {
+                     len = 0;
+                     while(Boolean(col[this.i2 + len]) && this.i2 + len < Number(this.boxw[i]) / 10)
+                     {
+                        len++;
+                     }
+                     if(this.boxmat[i] == 0)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new panel_top(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 1)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new panel_top2(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                        _mtx = new Matrix();
+                        _mtx.translate(this.boxx[i] + this.i2 * 10,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new panel_top2a(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + 1,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 1,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                        _mtx = new Matrix();
+                        _mtx.translate(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new panel_top2b(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 + 16 - 1,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 + 16 - 1,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 2)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,Number(this.boxy[i]) - 6);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new panel_top3(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,Number(this.boxy[i]) - 6 + 1);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,Number(this.boxy[i]) - 6 + 1);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 26 - 6);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 26 - 6);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 3)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new panel2_top(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 4)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new panel4_top(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 5)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new grass2(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                        _mtx = new Matrix();
+                        _mtx.translate(this.boxx[i] + this.i2 * 10,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new grass2b(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + 1,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 1,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                        _mtx = new Matrix();
+                        _mtx.translate(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new grass2a(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 + 16 - 1,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 + 16 - 1,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 6)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new grass3(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                        _mtx = new Matrix();
+                        _mtx.translate(this.boxx[i] + this.i2 * 10,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new grass3b(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + 1,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 1,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                        _mtx = new Matrix();
+                        _mtx.translate(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new grass3a(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 + 16 - 1,Number(this.boxy[i]) - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 + 16 - 1,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 28,this.boxy[i] + 38 - 23);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 7)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new dark_panel_clean(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 8)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new light_panel(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 9)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new light_panel_clean(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 10)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new usurper_floor(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 11)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new industrial(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 12)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new asphalt(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 13)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new white_concrete(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 14)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new pbfttp_concrete(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 15)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,Number(this.boxy[i]) - 6);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new wet_sand(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,Number(this.boxy[i]) - 6 + 1);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,Number(this.boxy[i]) - 6 + 1);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 26 - 6);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 26 - 6);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 16)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,Number(this.boxy[i]) - 6);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new mud(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,Number(this.boxy[i]) - 6 + 1);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,Number(this.boxy[i]) - 6 + 1);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 26 - 6);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 26 - 6);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 17)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new usurper2_bottom(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 18)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new stone_bricks(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 19)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new wood_tex(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 20)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,Number(this.boxy[i]) - 6);
+                        this.topsurfacebox[i].graphics.beginBitmapFill(new rocks(0,0),_mtx,true,true);
+                        this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,Number(this.boxy[i]) - 6 + 1);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,Number(this.boxy[i]) - 6 + 1);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 26 - 6);
+                        this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 26 - 6);
+                        this.topsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 3 || this.boxmat[i] == 0 || this.boxmat[i] == 10 || this.boxmat[i] == 11 || this.boxmat[i] == 13 || this.boxmat[i] == 14 || this.boxmat[i] == 18)
+                     {
+                        if(this.boxx[i] + this.i2 * 10 + len * 10 - (this.boxx[i] + this.i2 * 10) >= 20)
+                        {
+                           corner_sample_left = panel_top_left;
+                           corner_sample_right = panel_top_right;
+                           if(this.boxmat[i] == 10)
+                           {
+                              corner_sample_left = usurper_top_left;
+                              corner_sample_right = usurper_top_right;
+                           }
+                           if(this.boxmat[i] == 11)
+                           {
+                              corner_sample_left = indrustrial_left;
+                              corner_sample_right = indrustrial_right;
+                           }
+                           if(this.boxmat[i] == 13)
+                           {
+                              corner_sample_left = white_concrete_top_right;
+                              corner_sample_right = white_concrete_top_left;
+                           }
+                           if(this.boxmat[i] == 14)
+                           {
+                              corner_sample_left = pbfttp_corner_left;
+                              corner_sample_right = pbfttp_corner_right;
+                           }
+                           if(this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 - 5,this.boxy[i] + 5) || !this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 - 5,Number(this.boxy[i]) - 5) && !this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 - 5,this.boxy[i] + 5))
+                           {
+                              _mtx = new Matrix();
+                              _mtx.translate(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                              this.topsurfacebox[i].graphics.beginBitmapFill(new corner_sample_left(0,0),_mtx,true,true);
+                              this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i]);
+                              this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 12,this.boxy[i]);
+                              this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 12,this.boxy[i] + 16);
+                              this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + 16);
+                              this.topsurfacebox[i].graphics.endFill();
+                           }
+                           if(this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 + len * 10 + 5,this.boxy[i] + 5) || !this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 + len * 10 + 5,Number(this.boxy[i]) - 5) && !this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 + len * 10 + 5,this.boxy[i] + 5))
+                           {
+                              _mtx = new Matrix();
+                              _mtx.translate(this.boxx[i] + this.i2 * 10 + len * 10 - 12,this.boxy[i]);
+                              this.topsurfacebox[i].graphics.beginBitmapFill(new corner_sample_right(0,0),_mtx,true,true);
+                              this.topsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + len * 10 - 12,this.boxy[i]);
+                              this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i]);
+                              this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + 16);
+                              this.topsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 12,this.boxy[i] + 16);
+                              this.topsurfacebox[i].graphics.endFill();
+                           }
+                        }
+                     }
+                     this.i2 += len - 1;
+                  }
+                  ++this.i2;
+               }
+               i++;		  
+	   }		   
+		   
+			i = 0;
+			while(i < this.boxestotal)
+            {
+               this.i2 = 0;
+               while(this.i2 < Number(this.boxw[i]) / 10)
+               {
+                  col[this.i2] = true;
+                  ++this.i2;
+               }
+               this.i2 = 0;
+               while(this.i2 < this.boxestotal)
+               {
+                  if(i != this.i2)
+                  {
+                     if(this.boxy[i] + this.boxh[i] > this.boxy[this.i2])
+                     {
+                        if(this.boxy[i] + this.boxh[i] < this.boxy[this.i2] + this.boxh[this.i2])
+                        {
+                           if(this.boxx[this.i2] <= this.boxx[i] + this.boxw[i])
+                           {
+                              if(this.boxx[this.i2] + this.boxw[this.i2] >= this.boxx[i])
+                              {
+                                 this.i3 = 0;
+                                 while(this.i3 < Number(this.boxw[i]) / 10)
+                                 {
+                                    if(this.boxx[i] + this.i3 * 10 >= this.boxx[this.i2])
+                                    {
+                                       if(this.boxx[i] + this.i3 * 10 < this.boxx[this.i2] + this.boxw[this.i2])
+                                       {
+                                          col[this.i3] = false;
+                                       }
+                                    }
+                                    ++this.i3;
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+                  ++this.i2;
+               }
+			   this.bottomsurfacebox[i] = new Shape();
+               len = 0;
+               this.i2 = 0;
+               while(this.i2 < Number(this.boxw[i]) / 10)
+               {
+                  if(col[this.i2])
+                  {
+                     len = 0;
+                     while(Boolean(col[this.i2 + len]) && this.i2 + len < Number(this.boxw[i]) / 10)
+                     {
+                        len++;
+                     }
+                     if(this.boxmat[i] == 0 || this.boxmat[i] == 18)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new panel_bottom(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 3)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new panel2_bottom(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 4)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new panel4_bottom(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 7)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new dark_panel_clean_low(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 8)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new light_panel_low(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 9)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new light_panel_clean_low(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 10)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new usurper_bottom(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 11)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new industrial(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 13)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new white_concrete_underside(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 17)
+                     {
+                        _mtx = new Matrix();
+                        _mtx.translate(0,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.beginBitmapFill(new usurper2_ceiling(0,0),_mtx,true,true);
+                        this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                        this.bottomsurfacebox[i].graphics.endFill();
+                     }
+                     if(this.boxmat[i] == 3 || this.boxmat[i] == 0 || this.boxmat[i] == 10 || this.boxmat[i] == 11 || this.boxmat[i] == 13 || this.boxmat[i] == 18)
+                     {
+                        if(this.boxx[i] + this.i2 * 10 + len * 10 - (this.boxx[i] + this.i2 * 10) >= 20)
+                        {
+                           corner_sample_left = panel_bottom_left;
+                           corner_sample_right = panel_bottom_right;
+                           if(this.boxmat[i] == 10)
+                           {
+                              corner_sample_left = usurper_bottom_left;
+                              corner_sample_right = usurper_bottom_right;
+                           }
+                           if(this.boxmat[i] == 11)
+                           {
+                              corner_sample_left = indrustrial_bottom_left;
+                              corner_sample_right = indrustrial_bottom_right;
+                           }
+                           if(this.boxmat[i] == 13)
+                           {
+                              corner_sample_left = white_concrete_bottom_left;
+                              corner_sample_right = white_concrete_bottom_right;
+                           }
+                           if(this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 - 5,this.boxy[i] + this.boxh[i] - 5) || !this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 - 5,this.boxy[i] + this.boxh[i] + 5) && !this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 - 5,this.boxy[i] + this.boxh[i] - 5))
+                           {
+                              _mtx = new Matrix();
+                              _mtx.translate(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                              this.bottomsurfacebox[i].graphics.beginBitmapFill(new corner_sample_left(0,0),_mtx,true,true);
+                              this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i] - 16);
+                              this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 12,this.boxy[i] + this.boxh[i] - 16);
+                              this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + 12,this.boxy[i] + this.boxh[i]);
+                              this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10,this.boxy[i] + this.boxh[i]);
+                              this.bottomsurfacebox[i].graphics.endFill();
+                           }
+                           if(this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 + len * 10 + 5,this.boxy[i] + this.boxh[i] - 5) || !this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 + len * 10 + 5,this.boxy[i] + this.boxh[i] + 5) && !this.TracePointOnlyBoxes(this.boxx[i] + this.i2 * 10 + len * 10 + 5,this.boxy[i] + this.boxh[i] - 5))
+                           {
+                              _mtx = new Matrix();
+                              _mtx.translate(this.boxx[i] + this.i2 * 10 + len * 10 - 12,this.boxy[i] + this.boxh[i] - 16);
+                              this.bottomsurfacebox[i].graphics.beginBitmapFill(new corner_sample_right(0,0),_mtx,true,true);
+                              this.bottomsurfacebox[i].graphics.moveTo(this.boxx[i] + this.i2 * 10 + len * 10 - 12,this.boxy[i] + this.boxh[i] - 16);
+                              this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i] - 16);
+                              this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10,this.boxy[i] + this.boxh[i]);
+                              this.bottomsurfacebox[i].graphics.lineTo(this.boxx[i] + this.i2 * 10 + len * 10 - 12,this.boxy[i] + this.boxh[i]);
+                              this.bottomsurfacebox[i].graphics.endFill();
+                           }
+                        }
+                     }
+                     this.i2 += len - 1;
+                  }
+                  ++this.i2;
+               }
+               i++;
+            }
+               
+   
+				   i = 0; // WORK ON BOXES TEXTURES
+			   while(i < this.boxestotal) {
+				   if(this.topsurface[i] != null) {
+					   if(this.graphics_3d.contains(this.topsurface[i])) {
+						   if(this.gamebox[i].x + (this.gamebox[i].scaleX * 100) < this.render_minX || this.gamebox[i].x > this.render_maxX) {
+								this.graphics_3d.removeChild(this.topsurface[i]);
+						   }
+					   } else {
+						  if(this.gamebox[i].x + (this.gamebox[i].scaleX * 100) > this.render_minX && this.gamebox[i].x < this.render_maxX) {
+							   this.topsurface[i] = this.graphics_3d.addChildAt(this.topsurfacebox[i],this.graphics_3d.numChildren);
+
+						}
+					   }
+					
+				   }
+				   if(this.bottomsurface[i] != null) {
+					   if(this.graphics_3d.contains(this.bottomsurface[i])) {
+						   if(this.gamebox[i].x + (this.gamebox[i].scaleX * 100) < this.render_minX || this.gamebox[i].x > this.render_maxX) {
+								this.graphics_3d.removeChild(this.bottomsurface[i]);
+						   }
+					   } else {
+						  if(this.gamebox[i].x + (this.gamebox[i].scaleX * 100) > this.render_minX && this.gamebox[i].x < this.render_maxX) {
+							   this.bottomsurface[i] = this.graphics_3d.addChildAt(this.bottomsurfacebox[i],this.graphics_3d.numChildren);
+
+						}
+					   }
+					
+				   }
+				   i++;
+			   }		
+		
+		   
+		   
+			  i = 0;
+			  while(i < this.game.numChildren) {
+				  i++;
+			  }
+			  trace("Game:" + i);
+			  i = 0;
+			  while(i < this.graphics_3d.numChildren) {
+				  i++;
+			  }
+			  trace("Graphics 3D:" + i);
+			  i = 0;
+			  while(i < this.graphics_3d_front.numChildren) {
+				  i++;
+			  }
+			  trace("Graphics 3D Front:" + i);		  
+	   		   
+		   		  
+	   		   
 		   
 			   i = 0;
 			   while(i < this.maxef) {
@@ -31361,7 +32087,7 @@ import flash.display.Sprite;
 				   i++;
 			   }
 		   
-			   i = 0;
+			   /*i = 0;
 			   while(i < this.bgstotal) {
 				   if(this.bgbox != undefined) {
 					   if(this.bgx[i] + (this.bgw[i] * 100) < this.render_minX || this.bgx[i] > this.render_maxX) {
@@ -31379,8 +32105,9 @@ import flash.display.Sprite;
 					   }
 					   i++;
 				   }
-			   }
+			   }*/
 		   
+
                /*if(this.game.contains(this.ef[this.nextef]))
                {
                   this.game.removeChild(this.ef[this.nextef]);
@@ -34443,11 +35170,11 @@ import flash.display.Sprite;
                   i++;
                }
             }
-         }
+         /*}
          catch(e:*)
          {
             SpawnLevelLogicErrorIfNeeded(e,"Some level objects or logic have caused error within game loop");
-         }
+         }*/
          try
          {
             this.HandleRespawnAndLevelEnd();
